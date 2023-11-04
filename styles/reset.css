@@ -1,0 +1,46 @@
+body,
+ol,
+ul,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+th,
+td,
+dl,
+dd,
+form,
+fieldset,
+legend,
+input,
+textarea,
+select {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif, "Microsoft Yahei", "PingFang SC", "Avenir",
+    "Segoe UI", "Hiragino Sans GB", "STHeiti", "Microsoft Sans Serif",
+    "WenQuanYi Micro Hei", sans-serif;
+}
+a {
+  text-decoration: none;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
