@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             this.enemies.forEach(object=>{object.draw(this.ctx)})
         }
         #addNewEnemy() {
-            console.log(this.enemies)
+            // console.log(this.enemies)
             const randomEnemy=this.enemyType[Math.floor(Math.random()*this.enemyType.length)]
            if(randomEnemy==='worm')  this.enemies.push(new Worm(this))
            else if(randomEnemy==='ghost') this.enemies.push(new Ghost(this))

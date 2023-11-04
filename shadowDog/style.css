@@ -1,14 +1,29 @@
-#canvas1{
-    border: 5px solid black;
-    position: absolute;
-    top: 50%;
-    left:50%;
-    transform: translate(-50%,-50%);
-    /* 限制宽高是为了 各种情况都能完全显示 */
-    max-width: 100%;
-    max-height: 100%;
-    font-family: 'Creepster', cursive;
+@font-face {
+  font-family: 'Creepster';
+  src: url('../assets/shadow/font/AlZy_zVUqJz4yMrniH4Rcn35.woff2') format('woff2');
 }
-#player,#layer1,#layer2,#layer3,#layer4,#layer5,#enemy_fly,#enemy_plant,#enemy_spider_big,#fire,#collisionAnimation,#lives{
-    display: none;
+#canvas1 {
+  border: 5px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* 限制宽高是为了 各种情况都能完全显示 */
+  max-width: 100%;
+  max-height: 100%;
+  font-family: 'Creepster', cursive;
+}
+#player,
+#layer1,
+#layer2,
+#layer3,
+#layer4,
+#layer5,
+#enemy_fly,
+#enemy_plant,
+#enemy_spider_big,
+#fire,
+#collisionAnimation,
+#lives {
+  display: none;
 }

@@ -83,7 +83,7 @@ animationStates.forEach((state,index)=>{
 })
 
 
-console.log(spriteAnimations)
+// console.log(spriteAnimations)
 
 
 function animate(){

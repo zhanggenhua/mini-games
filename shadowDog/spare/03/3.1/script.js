@@ -36,7 +36,7 @@ class Enemy{
 for(let i=0;i<numberOfEnemies;i++){
     enemiesArray.push(new Enemy())
 }
-console.log(enemiesArray)
+// console.log(enemiesArray)
 function animate(){
     ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT)
     enemiesArray.forEach(enemy=>{

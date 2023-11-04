@@ -45,7 +45,7 @@ window.addEventListener('load', function () {
       this.time += deltaTime;
       if (this.time > this.maxTime) this.gameOver = true;
       this.background.update();
-      this.player.update(this.input.keys, deltaTime);//对记录的按键数据 做出反应
+      this.player.update(this.input.keys, deltaTime);
       // 敌人的更新控制
       if (this.enemyTimer > this.enemyInterval) {
         this.addEnemy();
@@ -77,7 +77,7 @@ window.addEventListener('load', function () {
       this.particles = this.particles.filter((particle) => !particle.markedForDeletion);
       this.collisions = this.collisions.filter((collision) => !collision.markedForDeletion);
       this.floatingMessages = this.floatingMessages.filter((message) => !message.markedForDeletion);
-      console.log(this.enemies, this.particles, this.collisions, this.floatingMessages);
+      // console.log(this.enemies, this.particles, this.collisions, this.floatingMessages);
     }
     draw(context) {
       this.background.draw(context);
@@ -107,7 +107,7 @@ window.addEventListener('load', function () {
   let lastTime = 0;
 
   function animate(timeStamp) {
-    // 记录时间增量是为了在不同设备上也有一样的游戏速度  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
+    // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
