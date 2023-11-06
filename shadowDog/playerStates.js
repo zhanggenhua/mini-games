@@ -15,6 +15,15 @@ class State {
     this.state = state;
     this.game = game;
   }
+  enter() {} //进入状态时执行
+  handleInput() {} //处理输入
+  leave() {} //离开状态时执行
+  // 记录上一次状态  --装饰模式？vue的beforedestroy给我的启发
+  setState(state, speed, pre = this) {
+    console.log('pre', this);
+    this.game.player.setState(state, speed, pre);
+    this.leave();
+  }
 }
 export class Sitting extends State {
   constructor(game) {
@@ -66,6 +75,9 @@ export class Jumping extends State {
   }
   // 设置时执行一次，相当于初始化
   enter() {
+    // 空中控制力较弱
+    this.game.player.maxSpeed = this.game.player.maxSpeed * this.game.player.airControl;
+
     this.game.player.jumpNumber++; //记录二段跳
     console.log(
       '是否二段跳? ',
@@ -86,14 +98,15 @@ export class Jumping extends State {
     this.game.player.frameY = 1;
     this.game.player.maxFrame = 6;
   }
-  // 真正的处理方法
   handleInput(input) {
     if (this.game.player.onGround()) {
       console.timeEnd('弹射起步');
-      this.game.player.setState(states.RUNNING, 1);
-    } else if (!this.game.player.onGround() && this.game.player.y > this.lastY) {
+      this.setState(states.RUNNING, 1);
+    } else if (this.game.player.vy > 0.1) {
+      //直接根据抵达顶点来判断
+      this.setState(states.FALLING, 1);
       // 通过比较当前高度和上一帧的高度 来判断是否下落中
-      this.game.player.setState(states.FALLING, 1);
+      // !this.game.player.onGround() && this.game.player.y > this.lastY
     } else if (!input.includes('ArrowUp')) {
       // 松开箭头 可以再次跳跃
       this.game.player.jumpSwitch = true;
@@ -110,14 +123,18 @@ export class Jumping extends State {
       //     console.log('设置最小速度', this.game.player.vy);
       //   }
       // }
-      // 松开加大重力，模拟按得越久跳的越高 --似乎没有这么简单
+      // 松开加大重力（长按低重力上升），模拟按得越久跳的越高 --似乎没有这么简单
       // this.game.player.g = 1.5;
     } else if (input.includes('Enter')) {
-      this.game.player.setState(states.ROLLING, 2);
+      this.setState(states.ROLLING, 2);
     } else if (input.includes('ArrowDown')) {
-      this.game.player.setState(states.DIVING, 0);
+      this.setState(states.DIVING, 0);
     }
-    this.lastY = this.game.player.y; //记录上一帧高度
+    // this.lastY = this.game.player.y; //记录上一帧高度
+  }
+
+  leave() {
+    console.log('leave', this.game.player.maxSpeed);
   }
 }
 // 下落
