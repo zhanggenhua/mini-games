@@ -17,7 +17,7 @@ export class Player {
 
     this.vy = 0; // 垂直速度
     this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
-    this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
+    this.maxJumpHeight = this.ground / 1; //跳跃的最大高度
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
     this.jumpNumber = 0; //记录跳跃次数，实现二段跳
     this.jumpSwitch = false; //跳跃开关 只有按下又松开上键才 为true

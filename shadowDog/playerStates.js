@@ -59,6 +59,7 @@ export class Running extends State {
     }
   }
 }
+
 export class Jumping extends State {
   constructor(game) {
     super('JUMPING', game);
@@ -91,10 +92,9 @@ export class Jumping extends State {
       console.timeEnd('弹射起步');
       this.game.player.setState(states.RUNNING, 1);
     } else if (!this.game.player.onGround() && this.game.player.y > this.lastY) {
-      // 通过比较当前高度和上一帧的高度 或者 松开箭头 来判断是否下落中
+      // 通过比较当前高度和上一帧的高度 来判断是否下落中
       this.game.player.setState(states.FALLING, 1);
     } else if (!input.includes('ArrowUp')) {
-      this.game.player.setState(states.FALLING, 1);
       // 松开箭头 可以再次跳跃
       this.game.player.jumpSwitch = true;
       // 设置最小跳跃高度  --手感怪怪的
@@ -136,6 +136,9 @@ export class Falling extends State {
     } else if (input.includes('ArrowUp') && this.game.player.canJump()) {
       // 二段跳
       this.game.player.setState(states.JUMPING, 1);
+    } else if (!input.includes('ArrowUp')) {
+      // 松开箭头 可以再次跳跃
+      this.game.player.jumpSwitch = true;
     } else if (input.includes('ArrowDown')) {
       this.game.player.setState(states.DIVING, 0);
     }
