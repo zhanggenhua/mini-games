@@ -18,10 +18,9 @@ class State {
   enter() {} //进入状态时执行
   handleInput() {} //处理输入
   leave() {} //离开状态时执行
-  // 记录上一次状态  --装饰模式？vue的beforedestroy给我的启发
-  setState(state, speed, pre = this) {
-    console.log('pre', this);
-    this.game.player.setState(state, speed, pre);
+  // 封装原本的setState以便在前后搞事情  --装饰模式？vue的beforedestroy给我的启发
+  setState(state, speed) {
+    this.game.player.setState(state, speed);
     this.leave();
   }
 }
@@ -69,14 +68,39 @@ export class Running extends State {
   }
 }
 
-export class Jumping extends State {
+// 加一级父类，抽取重复代码  --构造函数直接隐式继承
+export class Jump extends State {
+  // 设置时执行一次，相当于初始化
+  enter() {
+    // 空中控制力较弱
+    this.game.player.maxSpeed = this.game.player.maxSpeed * this.game.player.airControl;
+  }
+  handleInput(input) {
+    if (this.game.player.onGround()) {
+      console.timeEnd('弹射起步');
+      this.setState(states.RUNNING, 1);
+    } else if (!input.includes('ArrowUp')) {
+      // 松开箭头 可以再次跳跃
+      this.game.player.jumpSwitch = true;
+    } else if (input.includes('Enter')) {
+      this.setState(states.ROLLING, 2);
+    } else if (input.includes('ArrowDown')) {
+      this.setState(states.DIVING, 0);
+    }
+  }
+
+  leave() {
+    this.game.player.maxSpeed = 8;
+  }
+}
+
+export class Jumping extends Jump {
   constructor(game) {
     super('JUMPING', game);
   }
   // 设置时执行一次，相当于初始化
   enter() {
-    // 空中控制力较弱
-    this.game.player.maxSpeed = this.game.player.maxSpeed * this.game.player.airControl;
+    super.enter()
 
     this.game.player.jumpNumber++; //记录二段跳
     console.log(
@@ -99,17 +123,16 @@ export class Jumping extends State {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
+    super.handleInput(input);
     if (this.game.player.onGround()) {
       console.timeEnd('弹射起步');
       this.setState(states.RUNNING, 1);
     } else if (this.game.player.vy > 0.1) {
-      //直接根据抵达顶点来判断
+      //直接根据抵达顶点来判断进入下落状态
       this.setState(states.FALLING, 1);
       // 通过比较当前高度和上一帧的高度 来判断是否下落中
       // !this.game.player.onGround() && this.game.player.y > this.lastY
     } else if (!input.includes('ArrowUp')) {
-      // 松开箭头 可以再次跳跃
-      this.game.player.jumpSwitch = true;
       // 设置最小跳跃高度  --手感怪怪的
       // if (this.game.player.jumpNumber > 1) {
       //   //注意设置时就加一了
@@ -125,42 +148,30 @@ export class Jumping extends State {
       // }
       // 松开加大重力（长按低重力上升），模拟按得越久跳的越高 --似乎没有这么简单
       // this.game.player.g = 1.5;
-    } else if (input.includes('Enter')) {
-      this.setState(states.ROLLING, 2);
-    } else if (input.includes('ArrowDown')) {
-      this.setState(states.DIVING, 0);
-    }
+    } 
     // this.lastY = this.game.player.y; //记录上一帧高度
-  }
-
-  leave() {
-    console.log('leave', this.game.player.maxSpeed);
   }
 }
 // 下落
-export class Falling extends State {
+export class Falling extends Jump {
   constructor(game) {
     super('FALLING', game);
   }
   enter() {
+    super.enter()
     this.game.player.frameX = 0;
     this.game.player.frameY = 2;
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
-    if (this.game.player.onGround()) {
-      this.game.player.setState(states.RUNNING, 1);
-    } else if (input.includes('ArrowUp') && this.game.player.canJump()) {
-      // 二段跳
+    super.handleInput(input);
+    // 二段跳
+    if (input.includes('ArrowUp') && this.game.player.canJump()) {
       this.game.player.setState(states.JUMPING, 1);
-    } else if (!input.includes('ArrowUp')) {
-      // 松开箭头 可以再次跳跃
-      this.game.player.jumpSwitch = true;
-    } else if (input.includes('ArrowDown')) {
-      this.game.player.setState(states.DIVING, 0);
     }
   }
 }
+
 export class Rolling extends State {
   constructor(game) {
     super('ROLLING', game);

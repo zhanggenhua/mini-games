@@ -16,8 +16,8 @@ export class Player {
     this.y = this.ground;
 
     this.vy = 0; // 垂直速度
-    this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
-    this.maxJumpHeight = this.ground / 1; //跳跃的最大高度
+    // this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
+    this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
     this.jumpNumber = 0; //记录跳跃次数，实现二段跳
     this.jumpSwitch = false; //跳跃开关 只有按下又松开上键才 为true
@@ -33,7 +33,7 @@ export class Player {
     this.image = document.getElementById('player'); //不用new一个Image了
     this.frameX = 0;
     this.maxFrame = 5;
-    this.fps = 20;
+    this.fps = 20;//游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
     this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
     this.frameTimer = 0; //跟踪每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
