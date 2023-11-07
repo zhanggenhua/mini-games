@@ -2,4 +2,4 @@
 
 
 # 进行中小游戏
--[ ] shadow dog
+[x] shadow dog
