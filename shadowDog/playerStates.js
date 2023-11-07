@@ -65,14 +65,19 @@ export class Jumping extends State {
   }
   // 设置时执行一次，相当于初始化
   enter() {
-    this.game.player.jumpNumber++; //设置二段跳
-    console.log('是否二段跳? ', this.game.player.jumpSwitch, '在地上? ', this.game.player.onGround(), '二段跳次数? ', this.game.player.jumpNumber);
+    this.game.player.jumpNumber++; //记录二段跳
+    console.log(
+      '是否二段跳? ',
+      this.game.player.jumpSwitch,
+      '在地上? ',
+      this.game.player.onGround(),
+      '二段跳次数? ',
+      this.game.player.jumpNumber,
+    );
     if (this.game.player.onGround() || this.game.player.canJump) {
-        console.log('弹射起步');
-      // 根据高度设置跳跃起始速度  --公式：v0^2=2*g*h
-      this.game.player.vy = -Math.floor(
-        Math.sqrt(2 * this.game.player.weight * this.game.player.jumpHeight),
-      );
+      console.time('弹射起步');
+      // 根据高度设置跳跃起始速度
+      this.game.player.vy = this.game.player.maxJumpSpeed;
       this.game.player.jumpSwitch = false;
     }
 
@@ -82,28 +87,37 @@ export class Jumping extends State {
   }
   // 真正的处理方法
   handleInput(input) {
-      if (this.game.player.onGround()) {
-          this.game.player.setState(states.RUNNING, 1);
-        } else if (
-            (!this.game.player.onGround() && this.game.player.y > this.lastY) ||
-      !input.includes('ArrowUp')
-    ) {
+    if (this.game.player.onGround()) {
+      console.timeEnd('弹射起步');
+      this.game.player.setState(states.RUNNING, 1);
+    } else if (!this.game.player.onGround() && this.game.player.y > this.lastY) {
       // 通过比较当前高度和上一帧的高度 或者 松开箭头 来判断是否下落中
+      this.game.player.setState(states.FALLING, 1);
+    } else if (!input.includes('ArrowUp')) {
       this.game.player.setState(states.FALLING, 1);
       // 松开箭头 可以再次跳跃
       this.game.player.jumpSwitch = true;
-      // 设置最小跳跃高度
-      if (this.jumpNumber > 0) {
-        // 二段跳直接为 0
-        this.game.player.vy = 0;
-      } else {
-        this.game.player.vy = - Math.floor(Math.sqrt(2 * this.game.player.weight * this.game.player.jumpHeight)) / 2;
-      }
+      // 设置最小跳跃高度  --手感怪怪的
+      // if (this.game.player.jumpNumber > 1) {
+      //   //注意设置时就加一了
+      //   // 二段跳直接为 0  --继续优化，只有小于最小高度才使用最小高度
+      //   this.game.player.vy = 0;
+      // } else {
+      //   // 如果大于最小速度，说明已经走完了最小高度
+      //   if (this.game.player.vy < this.game.player.minJumpSpeed) {
+      //     console.log('当前速度', this.game.player.vy);
+      //     this.game.player.vy = this.game.player.minJumpSpeed;
+      //     console.log('设置最小速度', this.game.player.vy);
+      //   }
+      // }
+      // 松开加大重力，模拟按得越久跳的越高 --似乎没有这么简单
+      // this.game.player.g = 1.5;
     } else if (input.includes('Enter')) {
       this.game.player.setState(states.ROLLING, 2);
     } else if (input.includes('ArrowDown')) {
       this.game.player.setState(states.DIVING, 0);
     }
+    this.lastY = this.game.player.y; //记录上一帧高度
   }
 }
 // 下落

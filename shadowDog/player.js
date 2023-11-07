@@ -16,11 +16,18 @@ export class Player {
     this.y = this.ground;
 
     this.vy = 0; // 垂直速度
-    this.weight = 1; //(重力加速度)
-    this.airResistance = 0; // 空气阻力  --可能做飞行功能用得到
-    this.jumpHeight = this.ground / 2 ; //跳跃的最大高度
+    this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
+    this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
+    this.minJumpHeight = this.ground / 8; //跳跃的最小高度
     this.jumpNumber = 0; //记录跳跃次数，实现二段跳
     this.jumpSwitch = false; //跳跃开关 只有按下又松开上键才 为true
+    this.airResistance = 0; // 空气阻力  --可能做飞行功能用得到
+
+    // 计算属性 -- h= 1/2 gt^2  --由函数图像得来，vt*t /2: 总路程 | v=gt
+    this.g = 1; //重力加速度 -- g=2h/t^2  --像素好像没法算
+    this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
+    // this.minJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.minJumpHeight)); //最小跳跃速度
+    console.log('计算属性', this.g, this.maxJumpSpeed, this.minJumpSpeed);
 
     this.image = document.getElementById('player'); //不用new一个Image了
     this.frameX = 0;
@@ -29,11 +36,12 @@ export class Player {
     this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
     this.frameTimer = 0; //跟踪每帧时间间隔，和上方变量配置， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
+
     // 引入加速度和摩擦力 模拟更真实的物理 --匀加速直线运动
     this.acceleration = 0.3; // 设置加速度值
     this.friction = 0.5; // 设置摩擦力值
-    this.speed = 0; //初始速度
-    this.maxSpeed = 8; //移动速度
+    this.speed = 0; //初速度
+    this.maxSpeed = 8; //最大移动速度
     this.states = [
       new Sitting(this.game),
       new Running(this.game),
@@ -129,7 +137,7 @@ export class Player {
     this.y += this.vy;
 
     if (!this.onGround()) {
-      this.vy += this.weight;
+      this.vy += this.g;
       // 应用空气阻力
       this.vy -= this.airResistance * this.vy;
     } else {
