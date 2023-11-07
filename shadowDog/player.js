@@ -33,7 +33,7 @@ export class Player {
     this.image = document.getElementById('player'); //不用new一个Image了
     this.frameX = 0;
     this.maxFrame = 5;
-    this.fps = 20;//游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
+    this.fps = 20; //游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
     this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
     this.frameTimer = 0; //跟踪每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
@@ -131,6 +131,13 @@ export class Player {
     // 限制玩家不超过水平画布
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
+
+    // 达到屏幕三分之一时，才让背景可以移动
+    if (this.x > this.game.width / 3) {
+      this.game.background.bkgMove = true;
+    } else {
+      this.game.background.bkgMove = false;
+    }
   }
   // 跳跃
   jump() {
