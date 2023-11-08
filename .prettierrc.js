@@ -11,6 +11,6 @@ module.exports = {
     htmlWhitespaceSensitivity: 'ignore', //html存在空格是不敏感的
     vueIndentScriptAndStyle: false, //vue 的script和style的内容是否缩进
     endOfLine: 'auto', //行结尾形式 mac和linux是\n  windows是\r\n
-    singleAttributePerLine: false //组件或者标签的属性是否控制一行只显示一个属性
+    singleAttributePerLine: false, //组件或者标签的属性是否控制一行只显示一个属性
   };
   

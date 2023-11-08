@@ -14,7 +14,9 @@ window.addEventListener('load', function () {
       this.width = width;
       this.height = height;
 
-      this.groundMargin = 80;
+      this.level = 1;//记录游戏级别  --必须在背景初始化前
+
+      this.groundMargin = 80;//地面高度
       this.speed = 0;
       this.maxSpeed = 3;
       this.background = new BackGround(this);

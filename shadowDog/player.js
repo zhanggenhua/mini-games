@@ -11,6 +11,7 @@ export class Player {
     this.height = 91.3;
     // 位置
     this.x = 0;
+    this.bkgMove = false; //地图是否移动
     // 记录地板高度 后面要用 groundMargin: 地板高度
     this.ground = this.game.height - this.height - this.game.groundMargin;
     this.y = this.ground;
@@ -133,10 +134,10 @@ export class Player {
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
 
     // 达到屏幕三分之一时，才让背景可以移动
-    if (this.x > this.game.width / 3) {
-      this.game.background.bkgMove = true;
+    if (this.x > this.game.width / 4) {
+      this.bkgMove = true;
     } else {
-      this.game.background.bkgMove = false;
+      this.bkgMove = false;
     }
   }
   // 跳跃
@@ -165,6 +166,8 @@ export class Player {
   }
   // 碰撞检测
   checkCollision() {
+    if(this.game.debug) return
+    console.log('?', this.game.debug);
     this.game.enemies.forEach((enemy) => {
       if (checkCollision(enemy, this)) {
         //发生碰撞
