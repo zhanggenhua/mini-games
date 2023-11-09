@@ -25,13 +25,15 @@ window.addEventListener('load', function () {
       this.input = new InputHandler(this);//记录用户输入，没什么好说的
 
       this.ui = new UI(this);
+      
       this.enemies = [];
+      this.enemyInterval = 1000; //新敌人加入画面的速度，可以调节敌人出现的速度
+      this.enemyTimer = 0;
+
       this.particles = [];
       this.collisions = [];
       this.floatingMessages = [];
       this.maxParticles = 50;
-      this.enemyInterval = 1000; //新敌人加入画面的速度，可以调节敌人出现的速度
-      this.enemyTimer = 0;
       this.debug = false;
       this.score = 0;
       this.fontColor = 'black';

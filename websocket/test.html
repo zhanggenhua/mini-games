@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="msg"></div>
+    <input type="text" id="text">
+    <input type="button" value="发送" onclick="send()">
+
+    <script>
+        // ws是协议名，和http一样
+        var websocket = new WebSocket("ws://127.0.0.1:9999")
+        console.log("连接", websocket.readyState)
+        // 监听状态改变事件
+        websocket.onopen = function () {
+            //   0 CONNECTING 连接尚未建立
+            //   1 OPEN 已连接
+            //   2 CLOSING 正在关闭
+            //   3 CLOSED 已关闭
+            console.log("连接", websocket.readyState)
+        }
+        // 监听消息事件（服务器推送事件）
+        websocket.onmessage = function (event) {
+            console.log(event)
+            document.getElementById('msg').innerHTML = event.data
+        }
+        // 监听连接关闭事件
+        websocket.onclose = function () {
+            console.log("关闭", websocket.readyState)
+        }
+
+        function send(){
+            var text=document.getElementById('text').value
+            websocket.send(text)
+        }
+    </script>
+</body>
+
+</html>
