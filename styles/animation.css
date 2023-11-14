@@ -1,0 +1,19 @@
+/* 模糊淡出 */
+.blur-out-expand {
+  -webkit-animation: blur-out-expand 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: blur-out-expand 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes blur-out-expand {
+  0% {
+    -webkit-filter: blur(0.01);
+    filter: blur(0.01);
+  }
+  100% {
+    letter-spacing: 1em;
+	/* 中文不方便，只能特化，强行居中渐变 */
+    transform: translate(-30%, -50%);
+    -webkit-filter: blur(12px) opacity(0%);
+    filter: blur(12px) opacity(0%);
+  }
+}

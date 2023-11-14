@@ -96,6 +96,7 @@ export class Player {
     // 执行状态机行为
     this.currentState.enter();
   }
+  
   // 移动
   move(input) {
     // 水平移动

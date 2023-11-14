@@ -204,6 +204,7 @@ export class Rolling extends State {
     }
   }
 }
+// 下落攻击
 export class Diving extends State {
   constructor(game) {
     super('Diving', game);
@@ -224,6 +225,7 @@ export class Diving extends State {
     );
     if (this.game.player.onGround()) {
       this.game.player.setState(states.RUNNING, 1);
+      // 一个落地的爆炸效果
       for (let i = 0; i < 30; i++) {
         this.game.particles.unshift(
           new Splash(
