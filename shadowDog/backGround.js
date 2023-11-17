@@ -42,7 +42,7 @@ class Layer {
   draw(context) {
     context.drawImage(this.image, this.x, this.y, this.width, this.height);
     // 在图片右侧追加一张一模一样的图片实现无缝滚动
-    console.log('left', this.x, this.game.background.bkgMove);
+    // console.log('left', this.x, this.game.background.bkgMove);
     if (this.game.background.bkgMove === 'left') {
       context.drawImage(this.image, this.x - this.width, this.y, this.width, this.height);
     } else {

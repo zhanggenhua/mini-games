@@ -56,7 +56,7 @@ export class Fire extends Particle {
     context.restore();
   }
 }
-// 火焰爆炸效果
+// 落地的火焰爆炸效果
 export class Splash extends Particle {
   constructor(game, x, y) {
     super(game);

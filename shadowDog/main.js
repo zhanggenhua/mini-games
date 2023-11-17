@@ -18,7 +18,7 @@ window.addEventListener('load', function () {
       this.level = 1; //记录游戏级别  --必须在背景初始化前
 
       this.groundMargin = 80; //地面高度
-      this.speed = 0;
+      this.speed = 0; //游戏速度,决定了地图移动速度
       this.maxSpeed = 3;
       this.background = new BackGround(this);
 
@@ -116,7 +116,6 @@ window.addEventListener('load', function () {
           } else {
             this.enemies.push(new ClimbingEnemy(this));
           }
-
           this.enemies.push(new FlyingEnemy(this));
         } else {
         }
@@ -139,16 +138,60 @@ window.addEventListener('load', function () {
   }
   animate(0);
 
+  let mark = document.getElementsByClassName('pause__mark')[0];
+  let pauseText = document.getElementsByClassName('pause__text')[0];
   // 失去焦点暂停游戏
   window.onblur = function () {
     game.pause = true;
-    document.getElementsByClassName('pause')[0].style.visibility = 'visible';
-    document.getElementsByClassName('pause')[0].classList.remove('blur-out-expand');
+    mark.style.visibility = 'visible';
+    pauseText.style.visibility = 'visible';
+    pauseText.classList.remove('blur-out-expand');
+    // 暂停时要清空输入，因为没有触发松开按键的事件
+    game.input.keys = []
   };
   window.onfocus = function () {
     game.pause = false;
-    document.getElementsByClassName('pause')[0].classList.add('blur-out-expand');
-    // document.getElementsByClassName('pause')[0].style.visibility = 'hidden';
+    mark.style.visibility = 'hidden';
+    pauseText.classList.add('blur-out-expand');
     animate(0);
   };
+
+  /**
+ * @param {number} targetCount 不小于1的整数，表示经过targetCount帧之后返回结果
+ * @return {Promise<number>}
+ */
+const getScreenFps = (() => {
+  // 先做一下兼容性处理
+  const nextFrame = ([
+    window.requestAnimationFrame,
+    window.webkitRequestAnimationFrame,
+    window.mozRequestAnimationFrame
+  ]).find(fn => fn)
+  if (!nextFrame) {
+    console.error('requestAnimationFrame is not supported!')
+    return
+  }
+  return (targetCount = 50) => {
+    // 判断参数是否合规
+    if (targetCount < 1) throw new Error('targetCount cannot be less than 1.')
+    const beginDate = Date.now()
+    let count = 0
+    return new Promise(resolve => {
+      (function log() {
+        nextFrame(() => {
+          if (++count >= targetCount) {
+            const diffDate = Date.now() - beginDate
+            const fps = (count / diffDate) * 1000
+            return resolve(fps)
+          }
+          log()
+        })
+      })()
+    })
+  }
+})()
+
+getScreenFps().then(fps => {
+  console.log('当前屏幕刷新率为', fps)
+})
 });

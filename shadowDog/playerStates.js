@@ -24,6 +24,8 @@ class State {
     this.leave();
   }
 }
+
+// 坐下
 export class Sitting extends State {
   constructor(game) {
     super('SITTING', game);
@@ -36,11 +38,15 @@ export class Sitting extends State {
   handleInput(input) {
     if (input.includes('ArrowLeft') || input.includes('ArrowRight')) {
       this.game.player.setState(states.RUNNING, 1);
-    } else if (input.includes('Enter')) {
+    } else if (input.includes('ArrowUp')) {
+      this.game.player.setState(states.JUMPING, 1);
+    } else if (input.includes('Shift')) {
+      //按键检测的耦合很严重，考虑抽取
       this.game.player.setState(states.ROLLING, 2);
     }
   }
 }
+// 奔跑
 export class Running extends State {
   constructor(game) {
     super('RUNNING', game);
@@ -48,7 +54,7 @@ export class Running extends State {
   enter() {
     this.game.player.frameX = 0;
     this.game.player.frameY = 3;
-    this.game.player.maxFrame = 8;
+    this.game.player.maxFrame = 6;
   }
   handleInput(input) {
     this.game.particles.unshift(
@@ -62,7 +68,7 @@ export class Running extends State {
       this.game.player.setState(states.SITTING, 0);
     } else if (input.includes('ArrowUp')) {
       this.game.player.setState(states.JUMPING, 1);
-    } else if (input.includes('Enter')) {
+    } else if (input.includes('Shift')) {
       this.game.player.setState(states.ROLLING, 2);
     }
   }
@@ -76,13 +82,16 @@ export class Jump extends State {
     this.game.player.maxSpeed = this.game.player.maxSpeed * this.game.player.airControl;
   }
   handleInput(input) {
+    // 属性的修改应该独立出来
+    if (!input.includes('ArrowUp')) {
+      // 松开箭头 可以再次跳跃
+      this.game.player.jumpSwitch = true;
+    }
+
     if (this.game.player.onGround()) {
       console.timeEnd('弹射起步');
       this.setState(states.RUNNING, 1);
-    } else if (!input.includes('ArrowUp')) {
-      // 松开箭头 可以再次跳跃
-      this.game.player.jumpSwitch = true;
-    } else if (input.includes('Enter')) {
+    } else if (input.includes('Shift')) {
       this.setState(states.ROLLING, 2);
     } else if (input.includes('ArrowDown')) {
       this.setState(states.DIVING, 0);
@@ -90,6 +99,7 @@ export class Jump extends State {
   }
 
   leave() {
+    // 改回空中临时改变的速度
     this.game.player.maxSpeed = 8;
   }
 }
@@ -100,7 +110,7 @@ export class Jumping extends Jump {
   }
   // 设置时执行一次，相当于初始化
   enter() {
-    super.enter()
+    super.enter();
 
     this.game.player.jumpNumber++; //记录二段跳
     console.log(
@@ -124,6 +134,7 @@ export class Jumping extends Jump {
   }
   handleInput(input) {
     super.handleInput(input);
+
     if (this.game.player.onGround()) {
       console.timeEnd('弹射起步');
       this.setState(states.RUNNING, 1);
@@ -148,7 +159,7 @@ export class Jumping extends Jump {
       // }
       // 松开加大重力（长按低重力上升），模拟按得越久跳的越高 --似乎没有这么简单
       // this.game.player.g = 1.5;
-    } 
+    }
     // this.lastY = this.game.player.y; //记录上一帧高度
   }
 }
@@ -158,7 +169,7 @@ export class Falling extends Jump {
     super('FALLING', game);
   }
   enter() {
-    super.enter()
+    super.enter();
     this.game.player.frameX = 0;
     this.game.player.frameY = 2;
     this.game.player.maxFrame = 6;
@@ -172,6 +183,7 @@ export class Falling extends Jump {
   }
 }
 
+// 滚动：下+左右
 export class Rolling extends State {
   constructor(game) {
     super('ROLLING', game);
@@ -189,12 +201,12 @@ export class Rolling extends State {
         this.game.player.y + this.game.player.height * 0.5,
       ),
     );
-    if (!input.includes('Enter') && this.game.player.onGround()) {
+    if (!input.includes('Shift') && this.game.player.onGround()) {
       this.game.player.setState(states.RUNNING, 1);
-    } else if (!input.includes('Enter') && !this.game.player.onGround()) {
+    } else if (!input.includes('Shift') && !this.game.player.onGround()) {
       this.game.player.setState(states.FALLING, 1);
     } else if (
-      input.includes('Enter') &&
+      input.includes('Shift') &&
       input.includes('ArrowUp') &&
       this.game.player.onGround()
     ) {
@@ -204,7 +216,8 @@ export class Rolling extends State {
     }
   }
 }
-// 下落攻击
+
+// 下落攻击：上+下
 export class Diving extends State {
   constructor(game) {
     super('Diving', game);
@@ -235,11 +248,13 @@ export class Diving extends State {
           ),
         );
       }
-    } else if (input.includes('Enter') && this.game.player.onGround()) {
+    } else if (input.includes('Shift') && this.game.player.onGround()) {
       this.game.player.setState(states.ROLLING, 2);
     }
   }
 }
+
+// 受击状态
 export class Hit extends State {
   constructor(game) {
     super('Hit', game);

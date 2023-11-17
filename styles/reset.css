@@ -24,10 +24,14 @@ select {
 * {
   box-sizing: border-box;
 }
+html{
+  /* 方便高度继承 */
+  height: 100%;
+}
 body {
-  font-family: sans-serif, "Microsoft Yahei", "PingFang SC", "Avenir",
-    "Segoe UI", "Hiragino Sans GB", "STHeiti", "Microsoft Sans Serif",
-    "WenQuanYi Micro Hei", sans-serif;
+  height: 100%;
+  font-family: sans-serif, 'Microsoft Yahei', 'PingFang SC', 'Avenir', 'Segoe UI',
+    'Hiragino Sans GB', 'STHeiti', 'Microsoft Sans Serif', 'WenQuanYi Micro Hei', sans-serif;
 }
 a {
   text-decoration: none;

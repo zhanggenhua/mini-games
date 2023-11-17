@@ -56,6 +56,8 @@ export class Player {
   }
 
   update(input, deltaTime) {
+    // console.log('??', this.speed);
+    console.log('当前状态', this.currentState.state, '速度', this.speed, this.game.speed, '按键', this.game.input.keys, '在地上？', this.onGround());
     this.checkCollision(); //碰撞检测
     // 状态机处理当前输入
     this.currentState.handleInput(input);
@@ -96,7 +98,7 @@ export class Player {
     // 执行状态机行为
     this.currentState.enter();
   }
-  
+
   // 移动
   move(input) {
     // 水平移动
@@ -130,15 +132,15 @@ export class Player {
       this.speed = -this.maxSpeed;
     }
     // 限制玩家不超过水平画布
-    if (this.x <= -1) this.x = -1;//用于左移动
+    if (this.x <= -1) this.x = -1; //用于左移动
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
 
     // 达到屏幕三分之一时，才让背景可以移动
     if (this.x > this.game.width / 4) {
       this.game.background.bkgMove = 'right';
-    } else if(this.x < 0) {
+    } else if (this.x < 0) {
       this.game.background.bkgMove = 'left';
-    }else{
+    } else {
       this.game.background.bkgMove = '';
     }
   }
@@ -168,7 +170,7 @@ export class Player {
   }
   // 碰撞检测
   checkCollision() {
-    if(this.game.debug) return
+    if (this.game.debug) return;
     this.game.enemies.forEach((enemy) => {
       if (checkCollision(enemy, this)) {
         //发生碰撞
@@ -181,10 +183,11 @@ export class Player {
           ),
         );
         if (this.currentState === this.states[4] || this.currentState === this.states[5]) {
-          this.game.score++;
+          // 消灭敌人
+          this.game.score += enemy.score;
           this.game.floatingMessages.push(new FloatingMessage('+1', enemy.x, enemy.y, 150, 50));
         } else {
-          // 初始化状态
+          // 受击
           this.setState(6, 0);
           this.game.score -= 5;
           this.game.lives--;

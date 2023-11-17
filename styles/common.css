@@ -1,3 +1,13 @@
+
+@font-face {
+  font-family: "Yuan";
+  /* format:ttf --必加 */
+  src: url("../assets/fonts/keai.ttf") format("truetype");
+}
+
+
+
+
 /* 模糊淡出 */
 .blur-out-expand {
   -webkit-animation: blur-out-expand 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;

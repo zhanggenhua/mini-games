@@ -6,8 +6,10 @@ class Enemy {
     this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
+    this.score = 1;//敌人基础分数
   }
   update(deltaTime) {
+    // 加上游戏速度是为了和地图保持同步
     this.x -= this.speedX + this.game.speed;
     this.y += this.speedY;
     if (this.frameTimer > this.frameInterval) {
