@@ -32,7 +32,7 @@ class Layer {
     // }
 
     this.game.background.distance += this.game.speed; //统计距离
-    // 下一张地图 --应该只进一次
+    // 切换地图 --应该只进一次
     if (this.game.background.distance >= this.width * 2 * this.game.level) {
       console.log('distance', this.game.background.distance, this.x, this.width);
       this.game.level++;
@@ -70,7 +70,7 @@ export class BackGround {
     this.layer3 = new Layer(this.game, this.width, this.height, 0.4, this.layerImage3);
     this.layer4 = new Layer(this.game, this.width, this.height, 0.6, this.layerImage4);
     this.layer5 = new Layer(this.game, this.width, this.height, 1, this.layerImage5); //最前面的地板
-    this.layer6 = new Layer(this.game, this.width, this.height, 0.6, this.layerImage6);
+    this.layer6 = new Layer(this.game, this.width, this.height, 1, this.layerImage6);//森林
     this.init();
   }
   init() {
@@ -79,11 +79,16 @@ export class BackGround {
     if (this.game.level % 2 === 0) {
       //就在这两张地图之间切换了
       // 森林地图
-      this.BackGroundLayers = [this.layer1, this.layer3, this.layer6, this.layer5];
+      this.BackGroundLayers = [this.layer1, this.layer3, this.layer6];
+      this.game.groundMargin = 40;
+      this.game.ui.fontFamily = 'Creepster';
     } else {
       // 城市地图 --初始
       this.BackGroundLayers = [this.layer1, this.layer2, this.layer3, this.layer4, this.layer5];
+      this.game.groundMargin = 80;
+      this.game.ui.fontFamily = 'Bangers';
     }
+    this.game.player.computed();
   }
   update() {
     this.BackGroundLayers.forEach((layer) => {

@@ -4,6 +4,11 @@
   /* format:ttf --必加 */
   src: url("../assets/fonts/keai.ttf") format("truetype");
 }
+@font-face {
+  font-family: "Bangers";
+  /* format:ttf --必加 */
+  src: url("../assets/fonts/Bangers-Regular.ttf") format("truetype");
+}
 
 
 
