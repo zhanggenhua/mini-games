@@ -1,5 +1,5 @@
 export class FloatingMessage{
-    constructor(value,x,y,targetX,targetY){
+    constructor(game, value,x,y,targetX,targetY){
         this.value=value
         this.x=x
         this.y=y
@@ -17,7 +17,7 @@ export class FloatingMessage{
         }
     }
     draw(context){
-        context.font='20px Creepster'
+        context.font='20px' + 'px ' + this.game.ui.fontFamily;
         context.fillStyle='white'
         context.fillText(this.value,this.x,this.y)
         context.fillStyle='black'

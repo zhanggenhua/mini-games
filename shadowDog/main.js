@@ -3,6 +3,7 @@ import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
 import { FlyingEnemy, ClimbingEnemy, GroundEnemy } from './enemies.js';
 import { UI } from './UI.js';
+import { observe } from '../utils/tool.js';
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
@@ -47,7 +48,16 @@ window.addEventListener('load', function () {
 
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
+
+      observe(this, ['groundMargin'], () => {
+        console.log('计算触发', Object.assign({}, this));
+        this.player.computed();
+        this.enemies.forEach((enemy) => {
+          enemy.computed();
+        });
+      });
     }
+
     update(deltaTime) {
       // this.time += deltaTime;
       // if (this.time > this.maxTime) this.gameOver = true;
@@ -141,7 +151,7 @@ window.addEventListener('load', function () {
 
   let mark = document.getElementsByClassName('pause__mark')[0];
   let pauseText = document.getElementsByClassName('pause__text')[0];
-  // 失去焦点暂停游戏
+  // 失去焦点暂停游戏  --需要修复时间累积
   window.onblur = function () {
     game.pause = true;
     mark.style.visibility = 'visible';
@@ -157,42 +167,4 @@ window.addEventListener('load', function () {
     animate(0);
   };
 
-  /**
-   * @param {number} targetCount 不小于1的整数，表示经过targetCount帧之后返回结果
-   * @return {Promise<number>}
-   */
-  const getScreenFps = (() => {
-    // 先做一下兼容性处理
-    const nextFrame = [
-      window.requestAnimationFrame,
-      window.webkitRequestAnimationFrame,
-      window.mozRequestAnimationFrame,
-    ].find((fn) => fn);
-    if (!nextFrame) {
-      console.error('requestAnimationFrame is not supported!');
-      return;
-    }
-    return (targetCount = 50) => {
-      // 判断参数是否合规
-      if (targetCount < 1) throw new Error('targetCount cannot be less than 1.');
-      const beginDate = Date.now();
-      let count = 0;
-      return new Promise((resolve) => {
-        (function log() {
-          nextFrame(() => {
-            if (++count >= targetCount) {
-              const diffDate = Date.now() - beginDate;
-              const fps = (count / diffDate) * 1000;
-              return resolve(fps);
-            }
-            log();
-          });
-        })();
-      });
-    };
-  })();
-
-  getScreenFps().then((fps) => {
-    console.log('当前屏幕刷新率为', fps);
-  });
 });

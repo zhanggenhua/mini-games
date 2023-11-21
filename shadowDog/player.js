@@ -22,7 +22,8 @@ export class Player {
     // 计算属性 -- h= 1/2 gt^2  --由函数图像得来，vt*t /2: 总路程 | v=gt
     this.g = 1; //重力加速度 -- g=2h/t^2  --像素好像没法算
 
-    this.runFps = 1000 / 60; // 运动的帧率
+    // this.runInterval = 1000 / 60; // 运动的帧率
+    // this.runTimer = 0;
 
     this.image = document.getElementById('player'); //不用new一个Image了
     this.frameX = 0;
@@ -30,7 +31,7 @@ export class Player {
     this.fps = 20; //游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
     // 一秒除以fps，意思是一秒之内动画变动了fps次
     this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
-    this.frameTimer = 0; //跟踪每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
+    this.frameTimer = 0; //跟踪[动画]每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
 
     // 引入加速度和摩擦力 模拟更真实的物理 --匀加速直线运动
@@ -49,7 +50,7 @@ export class Player {
     ];
     this.currentState = null;
 
-    this.computed()
+    this.computed();
   }
 
   // 计算属性，可能会有变动 --因为依赖于其他对象的属性，而又不会自动更新
@@ -57,14 +58,14 @@ export class Player {
     // this.jumpDuration = 2 * this.maxJumpHeight / this.g;// 计算跳跃的时间
     // this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
     // this.minJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.minJumpHeight)); //最小跳跃速度
-    this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
-    console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
-
     // 记录地板高度 后面要用 groundMargin: 地板高度
     this.ground = this.game.height - this.height - this.game.groundMargin;
     this.y = this.ground;
     this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
+
+    this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
+    console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
   }
 
   update(input, deltaTime) {
@@ -78,15 +79,19 @@ export class Player {
       this.game.input.keys,
       '在地上？',
       this.onGround(),
+      Object.assign({}, this),
     );
     this.checkCollision(); //碰撞检测
     // 状态机处理当前输入
     this.currentState.handleInput(input);
 
     // 基于时间的游戏速度优化
-    // if (this.frameTimer > this.runFps) {
-    //   this.currentState.update(deltaTime);
-    //   this.frameTimer -= deltaTime; //不是归零而是减去，误差更小
+    // if (this.runTimer > this.runInterval) {
+    //   this.speed *= deltaTime
+    //   this.move(input);
+    //   this.runTimer -= this.runInterval; //不是归零而是减去，误差更小
+    // }else{
+    //   this.runTimer += deltaTime;
     // }
 
     this.move(input);
@@ -94,9 +99,9 @@ export class Player {
 
     // 动画部分 --动画是根据时间来播放  而不是根据电脑性能
     if (this.frameTimer > this.frameInterval) {
-      this.frameTimer = 0;
       if (this.frameX < this.maxFrame) this.frameX++;
       else this.frameX = 0;
+      this.frameTimer = 0; //不是归零而是减去，误差更小  --不能减，会有时间积累
     } else {
       this.frameTimer += deltaTime;
     }
@@ -118,6 +123,7 @@ export class Player {
     );
   }
   setState(state, speed) {
+    console.log('状态切换', Object.assign({}, this));
     // 根据state状态获取对应状态机
     this.currentState = this.states[state];
     // 游戏速度
@@ -212,7 +218,8 @@ export class Player {
         if (this.currentState === this.states[4] || this.currentState === this.states[5]) {
           // 消灭敌人
           this.game.score += enemy.score;
-          this.game.floatingMessages.push(new FloatingMessage('+1', enemy.x, enemy.y, 150, 50));
+          // 浮动消息
+          this.game.floatingMessages.push(new FloatingMessage(game, '+1', enemy.x, enemy.y, 150, 50));
         } else {
           // 受击
           this.setState(6, 0);

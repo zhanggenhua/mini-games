@@ -31,9 +31,9 @@ class Layer {
     // } else this.x -= this.game.speed * this.speedModifier;
     // }
 
-    this.game.background.distance += this.game.speed; //统计距离
+    this.game.background.distance += this.game.speed * (this.game.player.speed >= 0 ? 1 : -1); //统计距离--根据角色移动的方向和游戏速度即背景移动速度
     // 切换地图 --应该只进一次
-    if (this.game.background.distance >= this.width * 2 * this.game.level) {
+    if (this.game.background.distance >= 2 * this.width * this.game.level) {
       console.log('distance', this.game.background.distance, this.x, this.width);
       this.game.level++;
       this.game.background.init();
@@ -88,7 +88,7 @@ export class BackGround {
       this.game.groundMargin = 80;
       this.game.ui.fontFamily = 'Bangers';
     }
-    this.game.player.computed();
+    // this.game.player.computed();
   }
   update() {
     this.BackGroundLayers.forEach((layer) => {

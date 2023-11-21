@@ -11,3 +11,21 @@ export const checkCollision = (enemy, player) => {
     return false;
   }
 };
+
+// 监听属性 --从而无需在其他地方调用computed，单一职责
+export const observe = (obj, keys, callback) => {
+  keys.forEach((key) => {
+    // 必须要有value和get
+    let value;
+    Object.defineProperty(obj, key, {
+      get() {
+        return value;
+      },
+      set(newValue) {
+        console.log(`修改属性：${key}`, newValue, value);
+        value = newValue;
+        callback();
+      },
+    });
+  });
+}
