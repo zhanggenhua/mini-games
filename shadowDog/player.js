@@ -69,18 +69,18 @@ export class Player {
   }
 
   update(input, deltaTime) {
-    console.log(
-      '当前状态',
-      this.currentState.state,
-      '速度',
-      this.speed,
-      this.game.speed,
-      '按键',
-      this.game.input.keys,
-      '在地上？',
-      this.onGround(),
-      Object.assign({}, this),
-    );
+    // console.log(
+    //   '当前状态',
+    //   this.currentState.state,
+    //   '速度',
+    //   this.speed,
+    //   this.game.speed,
+    //   '按键',
+    //   this.game.input.keys,
+    //   '在地上？',
+    //   this.onGround(),
+    //   Object.assign({}, this),
+    // );
     this.checkCollision(); //碰撞检测
     // 状态机处理当前输入
     this.currentState.handleInput(input);
@@ -218,8 +218,8 @@ export class Player {
         if (this.currentState === this.states[4] || this.currentState === this.states[5]) {
           // 消灭敌人
           this.game.score += enemy.score;
-          // 浮动消息
-          this.game.floatingMessages.push(new FloatingMessage(game, '+1', enemy.x, enemy.y, 150, 50));
+          // 浮动消息 --起始位置到偏移量
+          this.game.floatingMessages.push(new FloatingMessage(this.game, '+1', enemy.x, enemy.y, 150, 50));
         } else {
           // 受击
           this.setState(6, 0);

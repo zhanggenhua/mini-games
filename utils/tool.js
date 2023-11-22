@@ -15,17 +15,20 @@ export const checkCollision = (enemy, player) => {
 // 监听属性 --从而无需在其他地方调用computed，单一职责
 export const observe = (obj, keys, callback) => {
   keys.forEach((key) => {
-    // 必须要有value和get
-    let value;
+    // 获取原来的属性描述符
+    let descriptor = Object.getOwnPropertyDescriptor(obj, key);
+    // 会覆盖原始属性，导致初始化失效 --vue2是采用代理方式避免
     Object.defineProperty(obj, key, {
+      // 必须要有get
       get() {
-        return value;
+        // 使用闭包
+        return descriptor.value;
       },
       set(newValue) {
         console.log(`修改属性：${key}`, newValue, value);
-        value = newValue;
+        descriptor.value = newValue;
         callback();
       },
     });
   });
-}
+};

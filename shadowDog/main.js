@@ -1,7 +1,7 @@
 import { Player } from './player.js'; //建议作为源码阅读的入口
 import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
-import { FlyingEnemy, ClimbingEnemy, GroundEnemy } from './enemies.js';
+import { Fly, BigSpider, Spider, Plant } from './enemies/index.js';
 import { UI } from './UI.js';
 import { observe } from '../utils/tool.js';
 window.addEventListener('load', function () {
@@ -49,6 +49,9 @@ window.addEventListener('load', function () {
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
 
+      this.enemyCount = {};
+      this.loadEnemys();
+
       observe(this, ['groundMargin'], () => {
         console.log('计算触发', Object.assign({}, this));
         this.player.computed();
@@ -72,6 +75,7 @@ window.addEventListener('load', function () {
       }
       this.enemies.forEach((enemy, index) => {
         enemy.update(deltaTime);
+        // 这种方式可能会使得后面的怪物更新出现错误
         if (enemy.markedForDeletion) this.enemies.splice(index, 1);
       });
       // 处理消除敌人消息
@@ -81,7 +85,6 @@ window.addEventListener('load', function () {
       // 处理粒子效果
       this.particles.forEach((particle, index) => {
         particle.update();
-        if (particle.markedForDeletion) this.particles.splice(index, 1);
       });
       // 清除超出上限的粒子
       if (this.particles.length > this.maxParticles) {
@@ -91,13 +94,12 @@ window.addEventListener('load', function () {
       // 处理碰撞动画效果
       this.collisions.forEach((collision, index) => {
         collision.update(deltaTime);
-        if (collision.markedForDeletion) this.collisions.splice(index, 1);
       });
 
-      // 删除标记了的元素
+      // 删除标记了的元素 --这种方式似乎更好
       // this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
-      // this.particles = this.particles.filter((particle) => !particle.markedForDeletion);
-      // this.collisions = this.collisions.filter((collision) => !collision.markedForDeletion);
+      this.particles = this.particles.filter((particle) => !particle.markedForDeletion);
+      this.collisions = this.collisions.filter((collision) => !collision.markedForDeletion);
       this.floatingMessages = this.floatingMessages.filter((message) => !message.markedForDeletion);
       // console.log(this.enemies, this.particles, this.collisions, this.floatingMessages);
     }
@@ -120,17 +122,39 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
-        if (this.level < 5) {
-          // 地面敌人生成
-          if (Math.random() < 0.5) {
-            this.enemies.push(new GroundEnemy(this));
-          } else {
-            this.enemies.push(new ClimbingEnemy(this));
-          }
-          this.enemies.push(new FlyingEnemy(this));
+        // 敌人生成
+        let enemyType = Object.keys(this.enemyLoad);
+        // 第一次根据类型随机出敌人池
+        let index = Math.floor(Math.random() * enemyType.length);
+        let enemies = this.enemyLoad[enemyType[index]];
+        // 第二次从敌人池中随机出某一个
+        let enemyArray = Object.values(enemies);
+        let enemy = new enemyArray[Math.floor(Math.random() * enemyArray.length)](this);
+        this.enemies.push(enemy);
+
+        // 统计敌人类型的创建次数
+        if (this.enemyCount.hasOwnProperty(enemyType)) {
+          this.enemyCount[index] += 1;
         } else {
+          this.enemyCount[index] = 1;
         }
+        console.log('敌人生成', enemy, this.enemyCount, Object.assign({}, this.enemies));
       }
+    }
+    // 加载敌人池  --收到环境和等级的影响
+    loadEnemys() {
+      this.enemyLoad = {
+        flies: {
+          Fly,
+        },
+        ground: {
+          Plant,
+        },
+        climbing: {
+          // BigSpider,
+          Spider
+        },
+      };
     }
   }
 
@@ -166,5 +190,4 @@ window.addEventListener('load', function () {
     pauseText.classList.add('blur-out-expand');
     animate(0);
   };
-
 });
