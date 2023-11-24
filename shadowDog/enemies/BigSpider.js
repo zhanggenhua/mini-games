@@ -9,7 +9,6 @@ export class BigSpider extends ClimbingEnemy {
     
     this.image = document.getElementById('enemy_spider_big');
     this.maxFrame = 5;
-    this.computed();
   }
   update(deltaTime) {
     super.update(deltaTime);

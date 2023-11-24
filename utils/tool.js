@@ -25,7 +25,7 @@ export const observe = (obj, keys, callback) => {
         return descriptor.value;
       },
       set(newValue) {
-        console.log(`修改属性：${key}`, newValue, value);
+        console.log(`修改属性：${key}`, newValue);
         descriptor.value = newValue;
         callback();
       },

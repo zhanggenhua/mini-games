@@ -76,7 +76,7 @@ window.addEventListener('load', function () {
       this.enemies.forEach((enemy, index) => {
         enemy.update(deltaTime);
         // 这种方式可能会使得后面的怪物更新出现错误
-        if (enemy.markedForDeletion) this.enemies.splice(index, 1);
+        // if (enemy.markedForDeletion) this.enemies.splice(index, 1);
       });
       // 处理消除敌人消息
       this.floatingMessages.forEach((message) => {
@@ -90,14 +90,13 @@ window.addEventListener('load', function () {
       if (this.particles.length > this.maxParticles) {
         this.particles.length = this.maxParticles;
       }
-
       // 处理碰撞动画效果
       this.collisions.forEach((collision, index) => {
         collision.update(deltaTime);
       });
 
       // 删除标记了的元素 --这种方式似乎更好
-      // this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
+      this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
       this.particles = this.particles.filter((particle) => !particle.markedForDeletion);
       this.collisions = this.collisions.filter((collision) => !collision.markedForDeletion);
       this.floatingMessages = this.floatingMessages.filter((message) => !message.markedForDeletion);

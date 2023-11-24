@@ -12,7 +12,6 @@ export class Fly extends FlyingEnemy {
     // 移动方式：基于sin
     this.angle = 0;
     this.va = Math.random() * 0.1 + 0.1;
-    this.computed();
   }
   update(deltaTime) {
     super.update(deltaTime);

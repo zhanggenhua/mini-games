@@ -8,9 +8,15 @@ class Enemy {
     this.markedForDeletion = false; //标记删除
     this.score = 1; //敌人基础分数dd
   }
-  computed() {
-    !this.realWidth ? (this.realWidth = this.width) : '';
-    !this.realHeith ? (this.realHeith = this.height) : '';
+  computed() {}
+  get realHeith() {
+    // 懒加载getter ，因为后续不会改变
+    delete this.realHeith;
+    return this._realHeight ? this._realHeight : this.height;
+  }
+  get realWidth() {
+    delete this.realWidth;
+    return this._realWidth ? this._realWidth : this.width;
   }
   update(deltaTime) {
     // 加上游戏速度是为了和地图保持同步
@@ -69,6 +75,7 @@ export class GroundEnemy extends Enemy {
     this.speedY = 0;
   }
   computed() {
+    super.computed();
     console.log('地面怪物计算属性d', this.height, this.game.height, this.game.groundMargin);
     this.y = this.game.height - this.height - this.game.groundMargin;
     console.log('地面怪物计算属性', this.y);

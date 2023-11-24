@@ -219,12 +219,13 @@ export class Player {
           // 消灭敌人
           this.game.score += enemy.score;
           // 浮动消息 --起始位置到偏移量
-          this.game.floatingMessages.push(new FloatingMessage(this.game, '+1', enemy.x, enemy.y, 150, 50));
+          this.game.floatingMessages.push(new FloatingMessage(this.game, '焯!', enemy.x, enemy.y, 150, 50));
         } else {
           // 受击
           this.setState(6, 0);
           this.game.score -= 5;
           this.game.lives--;
+          this.game.floatingMessages.push(new FloatingMessage(this.game, 'FUCK!', enemy.x, enemy.y, 150, 50));
           if (this.game.lives <= 0) this.game.gameOver = true;
         }
       }
