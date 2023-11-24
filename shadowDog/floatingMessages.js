@@ -1,5 +1,5 @@
 export class FloatingMessage {
-  constructor(game, value, x, y, targetX, targetY) {
+  constructor(game, value, x, y, targetX, targetY, timer = 0) {
     this.game = game;
     this.value = value;
     this.x = x;
@@ -7,7 +7,7 @@ export class FloatingMessage {
     this.targetX = targetX;
     this.targetY = targetY;
     this.markedForDeletion = false;
-    this.timer = 0;
+    this.timer = timer;
   }
   update() {
     this.x += (this.targetX - this.x) * 0.03;

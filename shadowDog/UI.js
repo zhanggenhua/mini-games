@@ -20,13 +20,17 @@ export class UI {
       context.fillStyle = this.game.fontColor;
       // 分数绘制
       context.fillText('Score: ' + this.game.score, 20, 50);
-      // 时间绘制
-      context.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
-      context.fillText('Time: ' + (this.game.time * 0.001).toFixed(1), 20, 80);
       // 生命值绘制
       for (let i = 0; i < this.game.lives; i++) {
-        context.drawImage(this.liveImage, 25 * i + 20, 95, 25, 25);
+        context.drawImage(this.liveImage, 25 * i + 20, 60, 25, 25);
       }
+      // 时间绘制
+      context.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
+      context.fillText('Time: ' + (this.game.time * 0.001).toFixed(1), 25, 120);
+      // 当前游戏等级
+      context.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
+      context.fillText('LEVEL: ' + this.game.level, 25, 140);
+      context.fillText('DISTANCE: ' + this.game.background.distance, 25, 160);
       // 游戏结束看板
       if (this.game.gameOver) {
         context.textAlign = 'center';

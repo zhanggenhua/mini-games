@@ -165,7 +165,7 @@ export class Player {
       this.speed = -this.maxSpeed;
     }
     // 限制玩家不超过水平画布
-    if (this.x <= -1) this.x = -1; //用于左移动
+    if (this.x <= 0) this.x = 0; 
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
 
     // 达到屏幕三分之一时，才让背景可以移动
@@ -219,13 +219,17 @@ export class Player {
           // 消灭敌人
           this.game.score += enemy.score;
           // 浮动消息 --起始位置到偏移量
-          this.game.floatingMessages.push(new FloatingMessage(this.game, '焯!', enemy.x, enemy.y, 150, 50));
+          this.game.floatingMessages.push(
+            new FloatingMessage(this.game, enemy.score, enemy.x, enemy.y, 150, 50),
+          );
         } else {
           // 受击
           this.setState(6, 0);
           this.game.score -= 5;
           this.game.lives--;
-          this.game.floatingMessages.push(new FloatingMessage(this.game, 'FUCK!', enemy.x, enemy.y, 150, 50));
+          this.game.floatingMessages.push(
+            new FloatingMessage(this.game, 'FUCK!', this.x, this.y, this.x - 20, this.y - 20, 70),
+          );
           if (this.game.lives <= 0) this.game.gameOver = true;
         }
       }

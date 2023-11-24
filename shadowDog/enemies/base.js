@@ -9,14 +9,14 @@ class Enemy {
     this.score = 1; //敌人基础分数dd
   }
   computed() {}
-  get realHeith() {
+  get width() {
     // 懒加载getter ，因为后续不会改变
-    delete this.realHeith;
-    return this._realHeight ? this._realHeight : this.height;
+    delete this.width;
+    return this._width ? this._width : this.spriteWidth;
   }
-  get realWidth() {
-    delete this.realWidth;
-    return this._realWidth ? this._realWidth : this.width;
+  get height() {
+    delete this.height;
+    return this._height ? this._height : this.spriteHeight;
   }
   update(deltaTime) {
     // 加上游戏速度是为了和地图保持同步
@@ -34,20 +34,20 @@ class Enemy {
   }
   draw(context) {
     if (this.game.debug) {
-      context.strokeRect(this.x, this.y, this.realWidth, this.realHeith);
+      context.strokeRect(this.x, this.y, this.width, this.height);
     }
     context.drawImage(
       this.image,
-      this.frameX * this.width,
+      this.frameX * this.spriteWidth,
       0,
       // 图片的宽高
-      this.width,
-      this.height,
+      this.spriteWidth,
+      this.spriteHeight,
       this.x,
       this.y,
       // 实际绘制的宽高
-      this.realWidth,
-      this.realHeith,
+      this.width,
+      this.height,
     );
   }
 }
@@ -76,8 +76,8 @@ export class GroundEnemy extends Enemy {
   }
   computed() {
     super.computed();
-    console.log('地面怪物计算属性d', this.height, this.game.height, this.game.groundMargin);
-    this.y = this.game.height - this.height - this.game.groundMargin;
+    console.log('地面怪物计算属性d', this.spriteHeight, this.game.height, this.game.groundMargin);
+    this.y = this.game.height - this.spriteHeight - this.game.groundMargin;
     console.log('地面怪物计算属性', this.y);
   }
 }
@@ -99,13 +99,13 @@ export class ClimbingEnemy extends Enemy {
     super.update(deltaTime);
     // 触底反弹
     if (this.y > this.game.height - this.height - this.game.groundMargin) this.speedY *= -1;
-    if (this.y < -this.height) this.markedForDeletion = true;
+    if (this.y < -this.spriteHeight) this.markedForDeletion = true;
   }
   draw(context) {
     super.draw(context);
     context.beginPath();
-    context.moveTo(this.x + this.realWidth / 2, 0); //线的起点，是画布上的坐标
-    context.lineTo(this.x + this.realWidth / 2, this.y);
+    context.moveTo(this.x + this.width / 2, 0); //线的起点，是画布上的坐标
+    context.lineTo(this.x + this.width / 2, this.y);
     context.stroke(); //画线
   }
 }

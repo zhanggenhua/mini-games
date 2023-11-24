@@ -4,10 +4,10 @@ import { ClimbingEnemy } from './base.js';
 export class Spider extends ClimbingEnemy {
   constructor(game) {
     super(game);
-    this.width = 310;
-    this.height = 175;
-    this._realWidth = 155;
-    this._realHeight = 87.5;
+    this.spriteWidth = 310;
+    this.spriteHeight = 175;
+    this._width = this.spriteWidth / 2;
+    this._height = this.spriteHeight / 2;
     
     this.image = document.getElementById('enemy_spider');
     this.maxFrame = 5;

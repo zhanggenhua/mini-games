@@ -30,24 +30,12 @@ class Layer {
     //   this.game.background.transition = false; //移动完归零
     // } else this.x -= this.game.speed * this.speedModifier;
     // }
-
-    this.game.background.distance += this.game.speed * (this.game.player.speed >= 0 ? 1 : -1); //统计距离--根据角色移动的方向和游戏速度即背景移动速度
-    // 切换地图 --应该只进一次
-    if (this.game.background.distance >= 2 * this.width * this.game.level) {
-      console.log('distance', this.game.background.distance, this.x, this.width);
-      this.game.level++;
-      this.game.background.init();
-    }
   }
   draw(context) {
     context.drawImage(this.image, this.x, this.y, this.width, this.height);
     // 在图片右侧追加一张一模一样的图片实现无缝滚动
+    context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
     // console.log('left', this.x, this.game.background.bkgMove);
-    if (this.game.background.bkgMove === 'left') {
-      context.drawImage(this.image, this.x - this.width, this.y, this.width, this.height);
-    } else {
-      context.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
-    }
   }
 }
 export class BackGround {
@@ -70,14 +58,12 @@ export class BackGround {
     this.layer3 = new Layer(this.game, this.width, this.height, 0.4, this.layerImage3);
     this.layer4 = new Layer(this.game, this.width, this.height, 0.6, this.layerImage4);
     this.layer5 = new Layer(this.game, this.width, this.height, 1, this.layerImage5); //最前面的地板
-    this.layer6 = new Layer(this.game, this.width, this.height, 1, this.layerImage6);//森林
+    this.layer6 = new Layer(this.game, this.width, this.height, 1, this.layerImage6); //森林
     this.init();
   }
   init() {
-    console.log('level', this.game.level, this.game);
-
+    // 替换地图资源
     if (this.game.level % 2 === 0) {
-      //就在这两张地图之间切换了
       // 森林地图
       this.BackGroundLayers = [this.layer1, this.layer3, this.layer6];
       this.game.groundMargin = 40;
@@ -88,9 +74,15 @@ export class BackGround {
       this.game.groundMargin = 80;
       this.game.ui.fontFamily = 'Bangers';
     }
-    // this.game.player.computed();
   }
   update() {
+    this.distance += this.game.speed; //统计距离--根据角色移动的方向和游戏速度即背景移动速度
+    // 切换地图
+    if (this.distance >= 2 * this.width * this.game.level) {
+      console.log('distance', this.game.background.distance, this.x, this.width);
+      this.game.level++;
+      this.init();
+    }
     this.BackGroundLayers.forEach((layer) => {
       layer.update();
     });

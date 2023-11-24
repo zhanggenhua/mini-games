@@ -1,6 +1,6 @@
 # 小游戏网站
 #### 介绍
-1. **shadow dog** : 学习目的，全面改造shadow dog，原地址：[shadow dog](https://www.youtube.com/c/Frankslaboratory)
+1. **shadow dog** : 以学习为目的，全面改造shadow dog，原地址：[shadow dog](https://www.youtube.com/c/Frankslaboratory)
 
 ## 完成的小游戏
 
@@ -15,12 +15,14 @@
   - [x] 功能
     - [x] 二段跳
     - [x] 允许后退 --解锁新bug
+    - [ ] 音效
     - [ ] 多达十余种怪物和简单生态系统
     - [ ] 会出怪的传送门，属于环境类怪物
     - [ ] 一环魔法，羽落术，使用用空气阻力
     - [ ] 幻影冲刺
+    - [ ] 火箭跳
     - [ ] 彩虹尾气，虚弱状态
-    - [ ] 火柱
+    - [ ] 火柱 --时雨的那个发射光线就很搭
     - [ ] 翻滚最长五秒，技能冷却
     - [ ] 山羊前端小屋的灵感，终局计分器
     - [ ] 后门

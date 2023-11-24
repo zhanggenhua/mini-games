@@ -40,8 +40,8 @@ window.addEventListener('load', function () {
       this.score = 0;
       this.winningScore = 1;
       this.fontColor = 'black';
+      this.time = 0;
       // 一局时间限制
-      // this.time = 0;
       // this.maxTime = 60000;
       this.gameOver = false;
       this.lives = 5;
@@ -62,7 +62,7 @@ window.addEventListener('load', function () {
     }
 
     update(deltaTime) {
-      // this.time += deltaTime;
+      this.time += deltaTime;
       // if (this.time > this.maxTime) this.gameOver = true;
       this.background.update();
       this.player.update(this.input.keys, deltaTime);

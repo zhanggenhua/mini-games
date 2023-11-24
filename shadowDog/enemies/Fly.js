@@ -3,8 +3,8 @@ import { FlyingEnemy } from './base.js';
 export class Fly extends FlyingEnemy {
   constructor(game) {
     super(game);
-    this.width = 60;
-    this.height = 44;
+    this.spriteWidth = 60;
+    this.spriteHeight = 44;
 
     this.image = document.getElementById('enemy_fly');
     this.maxFrame = 5;
