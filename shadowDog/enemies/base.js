@@ -1,4 +1,5 @@
 class Enemy {
+  static score = 1; //敌人基础分数
   constructor() {
     this.frameX = 0;
     this.frameY = 0;
@@ -6,7 +7,6 @@ class Enemy {
     this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
-    this.score = 1; //敌人基础分数dd
   }
   computed() {}
   get width() {

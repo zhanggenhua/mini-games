@@ -1,6 +1,6 @@
 import { FlyingEnemy } from './base.js';
 
-export class Fly extends FlyingEnemy {
+export default class Fly extends FlyingEnemy {
   constructor(game) {
     super(game);
     this.spriteWidth = 60;

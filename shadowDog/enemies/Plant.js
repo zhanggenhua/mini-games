@@ -1,6 +1,6 @@
 import { GroundEnemy } from './base.js';
 
-export class Plant extends GroundEnemy {
+export default class Plant extends GroundEnemy {
   constructor(game) {
     super(game);
     this.spriteWidth = 60;

@@ -1,7 +1,7 @@
 import { Player } from './player.js'; //建议作为源码阅读的入口
 import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
-import { Fly, BigSpider, Spider, Plant } from './enemies/index.js';
+import EnemyFactory from './enemies/index.js';
 import { UI } from './UI.js';
 import { observe } from '../utils/tool.js';
 window.addEventListener('load', function () {
@@ -49,8 +49,7 @@ window.addEventListener('load', function () {
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
 
-      this.enemyCount = {};
-      this.loadEnemys();
+      this.enemyFactory = new EnemyFactory(this);
 
       observe(this, ['groundMargin'], () => {
         console.log('计算触发', Object.assign({}, this));
@@ -121,39 +120,14 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
-        // 敌人生成
-        let enemyType = Object.keys(this.enemyLoad);
-        // 第一次根据类型随机出敌人池
-        let index = Math.floor(Math.random() * enemyType.length);
-        let enemies = this.enemyLoad[enemyType[index]];
-        // 第二次从敌人池中随机出某一个
-        let enemyArray = Object.values(enemies);
-        let enemy = new enemyArray[Math.floor(Math.random() * enemyArray.length)](this);
-        this.enemies.push(enemy);
-
-        // 统计敌人类型的创建次数
-        if (this.enemyCount.hasOwnProperty(enemyType)) {
-          this.enemyCount[index] += 1;
-        } else {
-          this.enemyCount[index] = 1;
+        try {
+          let factory = ['Fly', 'Ground', 'Climbing'];
+          let index = Math.floor(Math.random() * 3 + 1); // 0-3
+          this.enemies.push(this.enemyFactory[`create${factory[index]}Enemy`]());
+        } catch (error) {
+          console.error(error, error.data);
         }
-        console.log('敌人生成', enemy, this.enemyCount, Object.assign({}, this.enemies));
       }
-    }
-    // 加载敌人池  --收到环境和等级的影响
-    loadEnemys() {
-      this.enemyLoad = {
-        flies: {
-          Fly,
-        },
-        ground: {
-          Plant,
-        },
-        climbing: {
-          // BigSpider,
-          Spider
-        },
-      };
     }
   }
 

@@ -1,7 +1,7 @@
 // 爬行敌人(蜘蛛)
 import { ClimbingEnemy } from './base.js';
 
-export class BigSpider extends ClimbingEnemy {
+export default class BigSpider extends ClimbingEnemy {
   constructor(game) {
     super(game);
     this.spriteWidth = 120;

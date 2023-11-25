@@ -10,40 +10,41 @@
 
 <body>
     <script>
-        function reactive(obj) {
-            return new Proxy(obj, {
-                // get(target, key) {
-                //     // 在访问属性时进行依赖收集
-                //     track(target, key);
-                //     return Reflect.get(target, key);
-                // },
-                set(target, key, value) {
-                    Reflect.set(target, key, value);
-                    // 在属性被修改时触发更新
-                    trigger(target, key);
-                },
-            });
+        count = {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+        }
+        for (let index = 0; index < 100; index++) {
+            let index = Math.floor(Math.random() * 3 + 1);// 0-3
+            count[index] ++
+            
+            // let totalScore = 6;// 计算总分数
+
+            // const randomScore = Math.random() * totalScore;// 0-totalScore
+            // // const randomScore = Math.floor(Math.random() * (totalScore + 1))  ;// 0-totalScore
+            // // count[randomScore] ++
+            // enemies = [1, 2, 3]
+            // let cumulativeScore = 0;// 用一个累积的数模拟区间
+            // for (let i = 0; i < enemies.length; i++) {
+            //     cumulativeScore += enemies[i];
+            //     console.log('?', randomScore, cumulativeScore);
+            //     if (randomScore < cumulativeScore) {
+            //         console.log('?》', randomScore, cumulativeScore);
+            //         count[enemies[i]] ++
+            //         break
+            //     }
+            // }
+
         }
 
-        // 依赖收集函数
-        function track(target, key) {
-            // 在这里进行依赖收集的操作，比如将当前的依赖关系存储起来
-            console.log(`依赖收集：${key}`);
-        }
+        console.log(count);
 
-        // 触发更新函数
-        function trigger(target, key) {
-            // 在这里触发更新的操作，比如重新渲染视图
-            console.log(`触发更新：${key}`, target[key]);
-        }
-
-
-        // 使用示例
-        const obj = reactive({ count: 0 });
-
-        console.log(obj.count); // 依赖收集：count  0
-
-        obj.count = 1; // 触发更新：count
     </script>
 </body>
 
