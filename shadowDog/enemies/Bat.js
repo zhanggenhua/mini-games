@@ -19,6 +19,8 @@ export default class Bat extends FlyingEnemy {
     if (gameFrame % this.flapSpeed === 0) {
       this.frame > 4 ? (this.frame = 0) : this.frame++;
     }
+
+    this.computed();
   }
   update(deltaTime) {
     super.update(deltaTime);

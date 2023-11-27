@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <script>
+    <!-- <script>
         count = {
             0: 0,
             1: 0,
@@ -45,6 +45,49 @@
 
         console.log(count);
 
+    </script> -->
+
+    <script>
+        // let a=1
+        // let b=[3,4]
+        // b.push(a)
+        // console.log(...a);
+        class Parent {
+            static a = 1
+            constructor(game) {
+                // this.game = game;
+                // this.spriteWidth = 60;
+                // this.spriteHeight = 87;
+                // this.image = document.getElementById('enemy_plant');
+                // this.maxFrame = 1;
+
+                setTimeout(() => {
+                    this.computed();
+                    
+                })
+                this.init();
+            }
+
+            init() {
+            }
+
+        }
+
+        class Child extends Parent {
+            static a = 2
+            constructor(game) {
+                super(game);
+                this.haha = 'haha'
+            }
+
+            computed() {
+                console.log(Child.a);
+                console.log('Child computed', this.haha);
+            }
+        }
+
+        const game = 'example';
+        const child = new Child(game);
     </script>
 </body>
 

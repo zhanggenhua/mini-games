@@ -65,7 +65,7 @@ window.addEventListener('load', function () {
       // if (this.time > this.maxTime) this.gameOver = true;
       this.background.update();
       this.player.update(this.input.keys, deltaTime);
-      // 敌人的更新控制
+      // 敌人生成
       if (this.enemyTimer > this.enemyInterval) {
         this.addEnemy();
         this.enemyTimer = 0;
@@ -122,8 +122,14 @@ window.addEventListener('load', function () {
       if (this.speed > 0) {
         try {
           let factory = ['Fly', 'Ground', 'Climbing'];
-          let index = Math.floor(Math.random() * 3 + 1); // 0-3
-          this.enemies.push(this.enemyFactory[`create${factory[index]}Enemy`]());
+          let index = Math.floor(Math.random() * 3); // 0-2
+          let enemy = this.enemyFactory[`create${factory[index]}Enemy`]();
+          console.log(enemy);
+          if (Array.isArray(enemy)) {
+            this.enemies.push(...enemy);
+          } else {
+            this.enemies.push(enemy);
+          }
         } catch (error) {
           console.error(error, error.data);
         }

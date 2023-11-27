@@ -9,7 +9,6 @@ export default class Plant extends GroundEnemy {
     this.image = document.getElementById('enemy_plant');
     this.maxFrame = 1;
 
-    // 等所有属性都初始化完毕才计算
     this.computed();
   }
 }

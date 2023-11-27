@@ -24,16 +24,8 @@ class EnemyFactory {
       },
     };
     this.computed();
-
-    // 测试用
-    this.count = {
-      fly: 0,
-      ground: 0,
-      climbing: 0,
-    };
   }
   computed() {
-    console.log('计数：', this.count);
     // 根据当前环境设置敌人
     const currentEnemyConfig = this.enemyConfig[this.game.background.environment];
 
@@ -49,13 +41,23 @@ class EnemyFactory {
   createFlyEnemy() {
     // 随机生成一批敌人
     let enemy = this.getRandomEnemy(this.flyEnemy);
-    return enemy;
+    let enemyArr = [];
+    // 根据产卵率生成一批敌人  
+    let eggs = Math.floor(Math.random() * (enemy.egg + 1)); //0-->egg
+    console.log('产卵', enemy, enemy.egg, eggs);
+    for (let i = 0; i < eggs; i++) {
+      enemyArr.push(new enemy(this.game));
+    }
+    console.log('?????', enemyArr);
+    return enemyArr;
   }
   createGroundEnemy() {
-    return this.getRandomEnemy(this.groundEnemy);
+    let enemy = this.getRandomEnemy(this.groundEnemy);
+    return new enemy(this.game);
   }
   createClimbingEnemy() {
-    return this.getRandomEnemy(this.groundEnemy);
+    let enemy = this.getRandomEnemy(this.climbingEnemy);
+    return new enemy(this.game);
   }
 
   // 根据分数获取随机敌人，越到后期高分敌人越多才对
@@ -65,14 +67,14 @@ class EnemyFactory {
       totalScore += enemy.score;
     });
 
-    const randomScore = Math.random() * totalScore ;// 0-totalScore
+    const randomScore = Math.random() * totalScore; // 0-totalScore
     // Math.floor(Math.random() * (totalScore + 1))  ;// 0-totalScore
 
     let cumulativeScore = 0; // 用一个累积的数模拟区间
     for (let i = 0; i < enemies.length; i++) {
       cumulativeScore += enemies[i].score;
-      if (randomScore < cumulativeScore) { 
-        return new enemies[i](this.game); //此处才实例化
+      if (randomScore < cumulativeScore) {
+        return enemies[i]; //此处才实例化
       }
     }
 

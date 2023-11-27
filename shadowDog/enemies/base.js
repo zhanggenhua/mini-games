@@ -7,6 +7,9 @@ class Enemy {
     this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
+
+    // 这里调用的是具体实例的computed  --不能用异步，虽然可以等子类初始化后调用，但是执行顺序乱套
+    // this.computed();
   }
   computed() {}
   get width() {
@@ -52,11 +55,12 @@ class Enemy {
   }
 }
 export class FlyingEnemy extends Enemy {
+  static egg = 3;//基础产卵率
   constructor(game) {
     super();
     this.game = game;
 
-    this.x = this.game.width + Math.random() * this.game.width * 0.5; //给一个随机的进场时机
+    this.x = this.game.width + Math.random() * this.game.width * 0.25; //给一个随机的进场时机
     // 随机出生在上半屏幕
     this.y = Math.random() * this.game.height * 0.5;
     this.speedX = Math.random() + 1;
@@ -71,14 +75,15 @@ export class GroundEnemy extends Enemy {
     super();
     this.game = game;
     this.x = this.game.width;
+    this._y = this.game.height - this.spriteHeight - this.game.groundMargin;
+    
     this.speedX = 0; //完全基于场景移动
     this.speedY = 0;
   }
   computed() {
     super.computed();
-    console.log('地面怪物计算属性d', this.spriteHeight, this.game.height, this.game.groundMargin);
+    console.log('地面怪物计算属性', this.spriteHeight, this.game.height, this.game.groundMargin);
     this.y = this.game.height - this.spriteHeight - this.game.groundMargin;
-    console.log('地面怪物计算属性', this.y);
   }
 }
 
