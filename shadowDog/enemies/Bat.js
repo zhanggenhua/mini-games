@@ -11,21 +11,13 @@ export default class Bat extends FlyingEnemy {
     this.image = document.getElementById('bat');
     this.maxFrame = 5;
 
-    // 移动方式：基于sin
-    this.angle = 0;
-    this.va = Math.random() * 0.1 + 0.1;
-
-    //随机的震动翅膀
-    if (gameFrame % this.flapSpeed === 0) {
-      this.frame > 4 ? (this.frame = 0) : this.frame++;
-    }
-
-    this.computed();
+    this.fps = this.fps * 2; //默认就快两倍
+    this.flapSpeed = Math.floor(Math.random() * 3 + 1); //1 ~ 3
   }
-  update(deltaTime) {
-    super.update(deltaTime);
-    this.angle += this.va;
-    // 基于sin函数图像的移动方式
-    this.y += Math.sin(this.angle);
+  frameUpdate() {
+    //随机的震动翅膀速率
+    if (this.frame % this.flapSpeed === 0) {
+      this.frameX >= this.maxFrame ? (this.frameX = 0) : this.frameX++;
+    }
   }
 }

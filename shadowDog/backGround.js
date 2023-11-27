@@ -1,3 +1,5 @@
+import { observe } from '../utils/tool.js';
+
 export const environment = {
   FOREST: 0,
   CITY: 1,
@@ -11,7 +13,6 @@ export class BackGround {
     this.distance = 0; //记录总移动距离，用于分级
     this.environment = environment.CITY;
     // this.transition = false; //用于地图切换
-    
 
     this.layerImage1 = document.getElementById('layer1'); //最后面的图层，固定
     this.layerImage2 = document.getElementById('layer2');
@@ -26,6 +27,14 @@ export class BackGround {
     this.layer5 = new Layer(this.game, this.width, this.height, 1, this.layerImage5); //最前面的地板
     this.layer6 = new Layer(this.game, this.width, this.height, 1, this.layerImage6); //森林
     this.init();
+
+    observe(this, ['groundMargin'], () => {
+      console.log('计算触发', Object.assign({}, this));
+      this.game.player.computed();
+      this.game.enemies.forEach((enemy) => {
+        enemy.computed();
+      });
+    });
   }
   init() {
     // 替换地图资源
@@ -33,18 +42,21 @@ export class BackGround {
       case environment.CITY:
         // 城市地图 --初始
         this.BackGroundLayers = [this.layer1, this.layer2, this.layer3, this.layer4, this.layer5];
-        this.game.groundMargin = 80;
+        this.groundMargin = 80;//地面高度
         this.game.ui.fontFamily = 'Bangers';
         break;
       case environment.FOREST:
         // 森林地图
         this.BackGroundLayers = [this.layer1, this.layer3, this.layer6];
-        this.game.groundMargin = 40;
+        this.groundMargin = 40;
         this.game.ui.fontFamily = 'Creepster';
         break;
       default:
     }
-    
+  }
+  get realHeight() {
+    // 用canvas的高还是地图的高, 这是一个问题
+    return this.game.height - this.groundMargin;
   }
   update() {
     this.distance += this.game.speed; //统计距离

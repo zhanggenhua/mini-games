@@ -1,6 +1,9 @@
 // 统一的导出  --相当于原封不动搬过来
 import Fly from './Fly.js';
 import Bat from './Bat.js';
+import Swim from './Swim.js';
+import Saw from './Saw.js';
+import {SawGround} from './Saw.js';
 import Plant from './Plant.js';
 import Spider from './Spider.js';
 import BigSpider from './BigSpider.js';
@@ -13,9 +16,9 @@ class EnemyFactory {
     // 预定义的敌人组 --怪物等级从低到高
     this.enemyConfig = {
       [environment.CITY]: {
-        flyEnemy: [Fly],
-        groundEnemy: [Plant],
-        climbingEnemy: [Spider, BigSpider],
+        flyEnemy: [],
+        groundEnemy: [SawGround],
+        climbingEnemy: [Spider],
       },
       [environment.FOREST]: {
         flyEnemy: [Fly],
@@ -24,6 +27,7 @@ class EnemyFactory {
       },
     };
     this.computed();
+    
   }
   computed() {
     // 根据当前环境设置敌人
@@ -42,13 +46,12 @@ class EnemyFactory {
     // 随机生成一批敌人
     let enemy = this.getRandomEnemy(this.flyEnemy);
     let enemyArr = [];
-    // 根据产卵率生成一批敌人  
-    let eggs = Math.floor(Math.random() * (enemy.egg + 1)); //0-->egg
+    // 根据产卵率生成一批敌人
+    let eggs = Math.floor(Math.random() * enemy.egg + 1); //1-->egg
     console.log('产卵', enemy, enemy.egg, eggs);
     for (let i = 0; i < eggs; i++) {
       enemyArr.push(new enemy(this.game));
     }
-    console.log('?????', enemyArr);
     return enemyArr;
   }
   createGroundEnemy() {

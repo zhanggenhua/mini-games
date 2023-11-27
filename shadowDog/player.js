@@ -59,7 +59,7 @@ export class Player {
     // this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
     // this.minJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.minJumpHeight)); //最小跳跃速度
     // 记录地板高度 后面要用 groundMargin: 地板高度
-    this.ground = this.game.height - this.height - this.game.groundMargin;
+    this.ground = this.game.background.realHeight - this.height;
     this.y = this.ground;
     this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
@@ -99,8 +99,7 @@ export class Player {
 
     // 动画部分 --动画是根据时间来播放  而不是根据电脑性能
     if (this.frameTimer > this.frameInterval) {
-      if (this.frameX < this.maxFrame) this.frameX++;
-      else this.frameX = 0;
+      this.frameX >= this.maxFrame ? (this.frameX = 0) : this.frameX++;
       this.frameTimer = 0; //不是归零而是减去，误差更小  --不能减，会有时间积累
     } else {
       this.frameTimer += deltaTime;
@@ -108,7 +107,16 @@ export class Player {
   }
   draw(context) {
     if (this.game.debug) {
-      context.strokeRect(this.x, this.y, this.width, this.height);
+      // context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(
+        this.x + this.width / 2 + 5,
+        this.y + this.height / 2 + 15,
+        this.width / 3,
+        0,
+        Math.PI * 2,
+      );
+      context.stroke();
     }
     context.drawImage(
       this.image,
@@ -165,7 +173,7 @@ export class Player {
       this.speed = -this.maxSpeed;
     }
     // 限制玩家不超过水平画布
-    if (this.x <= 0) this.x = 0; 
+    if (this.x <= 0) this.x = 0;
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
 
     // 达到屏幕三分之一时，才让背景可以移动
@@ -201,6 +209,7 @@ export class Player {
   canJump() {
     return this.jumpNumber < 2 && this.jumpSwitch;
   }
+
   // 碰撞检测
   checkCollision() {
     if (this.game.debug) return;

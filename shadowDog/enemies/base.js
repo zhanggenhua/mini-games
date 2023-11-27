@@ -4,14 +4,20 @@ class Enemy {
     this.frameX = 0;
     this.frameY = 0;
     this.fps = 20;
-    this.frameInterval = 1000 / this.fps;
+    // this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
+
+    this.frame = 0; //记录帧数 --注意会长时间停留在一个值，和deltaTime有关的都要专门处理
 
     // 这里调用的是具体实例的computed  --不能用异步，虽然可以等子类初始化后调用，但是执行顺序乱套
     // this.computed();
   }
   computed() {}
+  get frameInterval() {
+    delete this.frameInterval;
+    return 1000 / this.fps;
+  }
   get width() {
     // 懒加载getter ，因为后续不会改变
     delete this.width;
@@ -21,23 +27,35 @@ class Enemy {
     delete this.height;
     return this._height ? this._height : this.spriteHeight;
   }
+
   update(deltaTime) {
-    // 加上游戏速度是为了和地图保持同步
-    this.x -= this.speedX + this.game.speed;
-    this.y += this.speedY;
+    this.move();
+    
     if (this.frameTimer > this.frameInterval) {
       this.frameTimer = 0;
-      if (this.frameX < this.maxFrame) this.frameX++;
-      else this.frameX = 0;
+      this.frame++;
+      this.frameUpdate();
     } else {
       this.frameTimer += deltaTime;
     }
     // 对敌人进行检查，超过屏幕就进行删除
     if (this.x + this.width < 0) this.markedForDeletion = true;
   }
+  move() {
+    // 加上游戏速度是为了和地图保持同步
+    this.x -= this.speedX + this.game.speed;
+    this.y += this.speedY;
+  }
+  frameUpdate() {
+    this.frameX >= this.maxFrame ? (this.frameX = 0) : this.frameX++;
+  }
+
   draw(context) {
     if (this.game.debug) {
-      context.strokeRect(this.x, this.y, this.width, this.height);
+      // context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+      context.stroke();
     }
     context.drawImage(
       this.image,
@@ -54,20 +72,29 @@ class Enemy {
     );
   }
 }
+
 export class FlyingEnemy extends Enemy {
-  static egg = 3;//基础产卵率
+  static egg = 3; //基础产卵率
   constructor(game) {
     super();
     this.game = game;
 
     this.x = this.game.width + Math.random() * this.game.width * 0.25; //给一个随机的进场时机
     // 随机出生在上半屏幕
-    this.y = Math.random() * this.game.height * 0.5;
+    this.y = Math.random() * this.game.height * 0.4 + this.game.height * 0.1;
     this.speedX = Math.random() + 1;
     this.speedY = 0;
+
+    // 移动方式：基于sin
+    this.angle = 0;
+    this.va = Math.random() * 2 + 2; // 2 ~ 4
   }
-  update(deltaTime) {
-    super.update(deltaTime);
+  move() {
+    this.x -= this.speedX + this.game.speed;
+    this.angle += this.va;
+    // 基于sin函数图像的移动方式
+    this.y =
+      Math.sin((this.angle * Math.PI) / 180) * this.game.height * 0.125 + this.game.height * 0.25;
   }
 }
 export class GroundEnemy extends Enemy {
@@ -75,15 +102,14 @@ export class GroundEnemy extends Enemy {
     super();
     this.game = game;
     this.x = this.game.width;
-    this._y = this.game.height - this.spriteHeight - this.game.groundMargin;
-    
+
     this.speedX = 0; //完全基于场景移动
     this.speedY = 0;
   }
   computed() {
     super.computed();
-    console.log('地面怪物计算属性', this.spriteHeight, this.game.height, this.game.groundMargin);
-    this.y = this.game.height - this.spriteHeight - this.game.groundMargin;
+    console.log('地面怪物计算属性', this.game.background.realHeight);
+    this.y = this.game.background.realHeight - this.height;
   }
 }
 
@@ -103,7 +129,7 @@ export class ClimbingEnemy extends Enemy {
   update(deltaTime) {
     super.update(deltaTime);
     // 触底反弹
-    if (this.y > this.game.height - this.height - this.game.groundMargin) this.speedY *= -1;
+    if (this.y > this.game.background.realHeight - this.height) this.speedY *= -1;
     if (this.y < -this.spriteHeight) this.markedForDeletion = true;
   }
   draw(context) {

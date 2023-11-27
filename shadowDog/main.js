@@ -1,9 +1,9 @@
-import { Player } from './player.js'; //建议作为源码阅读的入口
+import { Player } from './player.js'; 
 import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
 import EnemyFactory from './enemies/index.js';
 import { UI } from './UI.js';
-import { observe } from '../utils/tool.js';
+
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
@@ -13,19 +13,20 @@ window.addEventListener('load', function () {
   class Game {
     constructor(width, height) {
       this.pause = false; //控制游戏暂停
+      this.debug = false;
+
       this.width = width;
       this.height = height;
 
       this.level = 1; //记录游戏级别  --必须在背景初始化前
 
-      this.groundMargin = 80; //地面高度
       this.speed = 0; //游戏速度,决定了地图移动速度
       this.maxSpeed = 3;
 
       // 目前对象初始化有着严格的依赖顺序
       this.ui = new UI(this);
-      this.player = new Player(this);
       this.background = new BackGround(this);
+      this.player = new Player(this);
       this.input = new InputHandler(this); //记录用户输入，没什么好说的
 
       this.enemies = [];
@@ -35,8 +36,8 @@ window.addEventListener('load', function () {
       this.particles = [];
       this.collisions = [];
       this.floatingMessages = [];
+
       this.maxParticles = 50;
-      this.debug = false;
       this.score = 0;
       this.winningScore = 1;
       this.fontColor = 'black';
@@ -44,20 +45,14 @@ window.addEventListener('load', function () {
       // 一局时间限制
       // this.maxTime = 60000;
       this.gameOver = false;
-      this.lives = 5;
+      this.lives = 5;//生命
 
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
 
       this.enemyFactory = new EnemyFactory(this);
 
-      observe(this, ['groundMargin'], () => {
-        console.log('计算触发', Object.assign({}, this));
-        this.player.computed();
-        this.enemies.forEach((enemy) => {
-          enemy.computed();
-        });
-      });
+      this.flag = true;
     }
 
     update(deltaTime) {
@@ -120,11 +115,15 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
+      //   if(!this.flag) return
+      // this.flag = false
         try {
-          let factory = ['Fly', 'Ground', 'Climbing'];
-          let index = Math.floor(Math.random() * 3); // 0-2
+          // let factory = ['Fly', 'Ground', 'Climbing'];
+          let factory = ['Ground'];
+          let index = Math.floor(Math.random() * factory.length); // 0-2
+          console.log(index);
           let enemy = this.enemyFactory[`create${factory[index]}Enemy`]();
-          console.log(enemy);
+          console.log('敌人生成', enemy);
           if (Array.isArray(enemy)) {
             this.enemies.push(...enemy);
           } else {
