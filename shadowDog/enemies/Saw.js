@@ -42,7 +42,6 @@ export default class Saw extends FlyingEnemy {
     if (this.frame % this.interval === 0) {
       this.newX = this.x + (Math.random() * 200 - 100); //-50 -- 50
       this.newY = this.y + (Math.random() * 200 - 100);
-      //   console.log('?xxx', this.x, this.newX, this.frame, this.interval);
     }
   }
 }

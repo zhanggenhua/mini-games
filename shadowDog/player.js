@@ -1,14 +1,16 @@
 import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit } from './playerStates.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
-import { checkCollision } from '../utils/tool.js';
+import { checkCollision, throttle } from '../utils/tool.js';
 
 export class Player {
   constructor(game) {
     this.game = game;
     // 精灵图每帧的宽高
-    this.width = 100;
-    this.height = 91.3;
+    this.spriteWidth = 100;
+    this.spriteHeight = 91.3;
+    this.width = this.spriteWidth;
+    this.height = this.spriteHeight;
     // 位置
     this.x = 0;
 
@@ -66,6 +68,10 @@ export class Player {
 
     this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
     console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
+
+    this.checkCollision = throttle(() => {
+      this._checkCollision(); //碰撞检测
+    });
   }
 
   update(input, deltaTime) {
@@ -81,7 +87,7 @@ export class Player {
     //   this.onGround(),
     //   Object.assign({}, this),
     // );
-    this.checkCollision(); //碰撞检测
+    this.checkCollision();
     // 状态机处理当前输入
     this.currentState.handleInput(input);
 
@@ -211,10 +217,24 @@ export class Player {
   }
 
   // 碰撞检测
-  checkCollision() {
+  _checkCollision() {
     if (this.game.debug) return;
     this.game.enemies.forEach((enemy) => {
       if (checkCollision(enemy, this)) {
+        if (enemy.constructor.name == 'Crow') {
+          this.game.floatingMessages.push(
+            new FloatingMessage(
+              this.game,
+              'MISS',
+              enemy.x,
+              enemy.y,
+              enemy.x - 20,
+              enemy.y - 20,
+              70,
+            ),
+          );
+          return;
+        }
         //发生碰撞
         enemy.markedForDeletion = true;
         this.game.collisions.push(
@@ -222,6 +242,8 @@ export class Player {
             this.game,
             enemy.x + enemy.width * 0.5,
             enemy.y + enemy.height * 0.5,
+            enemy.width,
+            enemy.height,
           ),
         );
         if (this.currentState === this.states[4] || this.currentState === this.states[5]) {

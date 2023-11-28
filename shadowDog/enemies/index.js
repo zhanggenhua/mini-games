@@ -4,6 +4,7 @@ import Bat from './Bat.js';
 import Swim from './Swim.js';
 import Saw from './Saw.js';
 import {SawGround} from './Saw.js';
+import Crow from './Crow.js';
 import Plant from './Plant.js';
 import Spider from './Spider.js';
 import BigSpider from './BigSpider.js';
@@ -16,7 +17,7 @@ class EnemyFactory {
     // 预定义的敌人组 --怪物等级从低到高
     this.enemyConfig = {
       [environment.CITY]: {
-        flyEnemy: [],
+        flyEnemy: [Crow],
         groundEnemy: [SawGround],
         climbingEnemy: [Spider],
       },

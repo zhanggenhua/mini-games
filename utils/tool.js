@@ -45,3 +45,23 @@ export const observe = (obj, keys, callback) => {
     });
   });
 };
+
+// 节流
+/**
+ * @param {Function} fn 目标函数
+ * @param {Number} time 延迟执行毫秒数
+ * @param {Boolean} type 1-立即执行，2-不立即执行
+ * @description 节流函数
+ */
+export const throttle = (fn, delay = 100) => {
+  //上一次的执行时间
+  let previous = 0;
+  return function () {
+    let now = new Date().getTime();
+    //如果距离上一次执行超过了delay才能再次执行
+    if (now - previous > delay) {
+      fn.apply(this, [...arguments]);
+      previous = now;
+    }
+  };
+};

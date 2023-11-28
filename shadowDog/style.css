@@ -2,16 +2,30 @@
   font-family: 'Creepster';
   src: url('../assets/shadow/font/AlZy_zVUqJz4yMrniH4Rcn35.woff2') format('woff2');
 }
-#canvas1 {
-  border: 5px solid black;
+.canvas{
+  cursor: pointer;
   position: absolute;
-  top: 50%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  /* top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
   /* 限制宽高是为了 各种情况都能完全显示 */
   max-width: 100%;
   max-height: 100%;
+}
+#canvas1 {
+  z-index: 1;
+  border: 5px solid black;
   font-family: 'Creepster', cursive;
+}
+#collisionCanvas {
+  /* z-index: 100; */
+  /* 隐藏填充乌鸦的色块 */
+  opacity: 0;
 }
 img[id] {
   display: none;
@@ -19,6 +33,7 @@ img[id] {
 
 /* 暂停文字 */
 .pause__text {
+  cursor: pointer;
   z-index: 2;
   visibility: hidden;
   position: absolute;

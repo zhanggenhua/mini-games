@@ -18,6 +18,10 @@ class Enemy {
     delete this.frameInterval;
     return 1000 / this.fps;
   }
+  get score() {
+    delete this.score;
+    return this.constructor.score;
+  }
   get width() {
     // 懒加载getter ，因为后续不会改变
     delete this.width;
@@ -82,7 +86,7 @@ export class FlyingEnemy extends Enemy {
     this.x = this.game.width + Math.random() * this.game.width * 0.25; //给一个随机的进场时机
     // 随机出生在上半屏幕
     this.y = Math.random() * this.game.height * 0.4 + this.game.height * 0.1;
-    this.speedX = Math.random() + 1;
+    this.speedX = Math.random() + 1;// 1 ~ 2
     this.speedY = 0;
 
     // 移动方式：基于sin

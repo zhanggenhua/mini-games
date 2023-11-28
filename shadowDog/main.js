@@ -1,14 +1,22 @@
-import { Player } from './player.js'; 
+import { Player } from './player.js';
 import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
 import EnemyFactory from './enemies/index.js';
 import { UI } from './UI.js';
+import Crow from './enemies/Crow.js';
+
+import { CollisionAnimation } from './collisionAnimation.js';
+import { FloatingMessage } from './floatingMessages.js';
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
   canvas.width = 900;
   canvas.height = 500;
+  const collisionCanvas = document.getElementById('collisionCanvas');
+  const collisionCtx = collisionCanvas.getContext('2d');
+  collisionCanvas.width = 900;
+  collisionCanvas.height = 500;
 
   class Game {
     constructor(width, height) {
@@ -21,7 +29,7 @@ window.addEventListener('load', function () {
       this.level = 1; //记录游戏级别  --必须在背景初始化前
 
       this.speed = 0; //游戏速度,决定了地图移动速度
-      this.maxSpeed = 3;
+      this.maxSpeed = 1;
 
       // 目前对象初始化有着严格的依赖顺序
       this.ui = new UI(this);
@@ -37,7 +45,7 @@ window.addEventListener('load', function () {
       this.collisions = [];
       this.floatingMessages = [];
 
-      this.maxParticles = 50;
+      this.maxParticles = 500;
       this.score = 0;
       this.winningScore = 1;
       this.fontColor = 'black';
@@ -45,7 +53,7 @@ window.addEventListener('load', function () {
       // 一局时间限制
       // this.maxTime = 60000;
       this.gameOver = false;
-      this.lives = 5;//生命
+      this.lives = 5; //生命
 
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
@@ -99,9 +107,6 @@ window.addEventListener('load', function () {
     draw(context) {
       this.background.draw(context);
       this.player.draw(context);
-      this.enemies.forEach((enemy) => {
-        enemy.draw(context);
-      });
       this.particles.forEach((particle) => {
         particle.draw(context);
       });
@@ -112,16 +117,22 @@ window.addEventListener('load', function () {
         message.draw(context);
       });
       this.ui.draw(context);
+      this.enemies.forEach((enemy) => {
+        if (enemy.constructor.name == 'Crow') {
+          enemy.draw(context, collisionCtx);
+          return;
+        }
+        enemy.draw(context);
+      });
     }
     addEnemy() {
       if (this.speed > 0) {
-      //   if(!this.flag) return
-      // this.flag = false
+        // if (!this.flag) return;
+        // this.flag = false;
         try {
           // let factory = ['Fly', 'Ground', 'Climbing'];
-          let factory = ['Ground'];
+          let factory = ['Fly'];
           let index = Math.floor(Math.random() * factory.length); // 0-2
-          console.log(index);
           let enemy = this.enemyFactory[`create${factory[index]}Enemy`]();
           console.log('敌人生成', enemy);
           if (Array.isArray(enemy)) {
@@ -144,7 +155,9 @@ window.addEventListener('load', function () {
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
+    // 清除后再绘制
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
     game.update(deltaTime); //更新数据是为了draw 绘制做准备
     game.draw(ctx);
     if (!game.gameOver) requestAnimationFrame(animate);
@@ -168,4 +181,49 @@ window.addEventListener('load', function () {
     pauseText.classList.add('blur-out-expand');
     animate(0);
   };
+
+  // 点击击杀乌鸦  --指针事件，包含了点击，触摸
+  window.addEventListener('pointerdown', function (e) {
+    let point = getMousePos(collisionCanvas, e); //获取相对位置
+    const detectPixelColor = collisionCtx.getImageData(point.x, point.y, 1, 1); //获取鼠标点击的那块区域的相关属性
+    const pc = detectPixelColor.data; //鼠标点击的那块区域的rgb值如rgb(0,0,0,0.1)
+    game.enemies.forEach((enemy) => {
+      //对每个乌鸦进行碰撞检测
+      if (enemy.constructor.name == 'Crow') {
+        if (
+          enemy.randomColor[0] === pc[0] &&
+          enemy.randomColor[1] === pc[1] &&
+          enemy.randomColor[2] === pc[2]
+        ) {
+          enemy.markedForDeletion = true;
+          game.score += enemy.score;
+          game.collisions.push(
+            new CollisionAnimation(game, enemy.x + enemy.width * 0.5, enemy.y + enemy.height * 0.5, enemy.width, enemy.height),
+          );
+          game.floatingMessages.push(
+            new FloatingMessage(game, enemy.score, enemy.x, enemy.y, 150, 50),
+          );
+        }
+      }
+    });
+  });
+  function getMousePos(canvas, event) {
+    // 获取实际宽高
+    var style = window.getComputedStyle(canvas, null);
+    var cssWidth = parseFloat(style['width']);
+    var cssHeight = parseFloat(style['height']);
+    var scaleX = canvas.width / cssWidth; // 水平方向的缩放因子
+    var scaleY = canvas.height / cssHeight; // 垂直方向的缩放因子
+    // 获取边界距离窗口距离，以及自身宽高
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    x *= scaleX; // 修正水平方向的坐标
+    y *= scaleY; // 修正垂直方向的坐标
+    console.log('x:', x, 'y:', y);
+    return {
+      x: x,
+      y: y,
+    };
+  }
 });
