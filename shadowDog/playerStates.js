@@ -1,4 +1,4 @@
-import { Dust, Fire, Splash } from './particle.js';
+import { Dust, Fire, Splash, GroundSplash } from './particle.js';
 
 // 状态机
 const states = {
@@ -90,6 +90,15 @@ export class Jump extends State {
 
     if (this.game.player.onGround()) {
       console.timeEnd('弹射起步');
+      for (let i = 0; i < Math.floor(Math.random() * 4 + 6); i++) {
+        this.game.particles.unshift(
+          new GroundSplash(
+            this.game,
+            this.game.player.x + this.game.player.width * 0.5,
+            this.game.player.y + this.game.player.height,
+          ),
+        );
+      }
       this.setState(states.RUNNING, 1);
     } else if (input.includes('Shift')) {
       this.setState(states.ROLLING, 2);

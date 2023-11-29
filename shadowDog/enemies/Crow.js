@@ -4,7 +4,7 @@ import { CrowGas } from '../particle.js';
 // 乌鸦
 export default class Crow extends FlyingEnemy {
   static score = 2;
-  static egg = 2;
+  static egg = 1;
   constructor(game) {
     super(game);
     this.spriteWidth = 271;
@@ -30,9 +30,9 @@ export default class Crow extends FlyingEnemy {
   }
   move() {
     this.x -= this.speedX + this.game.speed;
+    this.game.particles.unshift(new CrowGas(this.game, this.x, this.y, this.width, this.color));
   }
   frameUpdate() {
-    this.game.particles.unshift(new CrowGas(this.game, this.x, this.y, this.width, this.color));
     //随机的震动翅膀速率
     if (this.frame % this.flapSpeed === 0) {
       this.frameX >= this.maxFrame ? (this.frameX = 0) : this.frameX++;

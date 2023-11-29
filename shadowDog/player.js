@@ -221,20 +221,6 @@ export class Player {
     if (this.game.debug) return;
     this.game.enemies.forEach((enemy) => {
       if (checkCollision(enemy, this)) {
-        if (enemy.constructor.name == 'Crow') {
-          this.game.floatingMessages.push(
-            new FloatingMessage(
-              this.game,
-              'MISS',
-              enemy.x,
-              enemy.y,
-              enemy.x - 20,
-              enemy.y - 20,
-              70,
-            ),
-          );
-          return;
-        }
         //发生碰撞
         enemy.markedForDeletion = true;
         this.game.collisions.push(
@@ -247,6 +233,21 @@ export class Player {
           ),
         );
         if (this.currentState === this.states[4] || this.currentState === this.states[5]) {
+          // 乌鸦只能被魔法打败
+          if (enemy.constructor.name == 'Crow') {
+            this.game.floatingMessages.push(
+              new FloatingMessage(
+                this.game,
+                'MISS',
+                enemy.x,
+                enemy.y,
+                enemy.x - 20,
+                enemy.y - 20,
+                70,
+              ),
+            );
+            return;
+          }
           // 消灭敌人
           this.game.score += enemy.score;
           // 浮动消息 --起始位置到偏移量

@@ -7,16 +7,24 @@ import Crow from './enemies/Crow.js';
 
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
+import { SpiritBomb } from './particle.js';
+import { checkCollision } from '../utils/tool.js';
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
   canvas.width = 900;
   canvas.height = 500;
+  // 创建颜色碰撞检测画布
   const collisionCanvas = document.getElementById('collisionCanvas');
   const collisionCtx = collisionCanvas.getContext('2d');
-  collisionCanvas.width = 900;
-  collisionCanvas.height = 500;
+  collisionCanvas.width = canvas.width;
+  collisionCanvas.height = canvas.height;
+  // 拖尾效果画布
+  const particlesCanvas = document.getElementById('particlesCanvas');
+  const particlesCtx = collisionCanvas.getContext('2d');
+  particlesCanvas.width = canvas.width;
+  particlesCanvas.height = canvas.height;
 
   class Game {
     constructor(width, height) {
@@ -45,7 +53,7 @@ window.addEventListener('load', function () {
       this.collisions = [];
       this.floatingMessages = [];
 
-      this.maxParticles = 500;
+      this.maxParticles = 50000;
       this.score = 0;
       this.winningScore = 1;
       this.fontColor = 'black';
@@ -106,10 +114,13 @@ window.addEventListener('load', function () {
     }
     draw(context) {
       this.background.draw(context);
-      this.player.draw(context);
       this.particles.forEach((particle) => {
         particle.draw(context);
+        // if (particle.constructor.name == 'SpiritBomb') {
+        //   particle.draw(particlesCtx);
+        // }
       });
+      this.player.draw(context);
       this.collisions.forEach((collision) => {
         collision.draw(context);
       });
@@ -127,8 +138,8 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
-        // if (!this.flag) return;
-        // this.flag = false;
+        if (!this.flag) return;
+        this.flag = false;
         try {
           // let factory = ['Fly', 'Ground', 'Climbing'];
           let factory = ['Fly'];
@@ -158,6 +169,11 @@ window.addEventListener('load', function () {
     // 清除后再绘制
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
+    // 用带透明度的矩形代替清空 --实现拖尾效果，失败的尝试
+    // particlesCtx.globalCompositeOperation = 'destination-in';
+    // particlesCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    // particlesCtx.fillRect(0, 0, canvas.width, canvas.height);
+
     game.update(deltaTime); //更新数据是为了draw 绘制做准备
     game.draw(ctx);
     if (!game.gameOver) requestAnimationFrame(animate);
@@ -195,14 +211,37 @@ window.addEventListener('load', function () {
           enemy.randomColor[1] === pc[1] &&
           enemy.randomColor[2] === pc[2]
         ) {
-          enemy.markedForDeletion = true;
-          game.score += enemy.score;
-          game.collisions.push(
-            new CollisionAnimation(game, enemy.x + enemy.width * 0.5, enemy.y + enemy.height * 0.5, enemy.width, enemy.height),
+          // 在口部生成元气弹
+          let bomb = new SpiritBomb(
+            game,
+            game.player.x + game.player.width,
+            game.player.y + 50,
+            enemy,
           );
-          game.floatingMessages.push(
-            new FloatingMessage(game, enemy.score, enemy.x, enemy.y, 150, 50),
-          );
+          game.particles.unshift(bomb);
+
+          // 碰撞后击杀乌鸦
+          let time = this.setInterval(() => {
+            if (checkCollision(enemy, bomb)) {
+              clearInterval(time);
+              time = null;
+              bomb.markedForDeletion = true;
+              enemy.markedForDeletion = true;
+              game.score += enemy.score;
+              game.collisions.push(
+                new CollisionAnimation(
+                  game,
+                  enemy.x + enemy.width * 0.5,
+                  enemy.y + enemy.height * 0.5,
+                  enemy.width,
+                  enemy.height,
+                ),
+              );
+              game.floatingMessages.push(
+                new FloatingMessage(game, enemy.score, enemy.x, enemy.y, 150, 50),
+              );
+            }
+          }, 100);
         }
       }
     });
