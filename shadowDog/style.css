@@ -46,7 +46,7 @@ img[id] {
   font-family: 'Yuan';
 }
 .pause__mark {
-  z-index: 1;
+  z-index: 3;
   visibility: hidden;
   position: relative;
 

@@ -1,4 +1,4 @@
-import { FlyingEnemy } from './base.js';
+import { FlyingEnemy } from '../base.js';
 
 // 浮游
 export default class Swim extends FlyingEnemy {

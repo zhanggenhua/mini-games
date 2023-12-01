@@ -1,5 +1,7 @@
-import { FlyingEnemy } from './base.js';
-import { CrowGas } from '../particle.js';
+import { FlyingEnemy } from '../base.js';
+import { CrowGas } from '../../particle.js';
+
+import { FloatingMessage } from '../../floatingMessages.js';
 
 // 乌鸦
 export default class Crow extends FlyingEnemy {
@@ -43,5 +45,15 @@ export default class Crow extends FlyingEnemy {
     super.draw(context);
     collisionCtx.fillStyle = this.color;
     collisionCtx.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  // 碰撞处理
+  handleCollision(collider) {
+    // 乌鸦只能被魔法打败
+    if (this.game.player.kill()) {
+      this.game.floatingMessages.push(
+        new FloatingMessage(this.game, 'MISS', this.x, this.y, this.x - 20, this.y - 20, 70),
+      );
+    }
   }
 }

@@ -1,3 +1,6 @@
+import { FloatingMessage } from '../floatingMessages.js';
+import { CollisionAnimation } from '../collisionAnimation.js';
+
 class Enemy {
   static score = 1; //敌人基础分数
   constructor() {
@@ -7,8 +10,10 @@ class Enemy {
     // this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
+    this.dead = false;//记录死亡
 
     this.frame = 0; //记录帧数 --注意会长时间停留在一个值，和deltaTime有关的都要专门处理
+
 
     // 这里调用的是具体实例的computed  --不能用异步，虽然可以等子类初始化后调用，但是执行顺序乱套
     // this.computed();
@@ -81,6 +86,24 @@ class Enemy {
       this.height,
     );
   }
+
+  // 碰撞处理  --返回是否死亡
+  handleCollision(collider) {
+    this.die();
+    this.dead = true;
+  }
+  die() {
+    this.markedForDeletion = true;
+    this.game.collisions.push(
+      new CollisionAnimation(
+        this.game,
+        this.x + this.width * 0.5,
+        this.y + this.height * 0.5,
+        this.width,
+        this.height,
+      ),
+    );
+  }
 }
 
 export class FlyingEnemy extends Enemy {
@@ -98,13 +121,17 @@ export class FlyingEnemy extends Enemy {
     // 移动方式：基于sin
     this.angle = 0;
     this.va = Math.random() * 2 + 2; // 2 ~ 4
+
+    // 上下浮动的随机值  0.2 -- 0.4
+    this.curve = Math.random() * 0.2 + 0.2;
   }
   move() {
     this.x -= this.speedX + this.game.speed;
     this.angle += this.va;
     // 基于sin函数图像的移动方式
     this.y =
-      Math.sin((this.angle * Math.PI) / 180) * this.game.height * 0.125 + this.game.height * 0.25;
+      Math.sin((this.angle * Math.PI) / 180) * this.game.height * this.curve * 0.5 +
+      this.game.height * this.curve;
   }
 }
 export class GroundEnemy extends Enemy {

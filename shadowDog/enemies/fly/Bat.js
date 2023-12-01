@@ -1,4 +1,4 @@
-import { FlyingEnemy } from './base.js';
+import { FlyingEnemy } from '../base.js';
 
 export default class Bat extends FlyingEnemy {
   constructor(game) {

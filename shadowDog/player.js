@@ -215,47 +215,35 @@ export class Player {
   canJump() {
     return this.jumpNumber < 2 && this.jumpSwitch;
   }
+  // 是否杀戮状态
+  kill() {
+    return this.currentState === this.states[4] || this.currentState === this.states[5];
+  }
+  // 是否无敌状态
+  wudi() {
+    return this.currentState === this.states[6];
+  }
 
   // 碰撞检测
   _checkCollision() {
     if (this.game.debug) return;
+
     this.game.enemies.forEach((enemy) => {
-      if (checkCollision(enemy, this)) {
-        //发生碰撞
-        enemy.markedForDeletion = true;
-        this.game.collisions.push(
-          new CollisionAnimation(
-            this.game,
-            enemy.x + enemy.width * 0.5,
-            enemy.y + enemy.height * 0.5,
-            enemy.width,
-            enemy.height,
-          ),
-        );
-        if (this.currentState === this.states[4] || this.currentState === this.states[5]) {
-          // 乌鸦只能被魔法打败
-          if (enemy.constructor.name == 'Crow') {
-            this.game.floatingMessages.push(
-              new FloatingMessage(
-                this.game,
-                'MISS',
-                enemy.x,
-                enemy.y,
-                enemy.x - 20,
-                enemy.y - 20,
-                70,
-              ),
-            );
-            return;
-          }
-          // 消灭敌人
-          this.game.score += enemy.score;
+      // 怪物没死才处理碰撞
+      if (!enemy.dead && checkCollision(enemy, this)) {
+        //发生碰撞 --各处理各的
+        enemy.handleCollision(this);
+        // 消灭敌人   --处理乌鸦这种不会被直接杀死的
+        if (this.kill() && enemy.dead) {
+          this.game.score += this.score;
           // 浮动消息 --起始位置到偏移量
           this.game.floatingMessages.push(
             new FloatingMessage(this.game, enemy.score, enemy.x, enemy.y, 150, 50),
           );
-        } else {
-          // 受击
+        }
+
+        // 受击
+        if (!(this.kill() || this.wudi())) {
           this.setState(6, 0);
           this.game.score -= 5;
           this.game.lives--;

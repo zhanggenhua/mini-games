@@ -3,12 +3,13 @@ import { InputHandler } from './input.js';
 import { BackGround } from './backGround.js';
 import EnemyFactory from './enemies/index.js';
 import { UI } from './UI.js';
-import Crow from './enemies/Crow.js';
 
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { SpiritBomb } from './particle.js';
 import { checkCollision } from '../utils/tool.js';
+
+import Crow from './enemies/fly/Crow.js';
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
@@ -161,21 +162,23 @@ window.addEventListener('load', function () {
   const game = new Game(canvas.width, canvas.height);
   let lastTime = 0;
 
+  // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
   function animate(timeStamp) {
-    if (game.pause) return;
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-    // 清除后再绘制
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
-    // 用带透明度的矩形代替清空 --实现拖尾效果，失败的尝试
-    // particlesCtx.globalCompositeOperation = 'destination-in';
-    // particlesCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    // particlesCtx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!game.pause) {
+      // 清除后再绘制
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
+      // 用带透明度的矩形代替清空 --实现拖尾效果，失败的尝试
+      // particlesCtx.globalCompositeOperation = 'destination-in';
+      // particlesCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      // particlesCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-    game.update(deltaTime); //更新数据是为了draw 绘制做准备
-    game.draw(ctx);
+      game.update(deltaTime); //更新数据是为了draw 绘制做准备
+      game.draw(ctx);
+    }
     if (!game.gameOver) requestAnimationFrame(animate);
   }
   animate(0);
@@ -195,7 +198,7 @@ window.addEventListener('load', function () {
     game.pause = false;
     mark.style.visibility = 'hidden';
     pauseText.classList.add('blur-out-expand');
-    animate(0);
+    // animate(lastTime);
   };
 
   // 点击击杀乌鸦  --指针事件，包含了点击，触摸
