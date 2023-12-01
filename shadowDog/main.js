@@ -139,11 +139,12 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
-        if (!this.flag) return;
-        this.flag = false;
+        // test 
+        // if (!this.flag) return;
+        // this.flag = false;
         try {
-          // let factory = ['Fly', 'Ground', 'Climbing'];
-          let factory = ['Fly'];
+          let factory = ['Fly', 'Ground', 'Climbing'];
+          // let factory = ['Fly'];
           let index = Math.floor(Math.random() * factory.length); // 0-2
           let enemy = this.enemyFactory[`create${factory[index]}Enemy`]();
           console.log('敌人生成', enemy);

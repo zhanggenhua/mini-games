@@ -1,4 +1,3 @@
-
 export const checkCollision = (enemy, player, type = 'circle') => {
   if (type == 'rect') {
     // 矩形碰撞检测 --判断四条线，怪的x左轴小于玩家的x右轴，怪的x右轴大于玩家的x左轴，怪的y上轴小于玩家的y下轴，怪的y下轴大于玩家的y上轴。即可视为怪矩形的点在玩家矩形内部
@@ -18,7 +17,7 @@ export const checkCollision = (enemy, player, type = 'circle') => {
     const dy = enemy.y + enemy.height / 2 - (player.y + player.height / 2 + 15); //微调
     const distance = Math.sqrt(dx * dx + dy * dy); // 平方根
     //更小一点
-    if (distance < enemy.width / 2 + player.width / 3) {
+    if (distance < enemy.width / 3 + player.width / 3) {
       return true;
     } else {
       return false;

@@ -31,9 +31,9 @@ export class BackGround {
     observe(this, ['groundMargin'], () => {
       console.log('计算触发', Object.assign({}, this));
       this.game.player.computed();
-      this.game.enemies.forEach((enemy) => {
-        enemy.computed();
-      });
+      // this.game.enemies.forEach((enemy) => {
+      //   enemy.computed();
+      // });
     });
   }
   init() {

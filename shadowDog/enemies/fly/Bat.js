@@ -21,3 +21,16 @@ export default class Bat extends FlyingEnemy {
     }
   }
 }
+
+export class BigBat extends Bat {
+  constructor(game) {
+    super(game);
+    this.spriteWidth = 266;
+    this.spriteHeight = 188;
+    this._width = this.spriteWidth / 2.5;
+    this._height = this.spriteHeight / 2.5;
+
+    this.image = document.getElementById('bat_big');
+    this.maxFrame = 5;
+  }
+}

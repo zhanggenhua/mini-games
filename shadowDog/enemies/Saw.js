@@ -58,7 +58,6 @@ export class SawGround extends GroundEnemy {
     this.image = document.getElementById('saw');
     this.maxFrame = 8;
 
-    this.computed();
     this.va = Math.random() * 0.05 + 0.05; // 0.1--0.2
   }
   move() {

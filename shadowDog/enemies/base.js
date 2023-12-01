@@ -3,17 +3,17 @@ import { CollisionAnimation } from '../collisionAnimation.js';
 
 class Enemy {
   static score = 1; //敌人基础分数
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.frameX = 0;
     this.frameY = 0;
     this.fps = 20;
     // this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
-    this.dead = false;//记录死亡
+    this.dead = false; //记录死亡
 
     this.frame = 0; //记录帧数 --注意会长时间停留在一个值，和deltaTime有关的都要专门处理
-
 
     // 这里调用的是具体实例的computed  --不能用异步，虽然可以等子类初始化后调用，但是执行顺序乱套
     // this.computed();
@@ -66,7 +66,7 @@ class Enemy {
       context.arc(
         this.x + this.width / 2,
         this.y + this.height / 2,
-        this.width / 2,
+        this.width / 3,
         0,
         Math.PI * 2,
       );
@@ -109,9 +109,7 @@ class Enemy {
 export class FlyingEnemy extends Enemy {
   static egg = 3; //基础产卵率
   constructor(game) {
-    super();
-    this.game = game;
-
+    super(game);
     this.x = this.game.width + Math.random() * this.game.width * 0.25; //给一个随机的进场时机
     // 随机出生在上半屏幕
     this.y = Math.random() * this.game.height * 0.4 + this.game.height * 0.1;
@@ -122,8 +120,8 @@ export class FlyingEnemy extends Enemy {
     this.angle = 0;
     this.va = Math.random() * 2 + 2; // 2 ~ 4
 
-    // 上下浮动的随机值  0.2 -- 0.4
-    this.curve = Math.random() * 0.2 + 0.2;
+    // 上下浮动的随机值  0.2 -- 0.3  --> 0.1 ~ 0.45
+    this.curve = Math.random() * 0.1 + 0.2;
   }
   move() {
     this.x -= this.speedX + this.game.speed;
@@ -136,26 +134,24 @@ export class FlyingEnemy extends Enemy {
 }
 export class GroundEnemy extends Enemy {
   constructor(game) {
-    super();
-    this.game = game;
+    super(game);
     this.x = this.game.width;
 
     this.speedX = 0; //完全基于场景移动
     this.speedY = 0;
   }
-  computed() {
-    super.computed();
+  // 延迟初始化
+  get y() {
     console.log('地面怪物计算属性', this.game.background.realHeight);
-    this.y = this.game.background.realHeight - this.height;
+    return this.game.background.realHeight - this.height;
   }
+  set y(value) {}
 }
 
 // 蜘蛛敌人
 export class ClimbingEnemy extends Enemy {
   constructor(game) {
-    super();
-    this.game = game;
-
+    super(game);
     this.x = this.game.width;
     // this.y = Math.random() * this.game.height * 0.5; //初始位置
     this.y = 0; //初始位置

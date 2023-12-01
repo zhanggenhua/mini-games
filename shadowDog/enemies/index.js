@@ -1,12 +1,14 @@
 // 统一的导出  --相当于原封不动搬过来
 import Fly from './fly/Fly.js';
 import Bat from './fly/Bat.js';
+import { BigBat } from './fly/Bat.js';
 import Swim from './fly/Swim.js';
 import Crow from './fly/Crow.js';
 import Ghost from './fly/Ghost.js';
 import Saw from './Saw.js';
 import { SawGround } from './Saw.js';
 import Plant from './Plant.js';
+import Worm from './worm.js';
 import Spider from './Spider.js';
 import BigSpider from './BigSpider.js';
 
@@ -18,8 +20,8 @@ class EnemyFactory {
     // 预定义的敌人组 --怪物等级从低到高
     this.enemyConfig = {
       [environment.CITY]: {
-        flyEnemy: [Ghost],
-        groundEnemy: [SawGround],
+        flyEnemy: [Fly],
+        groundEnemy: [Worm],
         climbingEnemy: [Spider],
       },
       [environment.FOREST]: {
