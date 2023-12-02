@@ -75,3 +75,36 @@ export const getEnemyClass = (enemy) => {
     return getEnemyClass(enemy.__proto__);
   }
 };
+//横向像素反转
+export function imageDataHRevert(sourceData, newData) {
+  for (var i = 0, h = sourceData.height; i < h; i++) {
+    for (var j = 0, w = sourceData.width; j < w; j++) {
+      newData.data[i * w * 4 + j * 4 + 0] = sourceData.data[i * w * 4 + (w - j) * 4 + 0];
+      newData.data[i * w * 4 + j * 4 + 1] = sourceData.data[i * w * 4 + (w - j) * 4 + 1];
+      newData.data[i * w * 4 + j * 4 + 2] = sourceData.data[i * w * 4 + (w - j) * 4 + 2];
+      newData.data[i * w * 4 + j * 4 + 3] = sourceData.data[i * w * 4 + (w - j) * 4 + 3];
+    }
+  }
+  return newData;
+}
+// 像素转换
+export function pixelConversion(data) {
+  // 遍历像素数据
+  for (let i = 0; i < data.length; i += 4) {
+    let red = data[i];
+    let green = data[i + 1];
+    let blue = data[i + 2];
+    let alpha = data[i + 3];
+
+    // console.log(red, green, blue, alpha);
+    // 判断是否为白色像素点
+    // if (red === 255 && green === 255 && blue === 255) {
+    //   console.log('???');
+    // 将白色像素点的 alpha 值设置为 0，即透明
+    // data[i] = 0;
+    // data[i + 1] = 0;
+    // data[i + 2] = 0;
+    // data[i + 3] = 0;
+    // }
+  }
+}

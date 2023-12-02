@@ -31,8 +31,10 @@ export class State {
 // 静态状态父类
 export class StaticState extends State {
   handleInput(input) {
-    if (input.includes('ArrowLeft') || input.includes('ArrowRight')) {
+    if (input.includes('ArrowRight')) {
       this.game.player.setState(states.RUNNING, 1);
+    } else if (input.includes('ArrowLeft') ) {
+      this.game.player.setState(states.RUNNING, 0);
     } else if (input.includes('ArrowUp')) {
       this.game.player.setState(states.JUMPING, 1);
     } else if (input.includes('Shift')) {
@@ -41,7 +43,7 @@ export class StaticState extends State {
     }
 
     // 塔塔开
-    if (this.game.player.x >= this.game.width / 3) {
+    if (this.game.player.x >= this.game.width / 4) {
       this.game.player.setState(states.RUNNING, 1);
     }
   }

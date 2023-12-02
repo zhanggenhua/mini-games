@@ -59,6 +59,13 @@ export class Running extends State {
     if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 3) {
       this.game.player.setState(states.STANDING, 0);
     }
+
+    // 奔跑分左右
+    if (input.includes('ArrowRight') && this.game.speed === 0) {
+      this.game.player.setState(states.RUNNING, 1);
+    } else if (input.includes('ArrowLeft') && this.game.speed !== 0) {
+      this.game.player.setState(states.RUNNING, 0);
+    }
   }
 }
 
