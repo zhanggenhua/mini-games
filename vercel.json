@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/shadowDog/index.html"
+      "source": "/*",
+      "destination": "./shadowDog/index.html"
     }
   ]
 }

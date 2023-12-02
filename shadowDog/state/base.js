@@ -43,7 +43,7 @@ export class StaticState extends State {
     }
 
     // 塔塔开
-    if (this.game.player.x >= this.game.width / 4) {
+    if (this.game.player.x >= this.game.width / 4 && !input.includes('ArrowDown')) {
       this.game.player.setState(states.RUNNING, 1);
     }
   }

@@ -56,7 +56,7 @@ export class Running extends State {
       this.game.player.setState(states.ROLLING, 2);
     }
 
-    if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 3) {
+    if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4 ) {
       this.game.player.setState(states.STANDING, 0);
     }
 

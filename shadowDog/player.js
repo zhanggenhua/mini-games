@@ -85,7 +85,7 @@ export class Player {
   }
 
   setState(state, speed) {
-    console.log('状态切换', Object.assign({}, this));
+    console.log('状态切换', state, speed);
     // 根据state状态获取对应状态机
     this.currentState = this.states[state];
     // 游戏速度

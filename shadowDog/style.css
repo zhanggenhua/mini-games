@@ -64,3 +64,21 @@ img[id] {
   display: block;
   background: rgba(255, 253, 253, 0.3);
 }
+
+/* 全屏按钮 */
+#restart{
+  position: absolute;
+  top: 10px;
+  left: 10%;
+  font-size: 12px;
+  padding: 4px;
+  transform: translateX(-50%);
+}
+#fullScreenButton{
+  position: absolute;
+  top: 40px;
+  left: 10%;
+  font-size: 12px;
+  padding: 4px;
+  transform: translateX(-50%);
+}

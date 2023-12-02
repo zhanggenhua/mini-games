@@ -139,7 +139,7 @@ window.addEventListener('load', function () {
     }
     addEnemy() {
       if (this.speed > 0) {
-        // test 
+        // test
         // if (!this.flag) return;
         // this.flag = false;
         try {
@@ -160,9 +160,15 @@ window.addEventListener('load', function () {
     }
   }
 
-  const game = new Game(canvas.width, canvas.height);
-  this.window.game = game;//test
+  let game = new Game(canvas.width, canvas.height);
   let lastTime = 0;
+  this.window.game = game; //test
+
+  function restartGame() {
+    game = new Game(canvas.width, canvas.height);
+    lastTime = 0;
+  }
+  this.document.getElementById('restart').addEventListener('click', restartGame);
 
   // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
   function animate(timeStamp) {
@@ -270,4 +276,42 @@ window.addEventListener('load', function () {
       y: y,
     };
   }
+
+  // 移动端适配
+  //禁止页面滑动
+  var html = document.getElementsByTagName('html')[0];
+  var body = document.getElementsByTagName('body')[0];
+  function stopScroll() {
+    var o = {};
+    (o.can = function () {
+      html.style.overflow = 'visible';
+      html.style.height = 'auto';
+      body.style.overflow = 'visible';
+      body.style.height = 'auto';
+    }),
+      (o.stop = function () {
+        html.style.overflow = 'hidden';
+        html.style.height = '100%';
+        body.style.overflow = 'hidden';
+        body.style.height = '100%';
+      });
+    return o;
+  }
+  const scroll = stopScroll();
+  scroll.stop(); //禁止页面滚动
+  // 禁用右键菜单
+  body.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch((err) => {
+        alert(`错误，不能切换为全屏模式：${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+  this.document.getElementById('fullScreenButton').addEventListener('click', toggleFullScreen);
 });
