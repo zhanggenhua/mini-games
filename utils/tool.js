@@ -13,8 +13,8 @@ export const checkCollision = (enemy, player, type = 'circle') => {
     }
   } else if (type == 'circle') {
     // 圆形碰撞检测
-    const dx = enemy.x + enemy.width / 2 - (player.x + player.width / 2 + 5);
-    const dy = enemy.y + enemy.height / 2 - (player.y + player.height / 2 + 15); //微调
+    const dx = enemy.x + enemy.width / 2 - (player.x + player.width / 2);
+    const dy = enemy.y + enemy.height / 2 - (player.y + player.height / 2);
     const distance = Math.sqrt(dx * dx + dy * dy); // 平方根
     //更小一点
     if (distance < enemy.width / 3 + player.width / 3) {
@@ -64,4 +64,14 @@ export const throttle = (fn, delay = 100) => {
       previous = now;
     }
   };
+};
+
+// 获取敌人祖先类
+export const getEnemyClass = (enemy) => {
+  if (enemy.__proto__.constructor.name === 'Enemy') {
+    console.log(enemy.__proto__.constructor.name, enemy);
+    return enemy;
+  } else {
+    return getEnemyClass(enemy.__proto__);
+  }
 };

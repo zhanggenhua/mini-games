@@ -2,6 +2,7 @@
 import { ClimbingEnemy } from './base.js';
 
 export default class BigSpider extends ClimbingEnemy {
+  static score = 2;
   constructor(game) {
     super(game);
     this.spriteWidth = 120;

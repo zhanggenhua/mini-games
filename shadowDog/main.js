@@ -161,6 +161,7 @@ window.addEventListener('load', function () {
   }
 
   const game = new Game(canvas.width, canvas.height);
+  this.window.game = game;//test
   let lastTime = 0;
 
   // timeStamp 哪怕不执行animate也一直增长，所以用假暂停

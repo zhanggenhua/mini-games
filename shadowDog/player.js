@@ -52,6 +52,10 @@ export class Player {
     ];
     this.currentState = null;
 
+    this.checkCollision = throttle(() => {
+      this._checkCollision(); //碰撞检测
+    });
+
     this.computed();
   }
 
@@ -68,10 +72,6 @@ export class Player {
 
     this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
     console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
-
-    this.checkCollision = throttle(() => {
-      this._checkCollision(); //碰撞检测
-    });
   }
 
   update(input, deltaTime) {
@@ -228,9 +228,16 @@ export class Player {
   _checkCollision() {
     if (this.game.debug) return;
 
+    // 碰撞盒
+    this.collision = {
+      x: this.x + 5,
+      y: this.y + 15,
+      width: this.width,
+      height: this.height,
+    };
     this.game.enemies.forEach((enemy) => {
       // 怪物没死才处理碰撞
-      if (!enemy.dead && checkCollision(enemy, this)) {
+      if (!enemy.dead && checkCollision(enemy, this.collision)) {
         //发生碰撞 --各处理各的
         enemy.handleCollision(this);
         // 消灭敌人   --处理乌鸦这种不会被直接杀死的

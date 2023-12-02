@@ -1,6 +1,8 @@
 import { FloatingMessage } from '../floatingMessages.js';
 import { CollisionAnimation } from '../collisionAnimation.js';
 
+import { checkCollision, throttle, getEnemyClass } from '../../utils/tool.js';
+
 class Enemy {
   static score = 1; //敌人基础分数
   constructor(game) {
@@ -104,6 +106,12 @@ class Enemy {
       ),
     );
   }
+
+  // 被捕食
+  prey() {
+    this.x -= this.game.speed;
+    this.y += this.speedY;
+  }
 }
 
 export class FlyingEnemy extends Enemy {
@@ -136,40 +144,100 @@ export class GroundEnemy extends Enemy {
   constructor(game) {
     super(game);
     this.x = this.game.width;
+    this.y = null;
 
     this.speedX = 0; //完全基于场景移动
     this.speedY = 0;
   }
   // 延迟初始化
   get y() {
-    console.log('地面怪物计算属性', this.game.background.realHeight);
-    return this.game.background.realHeight - this.height;
+    if (this._y === null) {
+      this._y = this.game.background.realHeight - this.height;
+    }
+    return this._y;
+    // console.log('地面怪物计算属性', this.game.background.realHeight);
   }
-  set y(value) {}
+  set y(value) {
+    this._y = value;
+  }
 }
 
 // 蜘蛛敌人
 export class ClimbingEnemy extends Enemy {
   constructor(game) {
     super(game);
-    this.x = this.game.width;
-    // this.y = Math.random() * this.game.height * 0.5; //初始位置
+    this.x = this.game.width - 200;
     this.y = 0; //初始位置
 
     this.speedX = 0;
-    this.speedY = Math.random() > 0.5 ? 1 : -1;
+    this.speedY = 1;
+    // this.speedY = Math.random() > 0.5 ? 1 : -1;
+
+    this.mouth = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+    this.checkCollision = throttle(() => {
+      this._checkCollision(); //碰撞检测
+    });
   }
   update(deltaTime) {
     super.update(deltaTime);
+    this.checkCollision();
     // 触底反弹
     if (this.y > this.game.background.realHeight - this.height) this.speedY *= -1;
     if (this.y < -this.spriteHeight) this.markedForDeletion = true;
   }
   draw(context) {
     super.draw(context);
+    if (this.game.debug) {
+      // context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(
+        this.mouth.x + this.mouth.width / 2,
+        this.mouth.y + this.mouth.height / 2,
+        this.mouth.width / 3,
+        0,
+        Math.PI * 2,
+      );
+      context.stroke();
+    }
     context.beginPath();
     context.moveTo(this.x + this.width / 2, 0); //线的起点，是画布上的坐标
     context.lineTo(this.x + this.width / 2, this.y);
     context.stroke(); //画线
+  }
+
+  // 碰撞检测
+  _checkCollision() {
+    if (this.dead) return;
+    // todo 修正x和y坐标之后慢慢调
+    // 嘴的位置
+    this.mouth = {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+    };
+    this.game.enemies.forEach((enemy) => {
+      // 不检测自己
+      if (enemy === this || enemy instanceof ClimbingEnemy) return;
+      // 怪物没死才处理碰撞
+      if (!enemy.dead && checkCollision(enemy, this.mouth)) {
+        // 比大小
+        if (this.score >= enemy.score) {
+          this.dead = true;
+          if (this.speedY > 0) this.speedY *= -1; //返航
+          enemy.dead = true;
+          enemy.speedY = this.speedY;
+
+          enemy.move = function () {
+            enemy.prey();
+          };
+        }
+      }
+    });
   }
 }
