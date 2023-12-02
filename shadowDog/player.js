@@ -1,4 +1,4 @@
-import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit } from './playerStates.js';
+import { Sitting, Running, Jumping, Falling, Rolling, Diving, Hit, Standing } from './state/playerStates.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision, throttle } from '../utils/tool.js';
@@ -49,6 +49,7 @@ export class Player {
       new Rolling(this.game),
       new Diving(this.game),
       new Hit(this.game),
+      new Standing(this.game),
     ];
     this.currentState = null;
 
@@ -72,6 +73,16 @@ export class Player {
 
     this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
     console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
+  }
+
+  setState(state, speed) {
+    console.log('状态切换', Object.assign({}, this));
+    // 根据state状态获取对应状态机
+    this.currentState = this.states[state];
+    // 游戏速度
+    this.game.speed = this.game.maxSpeed * speed;
+    // 执行状态机行为
+    this.currentState.enter();
   }
 
   update(input, deltaTime) {
@@ -136,15 +147,7 @@ export class Player {
       this.height,
     );
   }
-  setState(state, speed) {
-    console.log('状态切换', Object.assign({}, this));
-    // 根据state状态获取对应状态机
-    this.currentState = this.states[state];
-    // 游戏速度
-    this.game.speed = this.game.maxSpeed * speed;
-    // 执行状态机行为
-    this.currentState.enter();
-  }
+  
 
   // 移动
   move(input) {
@@ -181,15 +184,6 @@ export class Player {
     // 限制玩家不超过水平画布
     if (this.x <= 0) this.x = 0;
     if (this.x > this.game.width - this.width) this.x = this.game.width - this.width;
-
-    // 达到屏幕三分之一时，才让背景可以移动
-    if (this.x > this.game.width / 4) {
-      this.game.background.bkgMove = 'right';
-    } else if (this.x < 0) {
-      this.game.background.bkgMove = 'left';
-    } else {
-      this.game.background.bkgMove = '';
-    }
   }
   // 跳跃
   jump() {

@@ -9,7 +9,7 @@ export class BackGround {
     this.game = game;
     this.width = 1667;
     this.height = 500;
-    this.bkgMove = ''; //地图移动方向
+    // this.bkgMove = ''; //地图移动方向
     this.distance = 0; //记录总移动距离，用于分级
     this.environment = environment.CITY;
     // this.transition = false; //用于地图切换

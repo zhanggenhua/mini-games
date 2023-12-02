@@ -21,7 +21,7 @@ class EnemyFactory {
     this.enemyConfig = {
       [environment.CITY]: {
         flyEnemy: [Fly],
-        groundEnemy: [Worm],
+        groundEnemy: [Plant],
         climbingEnemy: [Spider],
       },
       [environment.FOREST]: {
