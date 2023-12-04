@@ -26,6 +26,7 @@ export class Player {
     this.vy = 0; // 垂直速度
 
     this.jumpNumber = 0; //记录跳跃次数，实现二段跳
+    this.maxJumpNumber = 2;//最大跳跃次数
     this.jumpSwitch = false; //跳跃开关 只有按下又松开上键才 为true
     this.airResistance = 0; // 空气阻力  --可能做飞行功能用得到
     this.airControl = 0.8; //空中控制力
@@ -249,8 +250,9 @@ export class Player {
   }
   // 是否满足二段跳条件
   canJump() {
-    return this.jumpNumber < 2 && this.jumpSwitch;
+    return this.jumpNumber < this.maxJumpNumber && this.jumpSwitch;
   }
+  
   // 是否杀戮状态
   kill() {
     return this.currentState === this.states[4] || this.currentState === this.states[5];
@@ -278,7 +280,7 @@ export class Player {
         enemy.handleCollision(this);
         // 消灭敌人   --处理乌鸦这种不会被直接杀死的
         if (this.kill() && enemy.dead) {
-          this.game.score += this.score;
+          this.game.score += enemy.score;
           // 浮动消息 --起始位置到偏移量
           this.game.floatingMessages.push(
             new FloatingMessage(this.game, enemy.score, enemy.x, enemy.y, 150, 50),

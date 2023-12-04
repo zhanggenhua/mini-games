@@ -61,7 +61,7 @@ export class BackGround {
   update() {
     this.distance += this.game.speed; //统计距离
     // 切换地图
-    if (this.distance >= 2 * this.width * this.game.level) {
+    if (this.distance >= this.width * this.game.level) {
       if (this.game.level % 2 === 0) {//简单的根据奇偶切换
         this.environment = environment.FOREST;
       } else {

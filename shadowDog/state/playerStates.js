@@ -48,7 +48,8 @@ export class Running extends State {
         this.game.player.y + this.game.player.height,
       ),
     );
-    if (input.includes('ArrowDown')) {
+    // 奔跑过程中不能坐，不然会鬼畜
+    if (input.includes('ArrowDown') && !input.includes('ArrowLeft') && !input.includes('ArrowRight')) {
       this.game.player.setState(states.SITTING, 0);
     } else if (input.includes('ArrowUp')) {
       this.game.player.setState(states.JUMPING, 1);
@@ -56,7 +57,7 @@ export class Running extends State {
       this.game.player.setState(states.ROLLING, 2);
     }
 
-    if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4 ) {
+    if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4) {
       this.game.player.setState(states.STANDING, 0);
     }
 
@@ -77,7 +78,6 @@ export class Jumping extends Jump {
   enter() {
     super.enter();
 
-    this.game.player.jumpNumber++; //记录二段跳
     console.log(
       '是否二段跳? ',
       this.game.player.jumpSwitch,
@@ -86,7 +86,8 @@ export class Jumping extends Jump {
       '二段跳次数? ',
       this.game.player.jumpNumber,
     );
-    if (this.game.player.onGround() || this.game.player.canJump) {
+    if (this.game.player.onGround() || this.game.player.canJump()) {
+      this.game.player.jumpNumber++; //记录跳跃次数
       console.time('弹射起步');
       // 根据高度设置跳跃起始速度
       this.game.player.vy = this.game.player.maxJumpSpeed;

@@ -58,7 +58,7 @@ export class Jump extends State {
   }
   handleInput(input) {
     // 属性的修改应该独立出来
-    if (!input.includes('ArrowUp')) {
+    if (!input.includes('ArrowUp') && this.game.player.jumpNumber < this.game.player.maxJumpNumber) {
       // 松开箭头 可以再次跳跃
       this.game.player.jumpSwitch = true;
     }

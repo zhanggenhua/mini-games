@@ -20,7 +20,7 @@ class EnemyFactory {
     // 预定义的敌人组 --怪物等级从低到高
     this.enemyConfig = {
       [environment.CITY]: {
-        flyEnemy: [Crow],
+        flyEnemy: [Fly],
         groundEnemy: [Plant, SawGround],
         climbingEnemy: [Spider],
       },
