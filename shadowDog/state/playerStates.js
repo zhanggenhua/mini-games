@@ -1,5 +1,6 @@
 import { Dust, Fire, Splash, GroundSplash } from '../particle.js';
 import { states, State, StaticState, Jump } from './base.js';
+import { skills } from '../skill.js';
 
 // 站立状态
 export class Standing extends StaticState {
@@ -12,9 +13,10 @@ export class Standing extends StaticState {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
-    super.handleInput(input);
     if (input.includes('ArrowDown')) {
-      this.game.player.setState(states.SITTING, 0);
+      this.setState(states.SITTING, 0);
+    } else {
+      super.handleInput(input);
     }
   }
 }
@@ -55,22 +57,22 @@ export class Running extends State {
       !input.includes('ArrowLeft') &&
       !input.includes('ArrowRight')
     ) {
-      this.game.player.setState(states.SITTING, 0);
+      this.setState(states.SITTING, 0);
     } else if (input.includes('ArrowUp')) {
-      this.game.player.setState(states.JUMPING, 1);
+      this.setState(states.JUMPING, 1);
     } else if (input.includes('Shift')) {
-      this.game.player.setState(states.ROLLING, 2);
+      this.setState(states.ROLLING, 2);
     }
     // 允许站立  --优先级更低
     else if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4) {
-      this.game.player.setState(states.STANDING, 0);
+      this.setState(states.STANDING, 0);
     }
 
     // 奔跑分左右
     else if (input.includes('ArrowRight') && this.game.speed === 0) {
-      this.game.player.setState(states.RUNNING, 1);
+      this.setState(states.RUNNING, 1);
     } else if (input.includes('ArrowLeft') && this.game.speed !== 0) {
-      this.game.player.setState(states.RUNNING, 0);
+      this.setState(states.RUNNING, 0);
     }
   }
 }
@@ -104,30 +106,31 @@ export class Jumping extends Jump {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
-    super.handleInput(input);
-
     if (this.game.player.vy > 0.1) {
       //直接根据抵达顶点来判断进入下落状态
       this.setState(states.FALLING, 1);
       // 通过比较当前高度和上一帧的高度 来判断是否下落中
       // !this.game.player.onGround() && this.game.player.y > this.lastY
-    } else if (!input.includes('ArrowUp')) {
-      // 设置最小跳跃高度  --手感怪怪的
-      // if (this.game.player.jumpNumber > 1) {
-      //   //注意设置时就加一了
-      //   // 二段跳直接为 0  --继续优化，只有小于最小高度才使用最小高度
-      //   this.game.player.vy = 0;
-      // } else {
-      //   // 如果大于最小速度，说明已经走完了最小高度
-      //   if (this.game.player.vy < this.game.player.minJumpSpeed) {
-      //     console.log('当前速度', this.game.player.vy);
-      //     this.game.player.vy = this.game.player.minJumpSpeed;
-      //     console.log('设置最小速度', this.game.player.vy);
-      //   }
-      // }
-      // 松开加大重力（长按低重力上升），模拟按得越久跳的越高 --似乎没有这么简单
-      // this.game.player.g = 1.5;
+    } else {
+      super.handleInput(input);
     }
+    // else if (!input.includes('ArrowUp')) {
+    // 设置最小跳跃高度  --手感怪怪的
+    // if (this.game.player.jumpNumber > 1) {
+    //   //注意设置时就加一了
+    //   // 二段跳直接为 0  --继续优化，只有小于最小高度才使用最小高度
+    //   this.game.player.vy = 0;
+    // } else {
+    //   // 如果大于最小速度，说明已经走完了最小高度
+    //   if (this.game.player.vy < this.game.player.minJumpSpeed) {
+    //     console.log('当前速度', this.game.player.vy);
+    //     this.game.player.vy = this.game.player.minJumpSpeed;
+    //     console.log('设置最小速度', this.game.player.vy);
+    //   }
+    // }
+    // 松开加大重力（长按低重力上升），模拟按得越久跳的越高 --似乎没有这么简单
+    // this.game.player.g = 1.5;
+    // }
     // this.lastY = this.game.player.y; //记录上一帧高度
   }
 }
@@ -143,11 +146,21 @@ export class Falling extends Jump {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
-    super.handleInput(input);
+    // 羽落术在下落时才生效
+    if (this.game.player.buff.includes(skills.FEATHERFALL)) {
+      this.game.player.airResistance = 0.2;
+    }
+
     // 二段跳
     if (input.includes('ArrowUp') && this.game.player.canJump()) {
-      this.game.player.setState(states.JUMPING, 1);
+      this.setState(states.JUMPING, 1);
+    } else {
+      super.handleInput(input);
     }
+  }
+  leave() {
+    super.leave();
+    this.game.player.airResistance = 0;
   }
 }
 
@@ -170,9 +183,9 @@ export class Rolling extends State {
       ),
     );
     if (!input.includes('Shift') && this.game.player.onGround()) {
-      this.game.player.setState(states.RUNNING, 1);
+      this.setState(states.RUNNING, 1);
     } else if (!input.includes('Shift') && !this.game.player.onGround()) {
-      this.game.player.setState(states.FALLING, 1);
+      this.setState(states.FALLING, 1);
     } else if (
       input.includes('Shift') &&
       input.includes('ArrowUp') &&
@@ -180,7 +193,7 @@ export class Rolling extends State {
     ) {
       this.game.player.vy -= 27;
     } else if (input.includes('ArrowDown') && !this.game.player.onGround()) {
-      this.game.player.setState(states.DIVING, 0);
+      this.setState(states.DIVING, 0);
     }
   }
 }
@@ -205,7 +218,7 @@ export class Diving extends State {
       ),
     );
     if (this.game.player.onGround()) {
-      this.game.player.setState(states.RUNNING, 1);
+      this.setState(states.RUNNING, 1);
       // 一个落地的爆炸效果
       for (let i = 0; i < 30; i++) {
         this.game.particles.unshift(
@@ -217,7 +230,7 @@ export class Diving extends State {
         );
       }
     } else if (input.includes('Shift') && this.game.player.onGround()) {
-      this.game.player.setState(states.ROLLING, 2);
+      this.setState(states.ROLLING, 2);
     }
   }
 }
@@ -234,9 +247,9 @@ export class Hit extends State {
   }
   handleInput(input) {
     if (this.game.player.frameX >= 10 && this.game.player.onGround()) {
-      this.game.player.setState(states.RUNNING, 1);
+      this.setState(states.RUNNING, 1);
     } else if (this.game.player.frameX >= 10 && !this.game.player.onGround()) {
-      this.game.player.setState(states.FALLING, 1);
+      this.setState(states.FALLING, 1);
     }
   }
 }

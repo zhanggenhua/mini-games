@@ -8,19 +8,66 @@
     <title>Document</title>
     <style>
         /* 给画布增加一个阴影和圆角的样式 */
-    canvas {
-      box-shadow: 0px 0px 5px #ccc;
-      border-radius: 8px;
-    }
+        canvas {
+            box-shadow: 0px 0px 5px #ccc;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
 <body>
     <canvas id="canvas" width="500" height="500">
         当前浏览器不支持canvas元素，请升级或更换浏览器！
-      </canvas>
+    </canvas>
 
-      <script>
+    <script>
+        class Singleton {
+           static instance;
+
+            constructor() {
+                if (Singleton.instance) {
+                    return Singleton.instance;
+                }
+                Singleton.instance = this;
+                // 其他初始化代码
+            }
+
+            test(){
+                console.log('father');
+            }
+        }
+
+        class ChildClass1 extends Singleton {
+            constructor() {
+                super();
+                this.test1 = 1;
+                // 子类1的构造函数
+            }
+            test(){
+                console.log('child1');
+            }
+        }
+
+        class ChildClass2 extends Singleton {
+            constructor() {
+                super();
+                this.test1 = 2;
+                // 子类2的构造函数
+            }
+        }
+
+        // 创建子类1的实例
+        const instance1 = new ChildClass1();
+
+        // 创建子类2的实例
+        const instance2 = new ChildClass2();
+
+        console.log(instance1.test1); 
+        console.log(instance2.test1); 
+        instance1.test()
+    </script>
+
+    <!-- <script>
         // 获取 canvas 元素
         var canvas = document.getElementById('canvas');
         // 通过判断getContext方法是否存在来判断浏览器的支持性
@@ -56,9 +103,9 @@
           window.requestAnimationFrame(draw);
           ball.draw();
         }
-      </script>
+      </script> -->
 
-      
+
     <!-- <script>
         count = {
             '-1': 0,

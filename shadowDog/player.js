@@ -8,9 +8,10 @@ import {
   Hit,
   Standing,
 } from './state/playerStates.js';
+import { FeatherFall } from './skill.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
-import { checkCollision, throttle, imageDataHRevert, pixelConversion } from '../utils/tool.js';
+import { checkCollision, throttle, imageDataHRevert } from '../utils/tool.js';
 
 export class Player {
   constructor(game) {
@@ -26,7 +27,7 @@ export class Player {
     this.vy = 0; // 垂直速度
 
     this.jumpNumber = 0; //记录跳跃次数，实现二段跳
-    this.maxJumpNumber = 2;//最大跳跃次数
+    this.maxJumpNumber = 2; //最大跳跃次数
     this.jumpSwitch = false; //跳跃开关 只有按下又松开上键才 为true
     this.airResistance = 0; // 空气阻力  --可能做飞行功能用得到
     this.airControl = 0.8; //空中控制力
@@ -63,6 +64,11 @@ export class Player {
     ];
     this.currentState = null;
 
+    this.skills = [new FeatherFall(this.game)];
+    this.currentSkill = null; //当前技能
+    this.prevSkill = null;
+    this.buff = [];//有的技能可能给的是buff  --buff的值即技能名
+
     this.checkCollision = throttle(() => {
       this._checkCollision(); //碰撞检测
     });
@@ -87,7 +93,7 @@ export class Player {
 
   setState(state, speed) {
     console.log('状态切换', state, speed);
-    console.trace();// 打印堆栈还是有用的，终于找出bug了
+    // console.trace();// 打印堆栈还是有用的，终于找出bug了
     // 根据state状态获取对应状态机
     this.currentState = this.states[state];
     // 游戏速度
@@ -95,23 +101,35 @@ export class Player {
     // 执行状态机行为
     this.currentState.enter();
   }
+  // 使用技能
+  useSkill(skill) {
+    this.currentSkill = this.skills[skill];
+    console.log('使用技能', this.currentSkill);
+    if (this.currentSkill.cdOk) {
+      this.prevSkill?.end();
+      this.currentSkill.use();
+      this.prevSkill = this.currentSkill;
+    }
+  }
 
   update(input, deltaTime) {
-    console.log(
-      '当前状态',
-      this.currentState.state,
-      '速度',
-      this.speed,
-      this.game.speed,
-      '按键',
-      this.game.input.keys,
-      '在地上？',
-      this.onGround(),
-      Object.assign({}, this),
-    );
+    // console.log(
+    //   '当前状态',
+    //   this.currentState.state,
+    //   '速度',
+    //   this.speed,
+    //   this.game.speed,
+    //   '按键',
+    //   this.game.input.keys,
+    //   '在地上？',
+    //   this.onGround(),
+    //   Object.assign({}, this),
+    // );
     this.checkCollision();
     // 状态机处理当前输入
     this.currentState.handleInput(input);
+    // 实时更新技能
+    this.currentSkill?.update(deltaTime);
 
     // 基于时间的游戏速度优化
     // if (this.runTimer > this.runInterval) {
@@ -197,7 +215,7 @@ export class Player {
   move(input) {
     // 水平移动
     this.x += this.speed;
-    // 右移，并且没有受击
+    // 右移，并且没有滚动
     if (input.includes('ArrowRight') && this.currentState !== this.states[6]) {
       // --应该有个刹车的动作
       if (this.speed < 0) this.speed = 0.5;
@@ -253,14 +271,14 @@ export class Player {
   canJump() {
     return this.jumpNumber < this.maxJumpNumber && this.jumpSwitch;
   }
-  
+
   // 是否杀戮状态
   kill() {
     return this.currentState === this.states[4] || this.currentState === this.states[5];
   }
   // 是否无敌状态
   wudi() {
-    return this.currentState === this.states[6];
+    return this.currentState === this.states[6] || this.kill();
   }
 
   // 碰撞检测
@@ -289,7 +307,7 @@ export class Player {
         }
 
         // 受击
-        if (!(this.kill() || this.wudi())) {
+        if (!this.wudi()) {
           this.setState(6, 0);
           this.game.score -= 5;
           this.game.lives--;

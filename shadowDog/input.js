@@ -1,5 +1,4 @@
-
-import { throttle } from '../utils/tool.js';
+import { skills } from './skill.js';
 export class InputHandler {
   constructor(game) {
     this.game = game;
@@ -14,7 +13,16 @@ export class InputHandler {
       this.keyHandler(e.key, (key) => {
         // 按键只记录一次
         if (this.keys.indexOf(key) === -1) {
-          this.keys.push(key);
+          // 使用技能  --因为是触发型，所以无需每帧都判断
+          switch (key) {
+            case '1':
+              this.game.player.useSkill(skills.FEATHERFALL);
+              break;
+
+            default:
+              // 不是技能才记录
+              this.keys.push(key);
+          }
         }
       });
       console.log('按下', e.key, this.keys);
@@ -82,7 +90,7 @@ export class InputHandler {
       key === 'ArrowLeft' ||
       key === 'ArrowRight' ||
       key === 'Shift' || // 翻滚
-      key === 'Enter'
+      key === '1' // 羽落术
     ) {
       fn(key);
     }

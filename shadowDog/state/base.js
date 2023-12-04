@@ -18,14 +18,16 @@ export class State {
     this.state = state;
     this.game = game;
   }
+  //进入状态时执行
   enter() {
     console.log('当前状态', this.state);
-  } //进入状态时执行
+  }
   handleInput() {} //处理输入
   leave() {} //离开状态时执行
   // 封装原本的setState以便在前后搞事情  --装饰模式？vue的beforedestroy给我的启发
   setState(state, speed) {
     this.game.player.setState(state, speed);
+    console.log('?????????????');
     this.leave();
   }
 }
@@ -34,19 +36,18 @@ export class State {
 export class StaticState extends State {
   handleInput(input) {
     if (input.includes('ArrowRight')) {
-      this.game.player.setState(states.RUNNING, 1);
-    } else if (input.includes('ArrowLeft') ) {
-      this.game.player.setState(states.RUNNING, 0);
+      this.setState(states.RUNNING, 1);
+    } else if (input.includes('ArrowLeft')) {
+      this.setState(states.RUNNING, 0);
     } else if (input.includes('ArrowUp')) {
-      this.game.player.setState(states.JUMPING, 1);
+      this.setState(states.JUMPING, 1);
     } else if (input.includes('Shift')) {
       //按键检测的耦合很严重，考虑抽取
-      this.game.player.setState(states.ROLLING, 2);
+      this.setState(states.ROLLING, 2);
     }
-
     // 塔塔开
-    if (this.game.player.x >= this.game.width / 4 && !input.includes('ArrowDown')) {
-      this.game.player.setState(states.RUNNING, 1);
+    else if (this.game.player.x >= this.game.width / 4 && !input.includes('ArrowDown')) {
+      this.setState(states.RUNNING, 1);
     }
   }
 }
@@ -62,7 +63,10 @@ export class Jump extends State {
   }
   handleInput(input) {
     // 属性的修改应该独立出来
-    if (!input.includes('ArrowUp') && this.game.player.jumpNumber < this.game.player.maxJumpNumber) {
+    if (
+      !input.includes('ArrowUp') &&
+      this.game.player.jumpNumber < this.game.player.maxJumpNumber
+    ) {
       // 松开箭头 可以再次跳跃
       this.game.player.jumpSwitch = true;
     }
@@ -87,6 +91,7 @@ export class Jump extends State {
   }
 
   leave() {
+    super.leave();
     // 改回空中临时改变的速度
     this.game.player.maxSpeed = 8;
   }

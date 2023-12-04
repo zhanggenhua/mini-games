@@ -64,12 +64,14 @@ window.addEventListener('load', function () {
       this.gameOver = false;
       this.lives = 5; //生命
 
+      // 状态初始化
       this.player.currentState = this.player.states[0];
       this.player.currentState.enter();
 
       this.enemyFactory = new EnemyFactory(this);
 
       this.flag = true;
+
     }
 
     update(deltaTime) {
@@ -300,7 +302,7 @@ window.addEventListener('load', function () {
   const scroll = stopScroll();
   scroll.stop(); //禁止页面滚动
   // 禁用右键菜单
-  body.addEventListener("contextmenu", (e) => {
+  body.addEventListener('contextmenu', (e) => {
     e.preventDefault();
   });
 
