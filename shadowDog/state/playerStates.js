@@ -40,6 +40,7 @@ export class Running extends State {
     this.game.player.frameY = 3;
     this.game.player.maxFrame = 6;
   }
+  // 只能有一个行为！
   handleInput(input) {
     this.game.particles.unshift(
       new Dust(
@@ -49,20 +50,24 @@ export class Running extends State {
       ),
     );
     // 奔跑过程中不能坐，不然会鬼畜
-    if (input.includes('ArrowDown') && !input.includes('ArrowLeft') && !input.includes('ArrowRight')) {
+    if (
+      input.includes('ArrowDown') &&
+      !input.includes('ArrowLeft') &&
+      !input.includes('ArrowRight')
+    ) {
       this.game.player.setState(states.SITTING, 0);
     } else if (input.includes('ArrowUp')) {
       this.game.player.setState(states.JUMPING, 1);
     } else if (input.includes('Shift')) {
       this.game.player.setState(states.ROLLING, 2);
     }
-
-    if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4) {
+    // 允许站立  --优先级更低
+    else if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4) {
       this.game.player.setState(states.STANDING, 0);
     }
 
     // 奔跑分左右
-    if (input.includes('ArrowRight') && this.game.speed === 0) {
+    else if (input.includes('ArrowRight') && this.game.speed === 0) {
       this.game.player.setState(states.RUNNING, 1);
     } else if (input.includes('ArrowLeft') && this.game.speed !== 0) {
       this.game.player.setState(states.RUNNING, 0);
@@ -101,10 +106,7 @@ export class Jumping extends Jump {
   handleInput(input) {
     super.handleInput(input);
 
-    if (this.game.player.onGround()) {
-      console.timeEnd('弹射起步');
-      this.setState(states.RUNNING, 1);
-    } else if (this.game.player.vy > 0.1) {
+    if (this.game.player.vy > 0.1) {
       //直接根据抵达顶点来判断进入下落状态
       this.setState(states.FALLING, 1);
       // 通过比较当前高度和上一帧的高度 来判断是否下落中

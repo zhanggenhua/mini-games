@@ -87,6 +87,7 @@ export class Player {
 
   setState(state, speed) {
     console.log('状态切换', state, speed);
+    console.trace();// 打印堆栈还是有用的，终于找出bug了
     // 根据state状态获取对应状态机
     this.currentState = this.states[state];
     // 游戏速度
@@ -96,18 +97,18 @@ export class Player {
   }
 
   update(input, deltaTime) {
-    // console.log(
-    //   '当前状态',
-    //   this.currentState.state,
-    //   '速度',
-    //   this.speed,
-    //   this.game.speed,
-    //   '按键',
-    //   this.game.input.keys,
-    //   '在地上？',
-    //   this.onGround(),
-    //   Object.assign({}, this),
-    // );
+    console.log(
+      '当前状态',
+      this.currentState.state,
+      '速度',
+      this.speed,
+      this.game.speed,
+      '按键',
+      this.game.input.keys,
+      '在地上？',
+      this.onGround(),
+      Object.assign({}, this),
+    );
     this.checkCollision();
     // 状态机处理当前输入
     this.currentState.handleInput(input);

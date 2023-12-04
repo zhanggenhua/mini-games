@@ -18,7 +18,9 @@ export class State {
     this.state = state;
     this.game = game;
   }
-  enter() {} //进入状态时执行
+  enter() {
+    console.log('当前状态', this.state);
+  } //进入状态时执行
   handleInput() {} //处理输入
   leave() {} //离开状态时执行
   // 封装原本的setState以便在前后搞事情  --装饰模式？vue的beforedestroy给我的启发
@@ -53,8 +55,10 @@ export class StaticState extends State {
 export class Jump extends State {
   // 设置时执行一次，相当于初始化
   enter() {
+    super.enter();
     // 空中控制力较弱
     this.game.player.maxSpeed = this.game.player.maxSpeed * this.game.player.airControl;
+    // console.log('??????????????????', this.game.player.airControl,  this.game.player.maxSpeed);
   }
   handleInput(input) {
     // 属性的修改应该独立出来

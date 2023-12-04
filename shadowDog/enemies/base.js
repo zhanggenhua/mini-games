@@ -166,7 +166,8 @@ export class GroundEnemy extends Enemy {
 export class ClimbingEnemy extends Enemy {
   constructor(game) {
     super(game);
-    this.x = this.game.width - 200;
+    // this.x = this.game.width;
+    this._x = null;
     this.y = 0; //初始位置
 
     this.speedX = 0;
@@ -183,6 +184,16 @@ export class ClimbingEnemy extends Enemy {
       this._checkCollision(); //碰撞检测
     });
   }
+  get x() {
+    if (this._x === null) {
+      this._x = this.game.width - this.width;
+    }
+    return this._x;
+  }
+  set x(value) {
+    this._x = value;
+  }
+
   update(deltaTime) {
     super.update(deltaTime);
     this.checkCollision();
