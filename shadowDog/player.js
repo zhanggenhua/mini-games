@@ -8,7 +8,7 @@ import {
   Hit,
   Standing,
 } from './state/playerStates.js';
-import { FeatherFall } from './skill.js';
+import { FeatherFall, SpiritBombSkill } from './skill.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision, throttle, imageDataHRevert } from '../utils/tool.js';
@@ -64,10 +64,10 @@ export class Player {
     ];
     this.currentState = null;
 
-    this.skills = [new FeatherFall(this.game)];
+    this.skills = [new FeatherFall(this.game), new SpiritBombSkill(this.game)];
     this.currentSkill = null; //当前技能
-    this.prevSkill = null;
-    this.buff = [];//有的技能可能给的是buff  --buff的值即技能名
+    this.cdSkill = [];//进入冷却的技能
+    this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
 
     this.checkCollision = throttle(() => {
       this._checkCollision(); //碰撞检测
@@ -102,13 +102,14 @@ export class Player {
     this.currentState.enter();
   }
   // 使用技能
-  useSkill(skill) {
+  useSkill(skill, ...params) {
     this.currentSkill = this.skills[skill];
-    console.log('使用技能', this.currentSkill);
     if (this.currentSkill.cdOk) {
-      this.prevSkill?.end();
-      this.currentSkill.use();
-      this.prevSkill = this.currentSkill;
+      console.log('使用技能', this.currentSkill);
+      this.currentSkill.use(params);
+      this.cdSkill.push(this.currentSkill);
+    }else{
+      this.currentSkill.headShake();
     }
   }
 
@@ -129,7 +130,9 @@ export class Player {
     // 状态机处理当前输入
     this.currentState.handleInput(input);
     // 实时更新技能
-    this.currentSkill?.update(deltaTime);
+    this.cdSkill.forEach((skill) => {
+      skill.update(deltaTime);
+    })
 
     // 基于时间的游戏速度优化
     // if (this.runTimer > this.runInterval) {

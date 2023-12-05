@@ -13,6 +13,7 @@
 
 
 
+
 /* 模糊淡出 */
 .blur-out-expand {
   -webkit-animation: blur-out-expand 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
@@ -30,5 +31,38 @@
     transform: translate(-30%, -50%);
     -webkit-filter: blur(12px) opacity(0%);
     filter: blur(12px) opacity(0%);
+  }
+}
+
+/* 摇头效果 */
+.shake-horizontal {
+	-webkit-animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+	        animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+}
+@keyframes shake-horizontal {
+  0%,
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  30%,
+  50%,
+  70% {
+    -webkit-transform: translateX(-2px);
+            transform: translateX(-2px);
+  }
+  20%,
+  40%,
+  60% {
+    -webkit-transform: translateX(2px);
+            transform: translateX(2px);
+  }
+  80% {
+    -webkit-transform: translateX(1px);
+            transform: translateX(1px);
+  }
+  90% {
+    -webkit-transform: translateX(-1px);
+            transform: translateX(-1px);
   }
 }

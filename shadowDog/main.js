@@ -10,6 +10,7 @@ import { SpiritBomb } from './particle.js';
 import { checkCollision } from '../utils/tool.js';
 
 import Crow from './enemies/fly/Crow.js';
+import { skills } from './skill.js';
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
@@ -71,7 +72,6 @@ window.addEventListener('load', function () {
       this.enemyFactory = new EnemyFactory(this);
 
       this.flag = true;
-
     }
 
     update(deltaTime) {
@@ -200,6 +200,7 @@ window.addEventListener('load', function () {
     game.pause = true;
     mark.style.visibility = 'visible';
     pauseText.style.visibility = 'visible';
+    pauseText.style.zIndex = '2000';
     pauseText.classList.remove('blur-out-expand');
     // 暂停时要清空输入，因为没有触发松开按键的事件
     game.input.keys = [];
@@ -207,9 +208,44 @@ window.addEventListener('load', function () {
   window.onfocus = function () {
     game.pause = false;
     mark.style.visibility = 'hidden';
+    setTimeout(() => {
+      // 等动画效果结束
+      pauseText.style.zIndex = '0';
+    }, 500);
     pauseText.classList.add('blur-out-expand');
     // animate(lastTime);
   };
+
+  // 技能UI
+  let skillUI = document.getElementsByClassName('ui__skill')[0];
+  let reverseSkills = [...game.player.skills].reverse(); 
+  reverseSkills.forEach((skill) => {
+    let skillIcon = document.createElement('span');
+    skillIcon.classList.add('icon');
+    skillIcon.classList.add(skill.constructor.name);
+    skill.element = skillIcon;
+    skillIcon.addEventListener('pointerdown', () => {
+      game.player.useSkill(skills[skill.constructor.name.toUpperCase()]);
+    });
+    
+    let iconMark = document.createElement('span');
+    iconMark.classList.add('icon__mark');
+    skillIcon.appendChild(iconMark);
+    skill.elementMark = iconMark;
+
+    skillUI.appendChild(skillIcon);
+    console.log(skillIcon.offsetLeft, skillIcon.offsetTop);
+  });
+
+  function drawUI() {
+    let rect = canvas.getBoundingClientRect();
+    // 技能UI 位置
+    skillUI.style.right = rect.right - rect.width + 20 + 'px';
+    skillUI.style.top = rect.top + 10 + 'px';
+    // console.log('???', rect, skillUI.offsetWidth, skillUI.offsetHeight);
+  }
+  drawUI();
+  this.window.addEventListener('resize', drawUI);
 
   // 点击击杀乌鸦  --指针事件，包含了点击，触摸
   window.addEventListener('pointerdown', function (e) {
@@ -224,37 +260,8 @@ window.addEventListener('load', function () {
           enemy.randomColor[1] === pc[1] &&
           enemy.randomColor[2] === pc[2]
         ) {
-          // 在口部生成元气弹
-          let bomb = new SpiritBomb(
-            game,
-            game.player.x + game.player.width,
-            game.player.y + 50,
-            enemy,
-          );
-          game.particles.unshift(bomb);
-
-          // 碰撞后击杀乌鸦
-          let time = this.setInterval(() => {
-            if (checkCollision(enemy, bomb)) {
-              clearInterval(time);
-              time = null;
-              bomb.markedForDeletion = true;
-              enemy.markedForDeletion = true;
-              game.score += enemy.score;
-              game.collisions.push(
-                new CollisionAnimation(
-                  game,
-                  enemy.x + enemy.width * 0.5,
-                  enemy.y + enemy.height * 0.5,
-                  enemy.width,
-                  enemy.height,
-                ),
-              );
-              game.floatingMessages.push(
-                new FloatingMessage(game, enemy.score, enemy.x, enemy.y, 150, 50),
-              );
-            }
-          }, 100);
+          // 触发元气弹
+          game.player.useSkill(skills.SPIRITBOMBSKILL, enemy);
         }
       }
     });

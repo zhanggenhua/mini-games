@@ -2,7 +2,7 @@
   font-family: 'Creepster';
   src: url('../assets/shadow/font/AlZy_zVUqJz4yMrniH4Rcn35.woff2') format('woff2');
 }
-.canvas{
+.canvas {
   cursor: crosshair;
   border: 5px solid black;
   position: absolute;
@@ -19,7 +19,7 @@
   max-height: 100%;
 }
 #canvas1 {
-  z-index: 2;
+  z-index: 10;
   font-family: 'Creepster', cursive;
 }
 #collisionCanvas {
@@ -34,7 +34,7 @@ img[id] {
 /* 暂停文字 */
 .pause__text {
   cursor: crosshair;
-  z-index: 2;
+  z-index: 0;
   visibility: hidden;
   position: absolute;
 
@@ -46,7 +46,7 @@ img[id] {
   font-family: 'Yuan';
 }
 .pause__mark {
-  z-index: 3;
+  z-index: 1000;
   visibility: hidden;
   position: relative;
 
@@ -66,7 +66,7 @@ img[id] {
 }
 
 /* 全屏按钮 */
-#restart{
+#restart {
   position: absolute;
   top: 10px;
   left: 10%;
@@ -74,11 +74,45 @@ img[id] {
   padding: 4px;
   transform: translateX(-50%);
 }
-#fullScreenButton{
+#fullScreenButton {
   position: absolute;
   top: 40px;
   left: 10%;
   font-size: 12px;
   padding: 4px;
   transform: translateX(-50%);
+}
+
+/* 技能图标 */
+.ui__skill {
+  z-index: 20;
+  cursor: pointer;
+  position: fixed;
+
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 1vw;
+}
+.icon {
+  position: relative;
+  display: inline-block;
+  height: 5.042vw;
+  width: 5.042vw;
+  background-size: contain;
+}
+.icon__mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background-color: rgba(248, 249, 250, 0.5);
+}
+.FeatherFall {
+  background-image: url(../assets/shadow/svg/feather.svg);
+}
+.SpiritBombSkill {
+  background: b;
+  background-image: url(../assets/shadow/svg/circle.svg);
 }

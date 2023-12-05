@@ -27,7 +27,6 @@ export class State {
   // 封装原本的setState以便在前后搞事情  --装饰模式？vue的beforedestroy给我的启发
   setState(state, speed) {
     this.game.player.setState(state, speed);
-    console.log('?????????????');
     this.leave();
   }
 }
