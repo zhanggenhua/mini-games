@@ -108,3 +108,16 @@ export function pixelConversion(data) {
     // }
   }
 }
+
+// 淡入
+export const fadeIn = (element) => {
+  element.classList.add('text-focus-in');
+  element.classList.remove('text-blur-out');
+  element.style.visibility = 'visible';
+};
+//淡出
+export const fadeOut = (target) => {
+  target.classList.add('text-blur-out');
+  target.classList.remove('text-focus-in');
+  target.style.visibility = 'hidden';
+};

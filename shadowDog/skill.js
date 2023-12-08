@@ -9,9 +9,11 @@ class Skill {
   constructor(game) {
     this.game = game;
     this.cdOk = true;
-    this.skillCurrentDuration = 0; //当前持续时间
     this.element = null;
     this.elementMark = null;
+    this.actived = false; //激活状态，用于取消激活直接进入冷却
+    this.activeTime = null;
+    // this.skillCurrentDuration = 0; //当前持续时间
 
     this.cd = 0;
     this.skillDuration = 0; //持续时间
@@ -20,50 +22,65 @@ class Skill {
   }
 
   computedCd() {
+    // 自上而下的动画
     this.elementMark.style.height = '0';
-    this.elementMark.style.transition = `height ${this.cd / 1000}s linear`;
     setTimeout(() => {
+      this.elementMark.style.transition = `height ${this.cd / 1000}s linear`;
       this.elementMark.style.height = '100%';
     });
     // 技能冷却进度
     setTimeout(() => {
       this.cdOk = true;
-      this.end();
 
       // 初始化
-      this.elementMark.style.height = '0';
-      this.elementMark.style.transition = '';
+      this.animalEnd();
     }, this.cd);
   }
   use() {
     this.cdOk = false;
     if (this.skillDuration === 0) {
       this.computedCd();
-    }
-  }
-  // 效果结束
-  end() {
-    // 从冷却数组移除
-    this.game.player.cdSkill.splice(this.game.player.cdSkill.indexOf(this), 1);
-    // 初始化
-    this.skillCurrentDuration = 0;
-  }
-  update(deltaTime) {
-    // 先计算持续时间
-    if (this.skillDuration !== 0) {
-      this.elementMark.style.height = `${
-        100 - (this.skillCurrentDuration / this.skillDuration) * 100
-      }%`;
-      if (this.skillCurrentDuration >= this.skillDuration) {
-        this.end();
-        this.computedCd();
-      } else {
-        this.skillCurrentDuration += deltaTime;
-      }
     } else {
+      this.active();
     }
   }
-  draw() {}
+  // 冷却动画结束
+  animalEnd() {
+    // 初始化
+    this.elementMark.style.transition = '';
+    this.elementMark.style.height = '0';
+    // 从激活数组移除
+    // this.game.player.activeSkill.splice(this.game.player.activeSkill.indexOf(this), 1);
+    // 初始化
+    // this.skillCurrentDuration = 0;
+  }
+  active() {
+    this.actived = true;
+
+    // 自下而上，和冷却动画反过来做区分
+    this.elementMark.style.height = '100%';
+    setTimeout(() => {
+      this.elementMark.style.transition = `height ${this.skillDuration / 1000}s linear`;
+      this.elementMark.style.height = '0';
+    });
+    // 先计算持续时间
+    this.activeTime = setTimeout(() => {
+      // 初始化
+      this.activeEnd();
+    }, this.skillDuration);
+    // 实时更新动画
+    // this.elementMark.style.height = `${
+    //   100 - (this.skillCurrentDuration / this.skillDuration) * 100
+    // }%`;
+  }
+  activeEnd() {
+    this.actived = false;
+    clearTimeout(this.activeTime);
+    this.animalEnd();
+    setTimeout(() => {
+      this.computedCd();
+    });
+  }
 
   // 振动
   headShake() {
@@ -79,18 +96,18 @@ class Skill {
 export class FeatherFall extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
-    this.skillDuration = 3000; //持续时间
-    this.title = '羽落术';
-    this.description = '源于DND中的法术';
+    this.cd = 8000;
+    this.skillDuration = 5000; //持续时间
+    this.title = '羽落术，羽落术羽落术羽落术';
+    this.description = '源于DND中的法术..................................................sags....';
   }
   use() {
     super.use();
-    this.game.player.buff.push(skills.FEATHERFALL);
+    // this.game.player.buff.push(skills.FEATHERFALL);
   }
   end() {
     super.end();
-    this.game.player.buff.splice(this.game.player.buff.indexOf(skills.FEATHERFALL), 1);
+    // this.game.player.buff.splice(this.game.player.buff.indexOf(skills.FEATHERFALL), 1);
   }
 }
 

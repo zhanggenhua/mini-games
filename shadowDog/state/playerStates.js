@@ -147,7 +147,7 @@ export class Falling extends Jump {
   }
   handleInput(input) {
     // 羽落术在下落时才生效
-    if (this.game.player.buff.includes(skills.FEATHERFALL)) {
+    if (this.game.player.skills[skills.FEATHERFALL].actived === true) {
       this.game.player.airResistance = 0.2;
     }
 

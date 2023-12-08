@@ -1,16 +1,65 @@
-
 @font-face {
-  font-family: "Yuan";
+  font-family: 'Yuan';
   /* format:ttf --必加 */
-  src: url("../assets/fonts/keai.ttf") format("truetype");
+  src: url('../assets/fonts/keai.ttf') format('truetype');
 }
 @font-face {
-  font-family: "Bangers";
+  font-family: 'Bangers';
   /* format:ttf --必加 */
-  src: url("../assets/fonts/Bangers-Regular.ttf") format("truetype");
+  src: url('../assets/fonts/Bangers-Regular.ttf') format('truetype');
 }
 
+/* 全局禁用文本选择 */
+body {
+  user-select: none;
+}
 
+/* 文本超出隐藏 */
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ellipsis-2 {
+  word-break: break-all;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* 全局svg图标设置 */
+span.icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* 文字提示 */
+.text-container:hover::before {
+  content: attr(data-text);
+  z-index: 1000;
+  /* 其他样式属性，例如背景色、边框等 */
+  position: absolute;
+  bottom: calc(1em + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 120%;
+  padding: 1rem 1rem 2rem 1rem;
+  color: white;
+  background-color: rgba(52, 58, 64, 0.8);
+
+  font-size: 2rem;
+  text-align: left;
+
+  clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 85%, 40% 100%, 40% 85%, 0% 85%);
+}
+/* 特殊处理图标提示框宽度 */
+.icon.text-container:hover::before{
+  width: 10rem;
+  text-align: center;
+}
 
 
 
@@ -27,7 +76,7 @@
   }
   100% {
     letter-spacing: 1em;
-	/* 中文不方便，只能特化，强行居中渐变 */
+    /* 中文不方便，只能特化，强行居中渐变 */
     transform: translate(-30%, -50%);
     -webkit-filter: blur(12px) opacity(0%);
     filter: blur(12px) opacity(0%);
@@ -36,33 +85,87 @@
 
 /* 摇头效果 */
 .shake-horizontal {
-	-webkit-animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
-	        animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+  -webkit-animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+  animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
 }
 @keyframes shake-horizontal {
   0%,
   100% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   30%,
   50%,
   70% {
     -webkit-transform: translateX(-2px);
-            transform: translateX(-2px);
+    transform: translateX(-2px);
   }
   20%,
   40%,
   60% {
     -webkit-transform: translateX(2px);
-            transform: translateX(2px);
+    transform: translateX(2px);
   }
   80% {
     -webkit-transform: translateX(1px);
-            transform: translateX(1px);
+    transform: translateX(1px);
   }
   90% {
     -webkit-transform: translateX(-1px);
-            transform: translateX(-1px);
+    transform: translateX(-1px);
+  }
+}
+
+/* 淡入淡出 */
+.text-focus-in {
+  -webkit-animation: text-focus-in 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: text-focus-in 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+}
+@-webkit-keyframes text-focus-in {
+  0% {
+    -webkit-filter: blur(4px);
+    filter: blur(4px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-filter: blur(0px);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+@keyframes text-focus-in {
+  0% {
+    -webkit-filter: blur(4px);
+    filter: blur(4px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-filter: blur(0px);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+.text-blur-out {
+  -webkit-animation: text-blur-out 0.2s cubic-bezier(0.25, 0.085, 0.68, 0.23) both;
+  animation: text-blur-out 0.2s cubic-bezier(0.25, 0.085, 0.68, 0.23) both;
+}
+@-webkit-keyframes text-blur-out {
+  0% {
+    -webkit-filter: blur(0.01);
+    filter: blur(0.01);
+  }
+  100% {
+    -webkit-filter: blur(4px) opacity(0%);
+    filter: blur(4px) opacity(0%);
+  }
+}
+@keyframes text-blur-out {
+  0% {
+    -webkit-filter: blur(0.01);
+    filter: blur(0.01);
+  }
+  100% {
+    -webkit-filter: blur(4px) opacity(0%);
+    filter: blur(4px) opacity(0%);
   }
 }

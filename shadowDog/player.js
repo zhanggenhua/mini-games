@@ -66,8 +66,8 @@ export class Player {
 
     this.skills = [new FeatherFall(this.game), new SpiritBombSkill(this.game)];
     this.currentSkill = null; //当前技能
-    this.cdSkill = [];//进入冷却的技能
-    this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
+    // this.activeSkill = [];//进入冷却的技能
+    // this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
 
     this.checkCollision = throttle(() => {
       this._checkCollision(); //碰撞检测
@@ -107,9 +107,13 @@ export class Player {
     if (this.currentSkill.cdOk) {
       console.log('使用技能', this.currentSkill);
       this.currentSkill.use(params);
-      this.cdSkill.push(this.currentSkill);
-    }else{
-      this.currentSkill.headShake();
+      // this.activeSkill.push(this.currentSkill);
+    } else {
+      if (this.currentSkill.actived) {
+        this.currentSkill.activeEnd();
+      } else {
+        this.currentSkill.headShake();
+      }
     }
   }
 
@@ -130,9 +134,9 @@ export class Player {
     // 状态机处理当前输入
     this.currentState.handleInput(input);
     // 实时更新技能
-    this.cdSkill.forEach((skill) => {
-      skill.update(deltaTime);
-    })
+    // this.activeSkill.forEach((skill) => {
+    //   skill.update(deltaTime);
+    // })
 
     // 基于时间的游戏速度优化
     // if (this.runTimer > this.runInterval) {

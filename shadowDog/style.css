@@ -2,6 +2,34 @@
   font-family: 'Creepster';
   src: url('../assets/shadow/font/AlZy_zVUqJz4yMrniH4Rcn35.woff2') format('woff2');
 }
+@media screen and (max-width: 460px) {
+  html {
+    font-size: 5px;
+  }
+}
+@media screen and (min-width: 460px) and (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+@media screen and (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+
 .canvas {
   cursor: crosshair;
   border: 5px solid black;
@@ -85,23 +113,25 @@ img[id] {
 
 /* 技能图标 */
 .ui__skill {
+  position: relative;
   z-index: 20;
-  cursor: pointer;
   position: fixed;
 
   display: flex;
   align-items: center;
   justify-content: end;
-  gap: 1vw;
+  gap: 1rem;
 }
-.icon {
+.ui__skill .icon {
+  cursor: pointer;
+
   position: relative;
   display: inline-block;
-  height: 5.042vw;
-  width: 5.042vw;
+  height: 6rem;
+  width: 6rem;
   background-size: contain;
 }
-.icon__mark {
+.ui__skill .icon__mark {
   position: absolute;
   top: 0;
   left: 0;
@@ -109,10 +139,115 @@ img[id] {
   height: 0;
   background-color: rgba(248, 249, 250, 0.5);
 }
-.FeatherFall {
+.ui__skill .FeatherFall {
   background-image: url(../assets/shadow/svg/feather.svg);
 }
-.SpiritBombSkill {
-  background: b;
+.ui__skill .SpiritBombSkill {
   background-image: url(../assets/shadow/svg/circle.svg);
 }
+
+/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+/* 提示框 */
+.ui__skill .skill__megbox {
+  visibility: hidden;
+  position: absolute;
+  top: calc(6rem + 3rem);
+  right: 0;
+  width: 15rem;
+  height: 21rem;
+  font-size: 1.5rem;
+  background-color: transparent;
+  border: 2px solid black;
+  border-radius: 2rem;
+  padding: 1rem 1rem;
+  z-index: 100;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  transform: translateX(50%);
+  background-color: rgba(0, 0, 0, 0.2); /* 设置背景颜色，可以根据需要调整透明度 */
+  backdrop-filter: blur(3px); /* 可以调整模糊程度 */
+}
+.ui__skill .skill__megbox::before {
+  content: '';
+  position: absolute;
+  top: -2rem;
+  left: calc(50% - 1rem);
+
+  width: 0;
+  height: 0;
+  border: 1rem solid;
+  border-color: transparent transparent black;
+}
+
+.ui__skill .skill__megbox .megbox__title {
+  position: relative;
+  font-size: 2rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* 图标部分 */
+.ui__skill .skill__megbox .megbox__icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 1rem;
+  padding: 1rem 0 0.5rem 0;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  font-size: 2rem;
+  line-height: 3rem;
+}
+.ui__skill .skill__megbox .megbox__icon div {
+  width: 49%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  /* padding: 0 1rem; */
+}
+@media screen and (max-width: 460px) {
+  .ui__skill .skill__megbox .megbox__icon div {
+    width: 100%;
+  }
+}
+.ui__skill .skill__megbox .megbox__icon .icon {
+  cursor: help;
+
+  width: 3rem;
+  height: 3rem;
+  display: inline-block;
+  /* 禁止缩放 */
+  flex-shrink: 0;
+}
+.ui__skill .skill__megbox .megbox__icon .megbox__icon--1 {
+  background-image: url(../assets/shadow/svg/cd.svg);
+}
+.ui__skill .skill__megbox .megbox__icon .megbox__icon--2 {
+  background-image: url(../assets/shadow/svg/duration.svg);
+}
+
+.ui__skill .skill__megbox .megbox__meg .megbox__txt {
+  height: 4rem;
+  margin: 1rem 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+
+
+/* 背景模糊 */
+/* .ui__skill .megbox__meg::after {
+  z-index: 90;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.3); 
+  filter: blur(1px); 
+} */
+/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */

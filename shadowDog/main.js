@@ -12,6 +12,8 @@ import { checkCollision } from '../utils/tool.js';
 import Crow from './enemies/fly/Crow.js';
 import { skills } from './skill.js';
 
+import { fadeIn, fadeOut } from '../utils/tool.js';
+
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
@@ -193,60 +195,6 @@ window.addEventListener('load', function () {
   }
   animate(0);
 
-  let mark = document.getElementsByClassName('pause__mark')[0];
-  let pauseText = document.getElementsByClassName('pause__text')[0];
-  // 失去焦点暂停游戏  --需要修复时间累积
-  window.onblur = function () {
-    game.pause = true;
-    mark.style.visibility = 'visible';
-    pauseText.style.visibility = 'visible';
-    pauseText.style.zIndex = '2000';
-    pauseText.classList.remove('blur-out-expand');
-    // 暂停时要清空输入，因为没有触发松开按键的事件
-    game.input.keys = [];
-  };
-  window.onfocus = function () {
-    game.pause = false;
-    mark.style.visibility = 'hidden';
-    setTimeout(() => {
-      // 等动画效果结束
-      pauseText.style.zIndex = '0';
-    }, 500);
-    pauseText.classList.add('blur-out-expand');
-    // animate(lastTime);
-  };
-
-  // 技能UI
-  let skillUI = document.getElementsByClassName('ui__skill')[0];
-  let reverseSkills = [...game.player.skills].reverse(); 
-  reverseSkills.forEach((skill) => {
-    let skillIcon = document.createElement('span');
-    skillIcon.classList.add('icon');
-    skillIcon.classList.add(skill.constructor.name);
-    skill.element = skillIcon;
-    skillIcon.addEventListener('pointerdown', () => {
-      game.player.useSkill(skills[skill.constructor.name.toUpperCase()]);
-    });
-    
-    let iconMark = document.createElement('span');
-    iconMark.classList.add('icon__mark');
-    skillIcon.appendChild(iconMark);
-    skill.elementMark = iconMark;
-
-    skillUI.appendChild(skillIcon);
-    console.log(skillIcon.offsetLeft, skillIcon.offsetTop);
-  });
-
-  function drawUI() {
-    let rect = canvas.getBoundingClientRect();
-    // 技能UI 位置
-    skillUI.style.right = rect.right - rect.width + 20 + 'px';
-    skillUI.style.top = rect.top + 10 + 'px';
-    // console.log('???', rect, skillUI.offsetWidth, skillUI.offsetHeight);
-  }
-  drawUI();
-  this.window.addEventListener('resize', drawUI);
-
   // 点击击杀乌鸦  --指针事件，包含了点击，触摸
   window.addEventListener('pointerdown', function (e) {
     let point = getMousePos(collisionCanvas, e); //获取相对位置
@@ -323,4 +271,141 @@ window.addEventListener('load', function () {
     }
   }
   this.document.getElementById('fullScreenButton').addEventListener('click', toggleFullScreen);
+
+  let mark = document.getElementsByClassName('pause__mark')[0];
+  let pauseText = document.getElementsByClassName('pause__text')[0];
+  // 失去焦点暂停游戏  --需要修复时间累积
+  window.onblur = function () {
+    game.pause = true;
+    mark.style.visibility = 'visible';
+    pauseText.style.visibility = 'visible';
+    pauseText.style.zIndex = '4000';
+    pauseText.classList.remove('blur-out-expand');
+    // 暂停时要清空输入，因为没有触发松开按键的事件
+    game.input.keys = [];
+  };
+  window.onfocus = function () {
+    game.pause = false;
+    mark.style.visibility = 'hidden';
+    setTimeout(() => {
+      // 等动画效果结束
+      pauseText.style.zIndex = '0';
+    }, 500);
+    pauseText.classList.add('blur-out-expand');
+    // animate(lastTime);
+  };
+
+  // 技能UI
+  let skillUI = document.getElementsByClassName('ui__skill')[0];
+  let reverseSkills = [...game.player.skills].reverse();
+  reverseSkills.forEach((skill) => {
+    let skillIcon = document.createElement('span');
+    skillIcon.classList.add('icon');
+    skillIcon.classList.add(skill.constructor.name);
+    skill.element = skillIcon;
+    skillIcon.addEventListener('pointerdown', () => {
+      game.player.useSkill(skills[skill.constructor.name.toUpperCase()]);
+    });
+
+    // 冷却遮罩
+    let iconMark = document.createElement('span');
+    iconMark.classList.add('icon__mark');
+    skillIcon.appendChild(iconMark);
+    skill.elementMark = iconMark;
+
+    // 保存技能id，方便后续使用
+    skillIcon.setAttribute('id', skill.constructor.name.toUpperCase());
+
+    // 技能描述
+    skillUI.appendChild(skillIcon);
+    console.log('技能位置', skillUI.offsetTop, skillIcon.offsetLeft, skillIcon.offsetTop);
+  });
+
+  function drawUI() {
+    let rect = canvas.getBoundingClientRect();
+    // 技能UI 位置
+    skillUI.style.right = rect.right - rect.width + 20 + 'px';
+    skillUI.style.top = rect.top + 10 + 'px';
+
+    // 根元素字体大小
+    let htmlFontSize = getComputedStyle(window.document.documentElement)['font-size'];
+
+    let skillMegbox = document.getElementsByClassName('skill__megbox')[0];
+    let titleElement = skillMegbox.getElementsByClassName('megbox__title')[0];
+    let txtElement = skillMegbox.getElementsByClassName('megbox__txt')[0];
+
+    let leaveTimer = null;
+    // 消失的延迟
+    skillMegbox.addEventListener('mouseover', () => {
+      clearTimeout(leaveTimer);
+      fadeIn(skillMegbox);
+
+      setTimeout(() => {
+        // 溢出元素给出友好的提示框
+        // 单行比较显示宽度和实际宽度，多行比较高度
+        if (
+          titleElement.getElementsByClassName('ellipsis')[0].scrollWidth >
+          titleElement.getElementsByClassName('ellipsis')[0].clientWidth
+        ) {
+          titleElement.classList.add('text-container');
+        }
+
+        if (
+          txtElement.getElementsByClassName('ellipsis-2')[0].scrollHeight >
+          txtElement.getElementsByClassName('ellipsis-2')[0].clientHeight
+        ) {
+          txtElement.classList.add('text-container');
+        }
+      });
+    });
+    skillMegbox.addEventListener('mouseleave', () => {
+      leaveTimer = setTimeout(() => {
+        fadeOut(skillMegbox);
+      }, 100);
+
+      titleElement.classList.remove('text-container');
+      txtElement.classList.remove('text-container');
+    });
+
+    // 跳过第一个提示框
+    for (let i = 1; i < skillUI.children.length; i++) {
+      const element = skillUI.children[i];
+      element.addEventListener('mouseover', () => {
+        clearTimeout(leaveTimer);
+        // 在这里编写事件处理逻辑
+        fadeIn(skillMegbox);
+
+        skillMegbox.style.right =
+          // 逆序
+          element.offsetWidth * (skillUI.children.length - i - 1) +
+          element.offsetWidth * 0.5 +
+          // 加上间隔 --1rem
+          parseInt(htmlFontSize) +
+          'px';
+
+        // 获取元素对应技能的属性
+        let skill = game.player.skills[skills[element.id]];
+        // 给元素填充技能描述
+        titleElement.getElementsByClassName('ellipsis')[0].innerHTML = skill.title;
+        titleElement.setAttribute('data-text', skill.title);
+
+        txtElement.getElementsByClassName('ellipsis-2')[0].innerHTML = skill.description;
+        txtElement.setAttribute('data-text', skill.description);
+
+        skillMegbox.getElementsByClassName('icon__text--1')[0].innerHTML = skill.cd / 1000 + ':00';
+        skillMegbox.getElementsByClassName('icon__text--2')[0].innerHTML =
+          skill.skillDuration / 1000 + ':00';
+
+          
+      });
+
+      element.addEventListener('mouseout', () => {
+        leaveTimer = setTimeout(() => {
+          fadeOut(skillMegbox);
+        }, 100);
+      });
+    }
+  }
+  drawUI();
+  this.window.addEventListener('resize', drawUI);
 });
