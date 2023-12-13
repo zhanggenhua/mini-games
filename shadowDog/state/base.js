@@ -21,7 +21,10 @@ export class State {
   //进入状态时执行
   enter() {
     console.log('当前状态', this.state);
+    // 钩子
+    this.preEnter();
   }
+  preEnter() {}
   handleInput() {} //处理输入
   leave() {} //离开状态时执行
   // 封装原本的setState以便在前后搞事情  --装饰模式？vue的beforedestroy给我的启发
@@ -40,10 +43,11 @@ export class StaticState extends State {
       this.setState(states.RUNNING, 0);
     } else if (input.includes('ArrowUp')) {
       this.setState(states.JUMPING, 1);
-    } else if (input.includes('Shift')) {
-      //按键检测的耦合很严重，考虑抽取
-      this.setState(states.ROLLING, 2);
     }
+    // else if (input.includes('Shift')) {
+    //   //按键检测的耦合很严重，考虑抽取
+    //   this.setState(states.ROLLING, 2);
+    // }
     // 塔塔开
     else if (this.game.player.x >= this.game.width / 4 && !input.includes('ArrowDown')) {
       this.setState(states.RUNNING, 1);
@@ -82,11 +86,12 @@ export class Jump extends State {
         );
       }
       this.setState(states.RUNNING, 1);
-    } else if (input.includes('Shift')) {
-      this.setState(states.ROLLING, 2);
     } else if (input.includes('ArrowDown')) {
       this.setState(states.DIVING, 0);
     }
+    //  else if (input.includes('Shift')) {
+    //   this.setState(states.ROLLING, 2);
+    // }
   }
 
   leave() {

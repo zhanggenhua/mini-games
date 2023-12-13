@@ -295,13 +295,15 @@ window.addEventListener('load', function () {
     // animate(lastTime);
   };
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // 技能UI
   let skillUI = document.getElementsByClassName('ui__skill')[0];
-  let reverseSkills = [...game.player.skills].reverse();
-  reverseSkills.forEach((skill) => {
+  // let reverseSkills = [...game.player.skills].reverse();
+  game.player.skills.forEach((skill) => {
     let skillIcon = document.createElement('span');
     skillIcon.classList.add('icon');
-    skillIcon.classList.add(skill.constructor.name);
+    // skillIcon.classList.add(skill.constructor.name);
+    skillIcon.style.backgroundImage = `url(${skill.icon})`;
     skill.element = skillIcon;
     skillIcon.addEventListener('pointerdown', () => {
       game.player.useSkill(skills[skill.constructor.name.toUpperCase()]);
@@ -313,7 +315,7 @@ window.addEventListener('load', function () {
     skillIcon.appendChild(iconMark);
     skill.elementMark = iconMark;
 
-    // 保存技能id，方便后续使用
+    // 保存技能id，方便后续使用(可以通过id获取技能)
     skillIcon.setAttribute('id', skill.constructor.name.toUpperCase());
 
     // 技能描述
@@ -375,12 +377,13 @@ window.addEventListener('load', function () {
         // 在这里编写事件处理逻辑
         fadeIn(skillMegbox);
 
+        // 提示框水平位置
         skillMegbox.style.right =
           // 逆序
           element.offsetWidth * (skillUI.children.length - i - 1) +
           element.offsetWidth * 0.5 +
           // 加上间隔 --1rem
-          parseInt(htmlFontSize) +
+          parseInt(htmlFontSize) * (skillUI.children.length - i - 1) +
           'px';
 
         // 获取元素对应技能的属性
@@ -395,8 +398,6 @@ window.addEventListener('load', function () {
         skillMegbox.getElementsByClassName('icon__text--1')[0].innerHTML = skill.cd / 1000 + ':00';
         skillMegbox.getElementsByClassName('icon__text--2')[0].innerHTML =
           skill.skillDuration / 1000 + ':00';
-
-          
       });
 
       element.addEventListener('mouseout', () => {

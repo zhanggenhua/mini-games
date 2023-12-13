@@ -12,6 +12,7 @@
 /* 全局禁用文本选择 */
 body {
   user-select: none;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 /* 文本超出隐藏 */

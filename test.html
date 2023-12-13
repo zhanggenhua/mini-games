@@ -20,7 +20,80 @@
         当前浏览器不支持canvas元素，请升级或更换浏览器！
     </canvas>
 
+    <!-- 多线程试验 -->
     <script>
+        // 主线程中
+        var code = `
+  self.onmessage = function(event) {
+    console.log('接收到主线程的消息：', event.data);
+    
+    // 在Worker线程中执行耗时操作
+    var result = doSomeHeavyTask();
+    
+    // 向主线程发送消息
+    self.postMessage(result);
+  };
+  
+  function doSomeHeavyTask() {
+    // 执行耗时操作
+    return '任务执行完毕';
+  }
+`;
+
+        var blob = new Blob([code], { type: 'application/javascript' });
+        var worker = new Worker(URL.createObjectURL(blob));
+
+        worker.onmessage = function (event) {
+            console.log('Worker线程返回的消息：', event.data);
+        };
+
+        worker.postMessage('开始执行'); // 向Worker线程发送消息
+
+    </script>
+
+    <!-- 定时器试验 -->
+    <!-- <script>
+        // var myIntervalTimer = null
+        // const myInterval = (fn, delay) => {
+        //     myIntervalTimer = setTimeout(() => {
+        //         fn().then(() => {
+        //             console.log('自定义延时器执行')
+        //             myInterval(fn, delay)
+        //         })
+        //     }, delay)
+        // }
+        class myInterval {
+            constructor(fn, time) {
+                this.end = false
+                // 定义一个递归函数，持续调用定时器
+                var execute = async (fn, time) => {
+                    await fn();
+                    if (!this.end) {
+                        // 在函数执行完毕后才再起用定时器
+                        setTimeout(function () {
+                            console.log('自定义延时器执行')
+                            execute(fn, time);
+                        }, time);
+                    }
+                };
+                execute(fn, time);
+            }
+            clear() {
+                this.end = true
+            }
+        }
+
+        let myIntervalTimer = new myInterval(async () => {
+            console.log('模拟请求');
+            await new Promise((resolve) => setTimeout(resolve, 5000))
+        }, 2000)
+
+        setTimeout(() => {
+            myIntervalTimer.clear()
+        }, 10000);
+    </script> -->
+
+    <!-- <script>
         class Singleton {
            static instance;
 
@@ -65,7 +138,7 @@
         console.log(instance1.test1); 
         console.log(instance2.test1); 
         instance1.test()
-    </script>
+    </script> -->
 
     <!-- <script>
         // 获取 canvas 元素

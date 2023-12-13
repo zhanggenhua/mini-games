@@ -139,12 +139,7 @@ img[id] {
   height: 0;
   background-color: rgba(248, 249, 250, 0.5);
 }
-.ui__skill .FeatherFall {
-  background-image: url(../assets/shadow/svg/feather.svg);
-}
-.ui__skill .SpiritBombSkill {
-  background-image: url(../assets/shadow/svg/circle.svg);
-}
+
 
 /* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 /* 提示框 */
@@ -230,9 +225,10 @@ img[id] {
 
 .ui__skill .skill__megbox .megbox__meg .megbox__txt {
   height: 4rem;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   font-size: 1.5rem;
   text-align: center;
+  line-height: 1.5;
 }
 
 

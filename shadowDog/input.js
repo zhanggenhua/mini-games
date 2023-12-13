@@ -13,19 +13,18 @@ export class InputHandler {
       this.keyHandler(e.key, (key) => {
         // 按键只记录一次
         if (this.keys.indexOf(key) === -1) {
-          // 使用技能  --因为是触发型，所以无需每帧都判断
-          switch (key) {
-            case '1':
-              this.game.player.useSkill(skills.FEATHERFALL);
-              break;
+          console.log('按下', e.key, this.keys);
 
-            default:
-              // 不是技能才记录
-              this.keys.push(key);
+          // 使用技能  --因为是触发型，防止长按重复判断，只在初次按下时触发一次
+          if (key === 'Shift') {
+            this.game.player.useSkill(skills.ROLLSKILL);
+          } else if (key === '1') {
+            this.game.player.useSkill(skills.FEATHERFALL);
+          } else {
+            this.keys.push(key);
           }
         }
       });
-      console.log('按下', e.key, this.keys);
       if (e.key === 'q') {
         this.game.debug = !this.game.debug;
       }
@@ -36,7 +35,12 @@ export class InputHandler {
     });
     window.addEventListener('keyup', (e) => {
       this.keyHandler(e.key, (key) => {
-        this.keys.splice(this.keys.indexOf(key), 1);
+        // 如果是松开已经按下的才处理
+        if (key === 'Shift') {
+          this.game.player.skills[skills.ROLLSKILL].activeEnd();
+        } else {
+          this.keys.splice(this.keys.indexOf(key), 1);
+        }
       });
     });
 

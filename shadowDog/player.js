@@ -8,7 +8,7 @@ import {
   Hit,
   Standing,
 } from './state/playerStates.js';
-import { FeatherFall, SpiritBombSkill } from './skill.js';
+import { FeatherFall, SpiritBombSkill, RollSkill, SprintSkill } from './skill.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision, throttle, imageDataHRevert } from '../utils/tool.js';
@@ -64,7 +64,7 @@ export class Player {
     ];
     this.currentState = null;
 
-    this.skills = [new FeatherFall(this.game), new SpiritBombSkill(this.game)];
+    this.skills = [new SpiritBombSkill(this.game), new FeatherFall(this.game), new RollSkill(this.game), new SprintSkill(this.game)];
     this.currentSkill = null; //当前技能
     // this.activeSkill = [];//进入冷却的技能
     // this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
