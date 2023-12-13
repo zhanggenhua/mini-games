@@ -9,6 +9,7 @@ export class Standing extends StaticState {
     super('STANDING', game);
   }
   enter() {
+    super.enter();
     this.game.player.frameX = 0;
     this.game.player.frameY = 0;
     this.game.player.maxFrame = 6;
@@ -29,6 +30,7 @@ export class Sitting extends StaticState {
     super('SITTING', game);
   }
   enter() {
+    super.enter();
     this.game.player.frameX = 0;
     this.game.player.frameY = 5;
     this.game.player.maxFrame = 4;
@@ -45,6 +47,7 @@ export class Running extends State {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
+    super.enter();
     this.game.particles.unshift(
       new Dust(
         this.game,
@@ -167,6 +170,7 @@ export class Rolling extends State {
     super('ROLLING', game);
   }
   enter() {
+    super.enter();
     this.game.player.frameX = 0;
     this.game.player.frameY = 6;
     this.game.player.maxFrame = 6;
@@ -194,6 +198,7 @@ export class Diving extends State {
     super('Diving', game);
   }
   enter() {
+    super.enter();
     this.game.player.frameX = 0;
     this.game.player.frameY = 6;
     this.game.player.maxFrame = 6;

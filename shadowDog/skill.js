@@ -1,11 +1,16 @@
-import { SpiritBomb } from './particle.js';
+import { SpiritBomb, Shadow } from './particle.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision } from '../utils/tool.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 
 import { states } from './state/base.js';
 
-export const skills = { SPIRITBOMBSKILL: 0, FEATHERFALL: 1, ROLLSKILL: 2, SPRINTSKILL: 3 };
+export const skills = {
+  SPIRITBOMBSKILL: 0,
+  FEATHERFALL: 1,
+  ROLLSKILL: 2,
+  SPRINTSKILL: 3,
+};
 
 class Skill {
   constructor(game) {
@@ -16,6 +21,7 @@ class Skill {
     this.actived = false; //激活状态，用于取消激活直接进入冷却
     this.activeTime = null;
     // this.skillCurrentDuration = 0; //当前持续时间
+    this.isBuff = false;
 
     this.cd = 0;
     this.skillDuration = 0; //持续时间
@@ -29,7 +35,7 @@ class Skill {
     setTimeout(() => {
       this.elementMark.style.transition = `height ${this.cd / 1000}s linear`;
       this.elementMark.style.height = '100%';
-    }, 100);
+    }, 10);
     // 技能冷却进度
     setTimeout(() => {
       this.cdOk = true;
@@ -41,6 +47,7 @@ class Skill {
   use() {
     this.cdOk = false;
     if (this.skillDuration === 0) {
+      // 顺发技能直接走冷却
       this.computedCd();
     } else {
       this.active();
@@ -59,18 +66,21 @@ class Skill {
     // this.skillCurrentDuration = 0;
   }
   active() {
+    console.log('激活技能');
     // 维护一个激活的状态，在相应地方进行判断
     this.actived = true;
 
     // 自下而上，和冷却动画反过来做区分
     this.elementMark.style.height = '100%';
-    // 很神奇的bug，一直按按键，就会导致上面代码应用前就执行了下面的修改
+
+    if (this.isBuff) return; //buff除非自己按下，否则不会结束
+
+    // 很神奇的bug，一直按按键，就会导致上面代码应用前就执行了下面的修改，所以给浏览器渲染引擎一些时间来应用更改
     setTimeout(() => {
       this.elementMark.style.transition = `height ${this.skillDuration / 1000}s linear`;
       this.elementMark.style.height = '0';
-    }, 100);
+    }, 10);
     // 先计算持续时间
-    console.log('激活技能');
     this.activeTime = setTimeout(() => {
       console.log('技能结束');
       this.activeEnd();
@@ -85,9 +95,8 @@ class Skill {
     this.end();
     clearTimeout(this.activeTime);
     this.animalEnd();
-    setTimeout(() => {
-      this.computedCd();
-    });
+
+    this.computedCd();
   }
 
   // 摇头
@@ -185,7 +194,7 @@ export class SpiritBombSkill extends Skill {
 export class RollSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 1000;
+    this.cd = 3000;
     this.skillDuration = 3000; //持续时间
     this.title = '无敌风火轮';
     this.description = '大开杀戒！';
@@ -215,15 +224,20 @@ export class RollSkill extends Skill {
 export class SprintSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
-    this.skillDuration = 5000; //持续时间
+    this.cd = 1000;
+    this.skillDuration = 99999; //持续时间
     this.title = '幻影冲刺';
     this.description = '更快的速度，更猛的怪物';
+    this.isBuff = true; //是buff，不计算激活
+    this._particle = null;
 
     this.icon = '../assets/shadow/svg/sprint.svg';
   }
   use() {
     super.use();
+    this.game.particles.unshift(new Shadow(this.game, this.game.player));
+
+    this.game.player.setState(states.RUNNING, 2);
   }
   end() {
     super.end();

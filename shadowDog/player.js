@@ -109,6 +109,7 @@ export class Player {
       this.currentSkill.use(params);
       // this.activeSkill.push(this.currentSkill);
     } else {
+      // 已经激活，则直接结束激活
       if (this.currentSkill.actived) {
         this.currentSkill.activeEnd();
       } else {
@@ -172,42 +173,55 @@ export class Player {
       context.stroke();
     }
 
+    // 向左
     if (this.speed < 0) {
       context.save();
-      // 保存背景
-      let bkgOldImageData = context.getImageData(0, 0, this.game.width, this.game.height);
-      // 二重翻转准备，获取目标区域背景
-      let bkgImageData = context.getImageData(this.x, this.y, this.width, this.height);
-      let bkgNewImageData = context.getImageData(this.x, this.y, this.width, this.height);
-
-      context.clearRect(0, 0, this.game.width, this.game.height);
-
-      // 获取带反转背景的角色图片
-      context.putImageData(imageDataHRevert(bkgNewImageData, bkgImageData), this.x, this.y);
+      context.scale(-1, 1);
       context.drawImage(
         this.image,
-        this.frameX * this.width,
-        this.frameY * this.height,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
         this.spriteWidth,
         this.spriteHeight,
-        this.x,
+        -this.x - this.width,
         this.y,
         this.width,
         this.height,
       );
-      let imgData = context.getImageData(this.x, this.y, this.width, this.height);
-      let newImgData = context.getImageData(this.x, this.y, this.width, this.height);
+      // // 保存背景
+      // let bkgOldImageData = context.getImageData(0, 0, this.game.width, this.game.height);
+      // // 二重翻转准备，获取目标区域背景
+      // let bkgImageData = context.getImageData(this.x, this.y, this.width, this.height);
+      // let bkgNewImageData = context.getImageData(this.x, this.y, this.width, this.height);
 
-      // 将保存的背景重新绘制到画布上
-      context.putImageData(bkgOldImageData, 0, 0);
-      //反转角色部分
-      context.putImageData(imageDataHRevert(newImgData, imgData), this.x, this.y); //左右翻转
+      // context.clearRect(0, 0, this.game.width, this.game.height);
+
+      // // 获取带反转背景的角色图片
+      // context.putImageData(imageDataHRevert(bkgNewImageData, bkgImageData), this.x, this.y);
+      // context.drawImage(
+      //   this.image,
+      //   this.frameX * this.width,
+      //   this.frameY * this.height,
+      //   this.spriteWidth,
+      //   this.spriteHeight,
+      //   this.x,
+      //   this.y,
+      //   this.width,
+      //   this.height,
+      // );
+      // let imgData = context.getImageData(this.x, this.y, this.width, this.height);
+      // let newImgData = context.getImageData(this.x, this.y, this.width, this.height);
+
+      // // 将保存的背景重新绘制到画布上
+      // context.putImageData(bkgOldImageData, 0, 0);
+      // //反转角色部分
+      // context.putImageData(imageDataHRevert(newImgData, imgData), this.x, this.y); //左右翻转
       context.restore();
     } else {
       context.drawImage(
         this.image,
-        this.frameX * this.width,
-        this.frameY * this.height,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
         this.spriteWidth,
         this.spriteHeight,
         this.x,

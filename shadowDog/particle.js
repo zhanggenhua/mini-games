@@ -1,3 +1,5 @@
+import { skills } from './skill.js';
+
 class Particle {
   constructor(game) {
     this.game = game;
@@ -148,7 +150,6 @@ export class CrowGas extends Particle {
 }
 
 // 元气弹
-// todo 增加冷却与相关UI
 export class SpiritBomb extends Particle {
   constructor(game, x, y, enemy) {
     super(game);
@@ -203,6 +204,80 @@ export class SpiritBomb extends Particle {
       context.arc(wake.x, wake.y, this.size, 0, Math.PI * 2);
       context.closePath();
       context.fill();
+    });
+    context.restore();
+  }
+}
+
+// 残影
+export class Shadow extends Particle {
+  constructor(game, player) {
+    super(game);
+    this.player = player;
+    this.frameX = 0;
+    // 子弹追踪
+    // this.speedX = player.speed;
+    // this.speedY = player.vy;
+
+    // 拖尾数组
+    this.wake = [];
+  }
+  move() {}
+  destroyed() {
+    if (this.game.player.skills[skills.SPRINTSKILL].actived === false) {
+      this.markedForDeletion = true;
+    }
+  }
+
+  update() {
+    super.update();
+
+    // 位置改变才添加尾迹
+    if (this.player.frameX > this.frameX) {
+      if (this.frameX < this.maxFrame) {
+        this.frameX = this.player.frameX;
+      } else {
+        this.frameX = 0;
+      }
+      this.wake.unshift({ x: this.player.x, y: this.player.y });
+      if (this.wake.length > 10) {
+        this.wake.pop();
+      }
+    }
+  }
+  draw(context) {
+    context.save();
+    this.wake.forEach((wake, index) => {
+      // 数组前面是新的轨迹
+      context.globalAlpha = 0.2 - (index / 10) * 0.2;
+      if (this.player.speed < 0) {
+        context.save();
+        context.scale(-1, 1);
+        context.drawImage(
+          this.player.image,
+          this.player.frameX * this.player.spriteWidth,
+          this.player.frameY * this.player.spriteHeight,
+          this.player.spriteWidth,
+          this.player.spriteHeight,
+          -wake.x - this.player.width,
+          wake.y,
+          this.player.width,
+          this.player.height,
+        );
+        context.restore();
+      } else {
+        context.drawImage(
+          this.player.image,
+          this.player.frameX * this.player.spriteWidth,
+          this.player.frameY * this.player.spriteHeight,
+          this.player.spriteWidth,
+          this.player.spriteHeight,
+          wake.x,
+          wake.y,
+          this.player.width,
+          this.player.height,
+        );
+      }
     });
     context.restore();
   }
