@@ -1,6 +1,8 @@
 # 小游戏网站
 + [git地址](https://github.com/zhanggenhua/mini-games)
 + 等做好两个游戏再搭界面
++ 预览地址：https://mini-games-cbx.pages.dev/
++ 个人博客首页：https://blog.csdn.net/zhuanggenhua?spm=1000.2115.3001.5343
 
 #### 介绍
 1. **shadow dog** : 以学习为目的，全面改造shadow dog，原地址：[shadow dog](https://www.youtube.com/c/Frankslaboratory)
