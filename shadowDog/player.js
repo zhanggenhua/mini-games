@@ -64,7 +64,12 @@ export class Player {
     ];
     this.currentState = null;
 
-    this.skills = [new SpiritBombSkill(this.game), new FeatherFall(this.game), new RollSkill(this.game), new SprintSkill(this.game)];
+    this.skills = [
+      new SpiritBombSkill(this.game),
+      new FeatherFall(this.game),
+      new RollSkill(this.game),
+      new SprintSkill(this.game),
+    ];
     this.currentSkill = null; //当前技能
     // this.activeSkill = [];//进入冷却的技能
     // this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
@@ -336,6 +341,12 @@ export class Player {
             new FloatingMessage(this.game, 'FUCK!', this.x, this.y, this.x - 20, this.y - 20, 70),
           );
           if (this.game.lives <= 0) this.game.gameOver = true;
+
+          // 添加屏幕振动效果
+          this.game.canvas.classList.remove('shake-horizontal');
+          setTimeout(() => {
+            this.game.canvas.classList.add('shake-horizontal');
+          });
         }
       }
     });

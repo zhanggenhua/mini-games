@@ -31,12 +31,13 @@ window.addEventListener('load', function () {
   particlesCanvas.height = canvas.height;
 
   class Game {
-    constructor(width, height) {
+    constructor(canvas) {
       this.pause = false; //控制游戏暂停
       this.debug = false;
 
-      this.width = width;
-      this.height = height;
+      this.canvas = canvas;
+      this.width = canvas.width;
+      this.height = canvas.height;
 
       this.level = 1; //记录游戏级别  --必须在背景初始化前
 
@@ -164,7 +165,7 @@ window.addEventListener('load', function () {
     }
   }
 
-  let game = new Game(canvas.width, canvas.height);
+  let game = new Game(canvas);
   let lastTime = 0;
   this.window.game = game; //test
 
@@ -234,6 +235,7 @@ window.addEventListener('load', function () {
     };
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // 移动端适配
   //禁止页面滑动
   var html = document.getElementsByTagName('html')[0];

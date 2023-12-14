@@ -229,7 +229,6 @@ export class SprintSkill extends Skill {
     this.title = '幻影冲刺';
     this.description = '更快的速度，更猛的怪物';
     this.isBuff = true; //是buff，不计算激活
-    this._particle = null;
 
     this.icon = '../assets/shadow/svg/sprint.svg';
   }
@@ -237,9 +236,21 @@ export class SprintSkill extends Skill {
     super.use();
     this.game.particles.unshift(new Shadow(this.game, this.game.player));
 
+    // 地图和玩家的速度都翻倍
     this.game.player.setState(states.RUNNING, 2);
+    this.game.player.states[states.RUNNING].preEnter = () => {
+      this.game.speed = 2;
+    };
+
+    this.game.player.maxSpeed *= 2;
   }
   end() {
     super.end();
+    if (this.game.player.currentState === this.game.player.states[states.RUNNING]) {
+      this.game.speed = 1;
+    }
+    this.game.player.states[states.RUNNING].preEnter = () => {};
+
+    this.game.player.maxSpeed /= 2;
   }
 }

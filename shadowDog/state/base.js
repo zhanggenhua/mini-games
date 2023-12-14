@@ -20,9 +20,9 @@ export class State {
   }
   //进入状态时执行
   enter() {
-    console.log('当前状态', this.state);
     // 钩子
     this.preEnter();
+    console.log('当前状态', this.state, 'speed', this.game.speed);
   }
   preEnter() {}
   handleInput() {} //处理输入
@@ -48,8 +48,8 @@ export class StaticState extends State {
     //   //按键检测的耦合很严重，考虑抽取
     //   this.setState(states.ROLLING, 2);
     // }
-    // 塔塔开
-    else if (this.game.player.x >= this.game.width / 4 && !input.includes('ArrowDown')) {
+    // 塔塔开  --大于1地图就前进
+    else if (this.game.player.x >= this.game.width / this.game.width && !input.includes('ArrowDown')) {
       this.setState(states.RUNNING, 1);
     }
   }

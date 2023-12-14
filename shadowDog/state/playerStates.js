@@ -69,16 +69,17 @@ export class Running extends State {
     //   this.setState(states.ROLLING, 2);
     // }
     // 允许站立  --优先级更低
-    else if (this.game.player.speed === 0 && this.game.player.x < this.game.width / 4) {
+    else if (this.game.player.speed === 0 && this.game.player.x < this.game.width / this.game.width) {
       this.setState(states.STANDING, 0);
     }
 
     // 奔跑分左右
-    else if (input.includes('ArrowRight') && this.game.speed === 0) {
-      this.setState(states.RUNNING, 1);
-    } else if (input.includes('ArrowLeft') && this.game.speed !== 0) {
-      this.setState(states.RUNNING, 0);
-    }
+    // else if (input.includes('ArrowRight') && this.game.speed === 0) {
+    //   this.setState(states.RUNNING, 1);
+    // } 
+    // else if (input.includes('ArrowLeft') && this.game.speed !== 0) {
+    //   this.setState(states.RUNNING, 0);
+    // }
   }
 }
 
