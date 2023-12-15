@@ -28,6 +28,104 @@ export const checkCollision = (enemy, player, type = 'circle') => {
       return false;
     }
   }
+  // 分离轴碰撞检测  --gpt4恐怖如斯
+  else if (type == 'separation') {
+    // 获取多边形的所有边的法线
+    function getNormals(polygon) {
+      let normals = [];
+      for (let i = 0; i < polygon.length; i++) {
+        let p1 = polygon[i];
+        let p2 = polygon[i + 1 == polygon.length ? 0 : i + 1];
+        let edge = { x: p2.x - p1.x, y: p2.y - p1.y };
+        let normal = { x: -edge.y, y: edge.x };
+        normals.push(normal);
+      }
+      return normals;
+    }
+
+    // 计算多边形在轴上的投影
+    function project(polygon, axis) {
+      let min = Infinity;
+      let max = -Infinity;
+      for (let i = 0; i < polygon.length; i++) {
+        let dot = polygon[i].x * axis.x + polygon[i].y * axis.y;
+        if (dot < min) min = dot;
+        if (dot > max) max = dot;
+      }
+      return { min, max };
+    }
+
+    // 检测两个多边形的投影是否有重叠
+    function overlap(proj1, proj2) {
+      return !(proj1.max < proj2.min || proj2.max < proj1.min);
+    }
+
+    // 碰撞检测
+    function checkCollision(polygonA, polygonB) {
+      let axes = getNormals(polygonA).concat(getNormals(polygonB));
+      for (let i = 0; i < axes.length; i++) {
+        let axis = axes[i];
+        let proj1 = project(polygonA, axis);
+        let proj2 = project(polygonB, axis);
+        if (!overlap(proj1, proj2)) {
+          return false;
+        }
+      }
+      return true; // 所有轴都有重叠
+    }
+
+    let pillar = player;
+    // 计算旋转后的四个顶点坐标
+    function rotatePoint(cx, cy, angle, px, py) {
+      let s = Math.sin(angle);
+      let c = Math.cos(angle);
+      // translate point back to origin:
+      px -= cx;
+      py -= cy;
+      // rotate point
+      let xnew = px * c - py * s;
+      let ynew = px * s + py * c;
+      // translate point back:
+      px = xnew + cx;
+      py = ynew + cy;
+      return { x: px, y: py };
+    }
+    function calculateRotatedPoints(x, y, x2, y2, lineH, deg) {
+      let angle = (deg * Math.PI) / 180;
+      let w = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
+
+      // 旋转前的四个顶点
+      let p1 = { x, y: y - lineH / 2 };
+      let p2 = { x: x + w, y: p1.y };
+      let p3 = { x: x + w, y: y + lineH / 2 };
+      let p4 = { x, y: p3.y };
+
+      // 旋转所有四个顶点
+      let rp1 = rotatePoint(x, y, angle, p1.x, p1.y);
+      let rp2 = rotatePoint(x, y, angle, p2.x, p2.y);
+      let rp3 = rotatePoint(x, y, angle, p3.x, p3.y);
+      let rp4 = rotatePoint(x, y, angle, p4.x, p4.y);
+
+      return [rp1, rp2, rp3, rp4];
+    }
+
+    let pillarVertices = calculateRotatedPoints(
+      pillar.x,
+      pillar.y,
+      pillar.x2,
+      pillar.y2,
+      pillar.lineH,
+      pillar.deg,
+    );
+    
+    let enemyVertices = [
+      { x: enemy.x, y: enemy.y },
+      { x: enemy.x, y: enemy.y + enemy.height },
+      { x: enemy.x + enemy.width, y: enemy.y + enemy.height },
+      { x: enemy.x + enemy.width, y: enemy.y },
+    ];
+    return checkCollision(pillarVertices, enemyVertices);
+  }
 };
 
 // 监听属性 --从而无需在其他地方调用computed，单一职责

@@ -1,4 +1,4 @@
-import { SpiritBomb, Shadow } from './particle.js';
+import { SpiritBomb, Shadow, FirePillar } from './particle.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision } from '../utils/tool.js';
 import { CollisionAnimation } from './collisionAnimation.js';
@@ -10,6 +10,8 @@ export const skills = {
   FEATHERFALL: 1,
   ROLLSKILL: 2,
   SPRINTSKILL: 3,
+  FIREPILLARSKILL: 4,
+  RAINBOWSKILL: 5,
 };
 
 class Skill {
@@ -252,5 +254,56 @@ export class SprintSkill extends Skill {
     this.game.player.states[states.RUNNING].preEnter = () => {};
 
     this.game.player.maxSpeed /= 2;
+  }
+}
+
+// 火柱
+export class FirePillarSkill extends Skill {
+  constructor(game) {
+    super(game);
+    this.cd = 1000;
+    this.skillDuration = 5000; //持续时间
+    this.title = '火柱';
+    this.description = '注意硬直';
+
+    this.icon = '../assets/shadow/svg/fire-ray.svg';
+  }
+  use() {
+    super.use();
+    this.game.particles.unshift(new FirePillar(this.game, this.game.player));
+
+    // 设置角色站立，禁止切换状态
+    this.game.player.setState(states.STANDING, 0);
+    this.fn = this.game.player.states[states.STANDING].setState; //保存方法以便恢复
+    this.game.player.states[states.STANDING].setState = () => {};
+
+    this.playerMaxSpeed = this.game.player.maxSpeed;
+    this.game.player.maxSpeed = 0;
+  }
+  end() {
+    super.end();
+
+    this.game.player.states[states.STANDING].setState = this.fn;
+    this.game.player.maxSpeed = this.playerMaxSpeed;
+  }
+}
+
+// 彩虹尾气
+export class RainbowSkill extends Skill {
+  constructor(game) {
+    super(game);
+    this.cd = 5000;
+    this.skillDuration = 5000; //持续时间
+    this.title = '喷射战士';
+    this.description = '噗————————';
+
+    this.icon = '../assets/shadow/svg/rainbow-star.svg';
+  }
+  use() {
+    super.use();
+    // y轴移动
+  }
+  end() {
+    super.end();
   }
 }

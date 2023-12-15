@@ -173,7 +173,7 @@ window.addEventListener('load', function () {
     game = new Game(canvas.width, canvas.height);
     lastTime = 0;
   }
-  this.document.getElementById('restart').addEventListener('pointerdown', restartGame);
+  document.getElementById('restart').addEventListener('pointerdown', restartGame);
 
   // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
   function animate(timeStamp) {

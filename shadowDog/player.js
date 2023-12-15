@@ -8,7 +8,14 @@ import {
   Hit,
   Standing,
 } from './state/playerStates.js';
-import { FeatherFall, SpiritBombSkill, RollSkill, SprintSkill } from './skill.js';
+import {
+  FeatherFall,
+  SpiritBombSkill,
+  RollSkill,
+  SprintSkill,
+  FirePillarSkill,
+  RainbowSkill,
+} from './skill.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision, throttle, imageDataHRevert } from '../utils/tool.js';
@@ -69,6 +76,8 @@ export class Player {
       new FeatherFall(this.game),
       new RollSkill(this.game),
       new SprintSkill(this.game),
+      new FirePillarSkill(this.game),
+      new RainbowSkill(this.game),
     ];
     this.currentSkill = null; //当前技能
     // this.activeSkill = [];//进入冷却的技能

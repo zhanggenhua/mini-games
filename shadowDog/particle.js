@@ -1,4 +1,6 @@
 import { skills } from './skill.js';
+import { checkCollision } from '../utils/tool.js';
+import { FloatingMessageRed } from './floatingMessages.js';
 
 class Particle {
   constructor(game) {
@@ -239,7 +241,7 @@ export class Shadow extends Particle {
       } else {
         this.frameX = 0;
       }
-      this.wake.unshift({ x: this.player.x, y: this.player.y });
+      this.wake.unshift({ x: this.x, y: this.player.y });
       if (this.wake.length > 10) {
         this.wake.pop();
       }
@@ -279,6 +281,152 @@ export class Shadow extends Particle {
         );
       }
     });
+    context.restore();
+  }
+}
+
+// 火柱
+export class FirePillar extends Particle {
+  constructor(game, player) {
+    super(game);
+    this.player = player;
+    this.x = player.x + player.width - 20;
+    this.y = player.y + player.height / 2 + 10;
+    // 长度
+    this.x2 = this.x + 500;
+    this.y2 = this.y + 500;
+
+    // 宽度
+    this.preLineH = 10; //起始宽度
+    this.lineH = 10;
+
+    this.deg = -75;
+
+    // document.getElementById('canvas1').addEventListener('pointerdown', (event) => {
+    // })
+  }
+  move() {}
+  destroyed() {
+    if (this.game.player.skills[skills.FIREPILLARSKILL].actived === false) {
+      this.markedForDeletion = true;
+    }
+  }
+
+  update() {
+    super.update();
+    if (this.lineH < 50) {
+      this.lineH += 0.2;
+    }
+    this.deg += 0.3;
+
+    // 矩形碰撞检测
+    // 怪物没死才处理碰撞
+    this.game.enemies.forEach((enemy) => {
+      if (enemy.dead && checkCollision(enemy, this, 'separation')) {
+        //发生碰撞 --各处理各的
+        enemy.handleCollision(this);
+        // 消灭敌人   --处理乌鸦这种不会被直接杀死的
+        if (enemy.dead) {
+          this.game.score += enemy.score;
+          // 浮动消息 --起始位置到偏移量
+          this.game.floatingMessages.push(
+            new FloatingMessageRed(this.game, enemy.score, enemy.x, enemy.y, 150, 50),
+          );
+        }
+      }
+    });
+  }
+  draw(context) {
+    if (!this.game.debug) {
+      let pillar = this;
+      // 计算旋转后的四个顶点坐标
+      function rotatePoint(cx, cy, angle, px, py) {
+        let s = Math.sin(angle);
+        let c = Math.cos(angle);
+        // translate point back to origin:
+        px -= cx;
+        py -= cy;
+        // rotate point
+        let xnew = px * c - py * s;
+        let ynew = px * s + py * c;
+        // translate point back:
+        px = xnew + cx;
+        py = ynew + cy;
+        return { x: px, y: py };
+      }
+      function calculateRotatedPoints(x, y, x2, y2, lineH, deg) {
+        let angle = (deg * Math.PI) / 180;
+        let w = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
+
+        // 旋转前的四个顶点
+        let p1 = { x, y: y - lineH / 2 };
+        let p2 = { x: x + w, y: p1.y };
+        let p3 = { x: x + w, y: y + lineH / 2 };
+        let p4 = { x, y: p3.y };
+
+        // 旋转所有四个顶点
+        let rp1 = rotatePoint(x, y, angle, p1.x, p1.y);
+        let rp2 = rotatePoint(x, y, angle, p2.x, p2.y);
+        let rp3 = rotatePoint(x, y, angle, p3.x, p3.y);
+        let rp4 = rotatePoint(x, y, angle, p4.x, p4.y);
+
+        return [rp1, rp2, rp3, rp4];
+      }
+
+      let pillarVertices = calculateRotatedPoints(
+        pillar.x,
+        pillar.y,
+        pillar.x2,
+        pillar.y2,
+        pillar.lineH,
+        pillar.deg,
+      );
+      //开始一个新的绘制路径
+      context.beginPath();
+      //设置线条颜色为蓝色
+      context.strokeStyle = 'blue';
+      //设置路径起点坐标
+      pillarVertices.forEach((point, index) => {
+        if (index === 0) {
+          context.moveTo(point.x, point.y);
+        }
+        context.lineTo(point.x, point.y);
+      });
+      //先关闭绘制路径。
+      context.closePath();
+      //最后，按照绘制路径画出直线
+      context.stroke();
+    }
+
+    context.save();
+    //
+    const _y = this.y - (this.lineH - this.preLineH) / 2;
+    context.translate(this.x, this.y);
+    context.rotate((this.deg * Math.PI) / 180);
+    context.translate(-this.x, -this.y);
+    // 设置渐变色
+    const linearGradient = context.createLinearGradient(this.x, _y, this.x, _y + this.lineH);
+    linearGradient.addColorStop(0, '#de5332');
+    linearGradient.addColorStop(0.4, '#f3c105');
+    linearGradient.addColorStop(0.5, '#ffc800');
+    linearGradient.addColorStop(0.6, '#f3c105');
+    linearGradient.addColorStop(1, '#de5332');
+    // 边缘和填充
+    context.strokeStyle = linearGradient;
+    context.fillStyle = linearGradient;
+
+    context.beginPath();
+    // 圆角矩形  --后面的参数圆角,  根号下 x1-x2的平方+y1-y2的平方
+    context.roundRect(
+      this.x,
+      _y,
+      Math.sqrt(Math.pow(this.x - this.x2, 2) + Math.pow(this.y - this.y2, 2)), //宽
+      this.lineH, //高
+      50,
+    );
+    context.fill();
+    context.stroke();
+
     context.restore();
   }
 }
