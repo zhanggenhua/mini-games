@@ -9,24 +9,19 @@
 }
 @media screen and (min-width: 460px) and (max-width: 768px) {
   html {
-    font-size: 14px;
+    font-size: 8;
   }
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
   html {
-    font-size: 16px;
+    font-size: 10px;
   }
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1920px) {
   html {
-    font-size: 18px;
-  }
-}
-@media screen and (min-width: 1920px) {
-  html {
-    font-size: 18px;
+    font-size: 12px;
   }
 }
 
@@ -160,6 +155,11 @@ img[id] {
   transform: translateX(50%);
   background-color: rgba(0, 0, 0, 0.2); /* 设置背景颜色，可以根据需要调整透明度 */
   backdrop-filter: blur(3px); /* 可以调整模糊程度 */
+}
+@media screen and (min-width: 1025px) and (max-width: 1920px) {
+  .ui__skill .skill__megbox {
+    border: 4px solid black;
+  }
 }
 .ui__skill .skill__megbox::before {
   content: '';

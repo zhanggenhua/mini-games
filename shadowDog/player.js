@@ -15,10 +15,12 @@ import {
   SprintSkill,
   FirePillarSkill,
   RainbowSkill,
+  BulletTimeSkill,
+  Giant,
 } from './skill.js';
 import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
-import { checkCollision, throttle, imageDataHRevert } from '../utils/tool.js';
+import { checkCollision, throttle, imageDataHRevert, observe } from '../utils/tool.js';
 
 export class Player {
   constructor(game) {
@@ -49,8 +51,6 @@ export class Player {
     this.frameX = 0;
     this.maxFrame = 5;
     this.fps = 20; //游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
-    // 一秒除以fps，意思是一秒之内动画变动了fps次
-    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
     this.frameTimer = 0; //跟踪[动画]每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
 
@@ -78,20 +78,32 @@ export class Player {
       new SprintSkill(this.game),
       new FirePillarSkill(this.game),
       new RainbowSkill(this.game),
+      new BulletTimeSkill(this.game),
+      new Giant(this.game),
     ];
     this.currentSkill = null; //当前技能
     // this.activeSkill = [];//进入冷却的技能
     // this.buff = []; //有的技能可能给的是buff  --buff的值即技能名
+
+    this.buff = [];
 
     this.checkCollision = throttle(() => {
       this._checkCollision(); //碰撞检测
     });
 
     this.computed();
+
+    observe(this, ['fps'], () => {
+      console.log('计算触发', Object.assign({}, this));
+      this.game.player.computed();
+    });
   }
 
   // 计算属性，可能会有变动 --因为依赖于其他对象的属性，而又不会自动更新
   computed() {
+    // 一秒除以fps，意思是一秒之内动画变动了fps次
+    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
+
     // this.jumpDuration = 2 * this.maxJumpHeight / this.g;// 计算跳跃的时间
     // this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
     // this.minJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.minJumpHeight)); //最小跳跃速度
@@ -130,6 +142,26 @@ export class Player {
         this.currentSkill.headShake();
       }
     }
+  }
+  // 设置buff
+  setBuff(buff, delay) {
+    if (this.buff.includes(buff)) return;
+    this.buff.push(buff);
+
+    if (buff === 'slow') {
+      // 玩家变慢
+      this.game.player.fps = 5;
+      this.oldMaxSpeed = this.maxSpeed;
+      this.game.player.maxSpeed = 2;
+    }
+    setTimeout(() => {
+      //恢复正常
+      if (buff === 'slow') {
+        this.fps = 20;
+        this.maxSpeed = this.oldMaxSpeed;
+      }
+      this.buff = this.buff.filter((b) => b !== buff);
+    }, delay);
   }
 
   update(input, deltaTime) {
@@ -171,78 +203,6 @@ export class Player {
       this.frameTimer = 0; //不是归零而是减去，误差更小  --不能减，会有时间积累
     } else {
       this.frameTimer += deltaTime;
-    }
-  }
-  draw(context) {
-    if (this.game.debug) {
-      // context.strokeRect(this.x, this.y, this.width, this.height);
-      context.beginPath();
-      context.arc(
-        this.x + this.width / 2 + 5,
-        this.y + this.height / 2 + 15,
-        this.width / 3,
-        0,
-        Math.PI * 2,
-      );
-      context.stroke();
-    }
-
-    // 向左
-    if (this.speed < 0) {
-      context.save();
-      context.scale(-1, 1);
-      context.drawImage(
-        this.image,
-        this.frameX * this.spriteWidth,
-        this.frameY * this.spriteHeight,
-        this.spriteWidth,
-        this.spriteHeight,
-        -this.x - this.width,
-        this.y,
-        this.width,
-        this.height,
-      );
-      // // 保存背景
-      // let bkgOldImageData = context.getImageData(0, 0, this.game.width, this.game.height);
-      // // 二重翻转准备，获取目标区域背景
-      // let bkgImageData = context.getImageData(this.x, this.y, this.width, this.height);
-      // let bkgNewImageData = context.getImageData(this.x, this.y, this.width, this.height);
-
-      // context.clearRect(0, 0, this.game.width, this.game.height);
-
-      // // 获取带反转背景的角色图片
-      // context.putImageData(imageDataHRevert(bkgNewImageData, bkgImageData), this.x, this.y);
-      // context.drawImage(
-      //   this.image,
-      //   this.frameX * this.width,
-      //   this.frameY * this.height,
-      //   this.spriteWidth,
-      //   this.spriteHeight,
-      //   this.x,
-      //   this.y,
-      //   this.width,
-      //   this.height,
-      // );
-      // let imgData = context.getImageData(this.x, this.y, this.width, this.height);
-      // let newImgData = context.getImageData(this.x, this.y, this.width, this.height);
-
-      // // 将保存的背景重新绘制到画布上
-      // context.putImageData(bkgOldImageData, 0, 0);
-      // //反转角色部分
-      // context.putImageData(imageDataHRevert(newImgData, imgData), this.x, this.y); //左右翻转
-      context.restore();
-    } else {
-      context.drawImage(
-        this.image,
-        this.frameX * this.spriteWidth,
-        this.frameY * this.spriteHeight,
-        this.spriteWidth,
-        this.spriteHeight,
-        this.x,
-        this.y,
-        this.width,
-        this.height,
-      );
     }
   }
 
@@ -359,5 +319,78 @@ export class Player {
         }
       }
     });
+  }
+
+  draw(context) {
+    if (this.game.debug) {
+      // context.strokeRect(this.x, this.y, this.width, this.height);
+      context.beginPath();
+      context.arc(
+        this.x + this.width / 2 + 5,
+        this.y + this.height / 2 + 15,
+        this.width / 3,
+        0,
+        Math.PI * 2,
+      );
+      context.stroke();
+    }
+
+    // 向左
+    if (this.speed < 0) {
+      context.save();
+      context.scale(-1, 1);
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
+        this.spriteWidth,
+        this.spriteHeight,
+        -this.x - this.width,
+        this.y,
+        this.width,
+        this.height,
+      );
+      // // 保存背景
+      // let bkgOldImageData = context.getImageData(0, 0, this.game.width, this.game.height);
+      // // 二重翻转准备，获取目标区域背景
+      // let bkgImageData = context.getImageData(this.x, this.y, this.width, this.height);
+      // let bkgNewImageData = context.getImageData(this.x, this.y, this.width, this.height);
+
+      // context.clearRect(0, 0, this.game.width, this.game.height);
+
+      // // 获取带反转背景的角色图片
+      // context.putImageData(imageDataHRevert(bkgNewImageData, bkgImageData), this.x, this.y);
+      // context.drawImage(
+      //   this.image,
+      //   this.frameX * this.width,
+      //   this.frameY * this.height,
+      //   this.spriteWidth,
+      //   this.spriteHeight,
+      //   this.x,
+      //   this.y,
+      //   this.width,
+      //   this.height,
+      // );
+      // let imgData = context.getImageData(this.x, this.y, this.width, this.height);
+      // let newImgData = context.getImageData(this.x, this.y, this.width, this.height);
+
+      // // 将保存的背景重新绘制到画布上
+      // context.putImageData(bkgOldImageData, 0, 0);
+      // //反转角色部分
+      // context.putImageData(imageDataHRevert(newImgData, imgData), this.x, this.y); //左右翻转
+      context.restore();
+    } else {
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height,
+      );
+    }
   }
 }

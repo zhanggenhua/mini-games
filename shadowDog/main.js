@@ -148,8 +148,8 @@ window.addEventListener('load', function () {
         // if (!this.flag) return;
         // this.flag = false;
         try {
-          let factory = ['Fly', 'Ground', 'Climbing'];
-          // let factory = ['Fly'];
+          // let factory = ['Fly', 'Ground', 'Climbing'];
+          let factory = ['Fly'];
           let index = Math.floor(Math.random() * factory.length); // 0-2
           let enemy = this.enemyFactory[`create${factory[index]}Enemy`]();
           console.log('敌人生成', enemy);
@@ -399,7 +399,7 @@ window.addEventListener('load', function () {
 
         skillMegbox.getElementsByClassName('icon__text--1')[0].innerHTML = skill.cd / 1000 + ':00';
         skillMegbox.getElementsByClassName('icon__text--2')[0].innerHTML =
-          skill.skillDuration / 1000 + ':00';
+          skill.skillDuration === '∞' ? skill.skillDuration : skill.skillDuration / 1000 + ':00';
       });
 
       element.addEventListener('mouseout', () => {

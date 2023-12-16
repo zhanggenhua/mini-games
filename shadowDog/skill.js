@@ -12,6 +12,8 @@ export const skills = {
   SPRINTSKILL: 3,
   FIREPILLARSKILL: 4,
   RAINBOWSKILL: 5,
+  BULLETTIMESKILL: 6,
+  GIANT: 7,
 };
 
 class Skill {
@@ -191,7 +193,7 @@ export class SpiritBombSkill extends Skill {
     }, 100);
   }
 }
-
+//todo 修复移动端无法跳跃
 // 翻滚
 export class RollSkill extends Skill {
   constructor(game) {
@@ -227,7 +229,7 @@ export class SprintSkill extends Skill {
   constructor(game) {
     super(game);
     this.cd = 1000;
-    this.skillDuration = 99999; //持续时间
+    this.skillDuration = '∞'; //持续时间
     this.title = '幻影冲刺';
     this.description = '更快的速度，更猛的怪物';
     this.isBuff = true; //是buff，不计算激活
@@ -261,7 +263,7 @@ export class SprintSkill extends Skill {
 export class FirePillarSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 1000;
+    this.cd = 5000;
     this.skillDuration = 5000; //持续时间
     this.title = '火柱';
     this.description = '注意硬直';
@@ -302,6 +304,44 @@ export class RainbowSkill extends Skill {
   use() {
     super.use();
     // y轴移动
+  }
+  end() {
+    super.end();
+  }
+}
+
+// 子弹时间
+export class BulletTimeSkill extends Skill {
+  constructor(game) {
+    super(game);
+    this.cd = 5000;
+    this.skillDuration = 5000; //持续时间
+    this.title = '子弹时间';
+    this.description = '一切都慢下来';
+
+    this.icon = '../assets/shadow/svg/astrolabe.svg';
+  }
+  use() {
+    super.use();
+  }
+  end() {
+    super.end();
+  }
+}
+
+// 法相天地
+export class Giant extends Skill {
+  constructor(game) {
+    super(game);
+    this.cd = 5000;
+    this.skillDuration = 5000; //持续时间
+    this.title = '法相天地';
+    this.description = '源自西游记的法术';
+
+    this.icon = '../assets/shadow/svg/giant.svg';
+  }
+  use() {
+    super.use();
   }
   end() {
     super.end();

@@ -1,6 +1,6 @@
 import { skills } from './skill.js';
-import { checkCollision } from '../utils/tool.js';
-import { FloatingMessageRed } from './floatingMessages.js';
+import { checkCollision, throttle } from '../utils/tool.js';
+import { FloatingMessageRed, FloatingMessage } from './floatingMessages.js';
 
 class Particle {
   constructor(game) {
@@ -11,6 +11,12 @@ class Particle {
     this.y = 0;
     this.speedX = 0;
     this.speedY = 0;
+  }
+  get width() {
+    return this._widht ?? this.size;
+  }
+  get height() {
+    return this._height ?? this.size;
   }
   update() {
     this.move();
@@ -150,6 +156,61 @@ export class CrowGas extends Particle {
     context.restore();
   }
 }
+// 乌鸦的便便
+export class CrowShit extends Particle {
+  constructor(game, x, y, size) {
+    super(game);
+    this.size = Math.round(size / 2);
+    this.x = x;
+    this.y = y;
+    this.img = new Image();
+    this.img.src = '../assets/shadow/svg/bianbian.svg';
+    this.loaded = false; // 标记图像是否已加载
+
+    this.g = 0.1;
+    this.speedY = -1;
+
+    this.checkCollision = throttle(() => {
+      this._checkCollision(); //碰撞检测
+    });
+  }
+  update() {
+    super.update();
+    this.speedY -= this.g;
+    this.checkCollision();
+  }
+  _checkCollision() {
+    // 矩形碰撞检测
+    if (checkCollision(this, this.game.player)) {
+      //发生碰撞
+      // 浮动消息
+      this.game.floatingMessages.push(
+        new FloatingMessage(
+          this.game,
+          '减速',
+          this.game.player.x,
+          this.game.player.y,
+          this.game.player.x,
+          this.game.player.y - 30,
+          50,
+        ),
+      );
+
+      this.game.player.setBuff('slow', 2000);
+    }
+  }
+  destroyed() {
+    if (this.y > this.game.background.realHeight - this.size) this.markedForDeletion = true;
+  }
+  draw(context) {
+    this.img.onload = function () {
+      this.loaded = true;
+    }.bind(this);
+    if (this.loaded) {
+      context.drawImage(this.img, this.x, this.y, this.size, this.size);
+    }
+  }
+}
 
 // 元气弹
 export class SpiritBomb extends Particle {
@@ -241,7 +302,7 @@ export class Shadow extends Particle {
       } else {
         this.frameX = 0;
       }
-      this.wake.unshift({ x: this.x, y: this.player.y });
+      this.wake.unshift({ x: this.player.x, y: this.player.y });
       if (this.wake.length > 10) {
         this.wake.pop();
       }
@@ -322,7 +383,7 @@ export class FirePillar extends Particle {
     // 矩形碰撞检测
     // 怪物没死才处理碰撞
     this.game.enemies.forEach((enemy) => {
-      if (enemy.dead && checkCollision(enemy, this, 'separation')) {
+      if (checkCollision(enemy, this, 'separation')) {
         //发生碰撞 --各处理各的
         enemy.handleCollision(this);
         // 消灭敌人   --处理乌鸦这种不会被直接杀死的
@@ -337,7 +398,7 @@ export class FirePillar extends Particle {
     });
   }
   draw(context) {
-    if (!this.game.debug) {
+    if (this.game.debug) {
       let pillar = this;
       // 计算旋转后的四个顶点坐标
       function rotatePoint(cx, cy, angle, px, py) {

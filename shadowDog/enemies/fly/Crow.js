@@ -1,11 +1,11 @@
 import { FlyingEnemy } from '../base.js';
-import { CrowGas } from '../../particle.js';
+import { CrowGas, CrowShit } from '../../particle.js';
 
 import { FloatingMessage } from '../../floatingMessages.js';
 
 // 乌鸦
 export default class Crow extends FlyingEnemy {
-  static score = 2;
+  static score = 3;
   static egg = 1;
   constructor(game) {
     super(game);
@@ -29,6 +29,9 @@ export default class Crow extends FlyingEnemy {
     this.fps = this.fps * 2; //默认就快两倍
     this.flapSpeed = Math.floor(this.speedX); //1 ~ 3
     // this.flapSpeed = Math.floor(Math.random() * 3 + 1); //1 ~ 3
+
+    // 随机的投掷便便
+    this.shitSpeed = Math.floor(Math.random() * 20 + 10); //2 ~ 4
   }
   move() {
     this.x -= this.speedX + this.game.speed;
@@ -38,6 +41,10 @@ export default class Crow extends FlyingEnemy {
     //随机的震动翅膀速率
     if (this.frame % this.flapSpeed === 0) {
       this.frameX >= this.maxFrame ? (this.frameX = 0) : this.frameX++;
+    }
+    // 随机的便便频率
+    if (this.frame % this.shitSpeed === 0) {
+      this.game.particles.unshift(new CrowShit(this.game, this.x, this.y, this.width));
     }
   }
 
