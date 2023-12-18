@@ -2,14 +2,14 @@
   font-family: 'Creepster';
   src: url('../assets/shadow/font/AlZy_zVUqJz4yMrniH4Rcn35.woff2') format('woff2');
 }
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 495px) {
   html {
     font-size: 5px;
   }
 }
-@media screen and (min-width: 460px) and (max-width: 768px) {
+@media screen and (min-width: 495px) and (max-width: 768px) {
   html {
-    font-size: 8;
+    font-size: 8px;
   }
 }
 

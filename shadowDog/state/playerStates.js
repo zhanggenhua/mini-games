@@ -47,7 +47,7 @@ export class Running extends State {
     this.game.player.maxFrame = 6;
   }
   handleInput(input) {
-    super.enter();
+    super.handleInput();
     this.game.particles.unshift(
       new Dust(
         this.game,
@@ -69,7 +69,7 @@ export class Running extends State {
     //   this.setState(states.ROLLING, 2);
     // }
     // 允许站立  --优先级更低
-    else if (this.game.player.speed === 0 && this.game.player.x < this.game.width / this.game.width) {
+    else if (this.game.player.speed === 0 && this.game.player.x <= this.game.width / this.game.width) {
       this.setState(states.STANDING, 0);
     }
 

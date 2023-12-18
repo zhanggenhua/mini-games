@@ -55,7 +55,7 @@ export default class Crow extends FlyingEnemy {
   }
 
   // 碰撞处理
-  handleCollision(collider) {
+  _handleCollision(collider) {
     // 乌鸦只能被魔法打败
     if (this.game.player.kill()) {
       this.game.floatingMessages.push(

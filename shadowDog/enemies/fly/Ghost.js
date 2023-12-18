@@ -1,4 +1,5 @@
 import { FlyingEnemy } from '../base.js';
+import { FloatingMessage } from '../../floatingMessages.js';
 
 export default class Ghost extends FlyingEnemy {
   static score = 3;
@@ -19,33 +20,45 @@ export default class Ghost extends FlyingEnemy {
     this.hidden = false;
 
     // 隐身频率
-    this.hiddenSpeed = Math.random() * 20 + 20;
+    this.hiddenSpeed = Math.floor(Math.random() * 20 + 20);
   }
   frameUpdate() {
+    console.log('???', this.frame, this.hiddenSpeed);
     if (this.frame % this.hiddenSpeed === 0) {
       this.hidden = !this.hidden;
     }
   }
 
-  handleCollision() {
-    // todo 碰撞还是发生，处理玩家kill状态
-    if (this.hidden) return;
-    super.handleCollision();
+  _handleCollision() {
+    if (this.hidden) {
+      if (this.game.player.kill()) {
+        this.game.floatingMessages.push(
+          new FloatingMessage(this.game, 'MISS', this.x, this.y, this.x - 20, this.y - 20, 70),
+        );
+      }
+    } else {
+      super._handleCollision();
+    }
+  }
+  die() {
+    // 发生碰撞时，幽灵隐身则 变成实体，否则死亡
+    // console.log('???', this.hiddenSpeed, this.hidden);
+    if (this.hidden) {
+      // 幽灵变成实体
+      this.hidden = false;
+    } else {
+      super.die();
+    }
   }
 
   draw(context) {
     //实现幽灵半透明
     context.save(); //保存所有画布的快照
-    if (!this.hidden) context.globalAlpha = 0.5;
+    if (this.hidden) context.globalAlpha = 0.5;
     super.draw(context);
     context.restore();
   }
 
-  handleCollision() {
-    // 幽灵变成实体
-    this.hidden = false;
-    super.handleCollision();
-  }
   die() {
     setTimeout(() => {
       super.die();

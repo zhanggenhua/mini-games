@@ -19,6 +19,10 @@ class Enemy {
 
     // 这里调用的是具体实例的computed  --不能用异步，虽然可以等子类初始化后调用，但是执行顺序乱套
     // this.computed();
+
+    this.handleCollision = throttle(() => {
+      this._handleCollision(); //碰撞检测
+    }, 1000);
   }
   computed() {}
   get frameInterval() {
@@ -90,7 +94,7 @@ class Enemy {
   }
 
   // 碰撞处理  --返回是否死亡
-  handleCollision(collider) {
+  _handleCollision(collider) {
     this.die();
     this.dead = true;
   }
