@@ -339,24 +339,42 @@ export class BulletTimeSkill extends Skill {
 export class Giant extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 10000;
-    this.skillDuration = 5000; //持续时间
+    this.cd = 8000;
+    this.skillDuration = 6000; //持续时间
     this.title = '法相天地';
     this.description = '源自西游记的法术';
 
     this.icon = '../assets/shadow/svg/giant.svg';
+
+    this.frame = 0;
   }
   use() {
     super.use();
     this.oldWidth = this.game.player.width;
     this.oldHeight = this.game.player.height;
-    this.game.player.width *= 3;
-    this.game.player.height *= 3;
+    this.targetWidth = this.game.player.width * 3;
+    this.targetHeight = this.game.player.height * 3;
+    this.animateSize();
   }
   end() {
     super.end();
 
-    this.game.player.width = this.oldWidth;
-    this.game.player.height = this.oldHeight;
+    this.targetWidth = this.oldWidth;
+    this.targetHeight = this.oldHeight;
+    this.animateSize();
+  }
+  animateSize() {
+    if (
+      Math.round(this.game.player.width) == Math.round(this.targetWidth) &&
+      Math.round(this.game.player.height) == Math.round(this.targetHeight)
+    ) {
+      return;
+    }
+
+    this.game.player.width += (this.targetWidth - this.game.player.width) * 0.01;
+    this.game.player.height += (this.targetHeight - this.game.player.height) * 0.01;
+    setTimeout(() => {
+      this.animateSize();
+    }, 10);
   }
 }

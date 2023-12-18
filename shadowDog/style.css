@@ -195,14 +195,14 @@ img[id] {
   line-height: 3rem;
 }
 .ui__skill .skill__megbox .megbox__icon div {
-  width: 49%;
+  width: 46%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 5%;
   /* padding: 0 1rem; */
 }
-@media screen and (max-width: 460px) {
+@media screen and (max-width: 769px) {
   .ui__skill .skill__megbox .megbox__icon div {
     width: 100%;
   }

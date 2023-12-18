@@ -9,6 +9,7 @@ import {
   Standing,
 } from './state/playerStates.js';
 import {
+  skills,
   FeatherFall,
   SpiritBombSkill,
   RollSkill,
@@ -41,6 +42,7 @@ export class Player {
     this.airResistance = 0; // 空气阻力  --可能做飞行功能用得到
     this.airControl = 0.8; //空中控制力
 
+    this.y = this.game.background.realHeight - this.height;
     // 计算属性 -- h= 1/2 gt^2  --由函数图像得来，vt*t /2: 总路程 | v=gt
     this.g = 1; //重力加速度 -- g=2h/t^2  --像素好像没法算
 
@@ -51,6 +53,8 @@ export class Player {
     this.frameX = 0;
     this.maxFrame = 5;
     this.fps = 20; //游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
+    // 一秒除以fps，意思是一秒之内动画变动了fps次
+    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
     this.frameTimer = 0; //跟踪[动画]每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
 
@@ -101,15 +105,11 @@ export class Player {
 
   // 计算属性，可能会有变动 --因为依赖于其他对象的属性，而又不会自动更新
   computed() {
-    // 一秒除以fps，意思是一秒之内动画变动了fps次
-    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
-
     // this.jumpDuration = 2 * this.maxJumpHeight / this.g;// 计算跳跃的时间
     // this.jumpDuration = 2; //跳跃总时间，以此计算重力加速度 --好处：更直观的控制手感
     // this.minJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.minJumpHeight)); //最小跳跃速度
     // 记录地板高度 后面要用 groundMargin: 地板高度
     this.ground = this.game.background.realHeight - this.height;
-    this.y = this.ground;
     this.maxJumpHeight = this.ground / 2; //跳跃的最大高度
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
 
@@ -269,10 +269,11 @@ export class Player {
 
   // 是否杀戮状态
   kill() {
+    console.log('???', this.skills[skills.GIANT].actived);
     return (
       this.currentState === this.states[4] ||
       this.currentState === this.states[5] ||
-      this.skills[skills.GIANT]
+      this.skills[skills.GIANT].actived === true
     );
   }
   // 是否无敌状态
