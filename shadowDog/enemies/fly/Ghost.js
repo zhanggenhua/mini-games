@@ -23,7 +23,6 @@ export default class Ghost extends FlyingEnemy {
     this.hiddenSpeed = Math.floor(Math.random() * 20 + 20);
   }
   frameUpdate() {
-    console.log('???', this.frame, this.hiddenSpeed);
     if (this.frame % this.hiddenSpeed === 0) {
       this.hidden = !this.hidden;
     }

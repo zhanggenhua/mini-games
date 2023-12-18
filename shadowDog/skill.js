@@ -12,8 +12,8 @@ export const skills = {
   SPRINTSKILL: 3,
   FIREPILLARSKILL: 4,
   RAINBOWSKILL: 5,
-  BULLETTIMESKILL: 6,
-  GIANT: 7,
+  GIANT: 6,
+  // BULLETTIMESKILL: 6,
 };
 
 class Skill {
@@ -310,11 +310,11 @@ export class RainbowSkill extends Skill {
   }
 }
 
-// 子弹时间
+// 子弹时间 --耦合太深，放弃
 export class BulletTimeSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
+    this.cd = 1000;
     this.skillDuration = 5000; //持续时间
     this.title = '子弹时间';
     this.description = '一切都慢下来';
@@ -323,9 +323,15 @@ export class BulletTimeSkill extends Skill {
   }
   use() {
     super.use();
+    this.game.speed = 0.01;
+    this.game.afterSetState = function () {
+      this.game.speed = 0.01;
+    };
   }
   end() {
     super.end();
+    this.game.speed == 0.01 && (this.game.speed = 1);
+    this.game.afterSetState = () => {};
   }
 }
 
@@ -333,7 +339,7 @@ export class BulletTimeSkill extends Skill {
 export class Giant extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
+    this.cd = 10000;
     this.skillDuration = 5000; //持续时间
     this.title = '法相天地';
     this.description = '源自西游记的法术';
@@ -342,8 +348,15 @@ export class Giant extends Skill {
   }
   use() {
     super.use();
+    this.oldWidth = this.game.player.width;
+    this.oldHeight = this.game.player.height;
+    this.game.player.width *= 3;
+    this.game.player.height *= 3;
   }
   end() {
     super.end();
+
+    this.game.player.width = this.oldWidth;
+    this.game.player.height = this.oldHeight;
   }
 }

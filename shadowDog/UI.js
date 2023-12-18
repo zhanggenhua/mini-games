@@ -30,7 +30,7 @@ export class UI {
       // 当前游戏等级
       context.font = this.fontSize * 0.8 + 'px ' + this.fontFamily;
       context.fillText('LEVEL: ' + this.game.level, 25, 140);
-      context.fillText('DISTANCE: ' + this.game.background.distance, 25, 160);
+      context.fillText('DISTANCE: ' + Math.floor(this.game.background.distance), 25, 160);
       // 游戏结束看板
       if (this.game.gameOver) {
         context.textAlign = 'center';

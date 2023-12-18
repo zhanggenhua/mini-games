@@ -241,8 +241,8 @@ export class ClimbingEnemy extends Enemy {
       if (enemy === this || enemy instanceof ClimbingEnemy) return;
       // 怪物没死才处理碰撞
       if (!enemy.dead && checkCollision(enemy, this.mouth)) {
-        // 比大小 --只吃同等级的
-        if (this.score == enemy.score) {
+        // 比大小 --
+        if (this.score >= enemy.score && enemy.constructor.name !== 'Fly') {
           this.dead = true;
           if (this.speedY > 0) this.speedY *= -1; //返航
           enemy.dead = true;

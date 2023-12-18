@@ -2,6 +2,7 @@ import { FlyingEnemy } from '../base.js';
 
 // 浮游
 export default class Swim extends FlyingEnemy {
+  static score = 2;
   static egg = 2;
   constructor(game) {
     super(game);

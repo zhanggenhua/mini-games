@@ -1,6 +1,7 @@
 import { FlyingEnemy } from '../base.js';
 
 export default class Bat extends FlyingEnemy {
+  static score = 2;
   constructor(game) {
     super(game);
     this.spriteWidth = 293;

@@ -78,7 +78,7 @@ export class Player {
       new SprintSkill(this.game),
       new FirePillarSkill(this.game),
       new RainbowSkill(this.game),
-      new BulletTimeSkill(this.game),
+      // new BulletTimeSkill(this.game),
       new Giant(this.game),
     ];
     this.currentSkill = null; //当前技能
@@ -93,7 +93,7 @@ export class Player {
 
     this.computed();
 
-    observe(this, ['fps'], () => {
+    observe(this, ['fps', 'width', 'height'], () => {
       console.log('计算触发', Object.assign({}, this));
       this.game.player.computed();
     });
@@ -269,7 +269,11 @@ export class Player {
 
   // 是否杀戮状态
   kill() {
-    return this.currentState === this.states[4] || this.currentState === this.states[5];
+    return (
+      this.currentState === this.states[4] ||
+      this.currentState === this.states[5] ||
+      this.skills[skills.GIANT]
+    );
   }
   // 是否无敌状态
   wudi() {
