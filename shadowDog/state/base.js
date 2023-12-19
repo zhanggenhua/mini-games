@@ -1,4 +1,5 @@
 import { GroundSplash } from '../particle.js';
+import { playerParams} from '../player.js';
 
 // 状态机
 export const states = {
@@ -97,6 +98,6 @@ export class Jump extends State {
   leave() {
     super.leave();
     // 改回空中临时改变的速度
-    this.game.player.maxSpeed = 8;
+    this.game.player.maxSpeed = playerParams.MAXSPEED;
   }
 }

@@ -23,6 +23,9 @@ import { CollisionAnimation } from './collisionAnimation.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision, throttle, imageDataHRevert, observe } from '../utils/tool.js';
 
+export const playerParams = {
+  MAXSPEED : 8,
+}
 export class Player {
   constructor(game) {
     this.game = game;
@@ -62,7 +65,7 @@ export class Player {
     this.acceleration = 0.3; // 设置加速度值
     this.friction = 0.5; // 设置摩擦力值
     this.speed = 0; //初速度
-    this.maxSpeed = 8; //最大移动速度
+    this.maxSpeed = playerParams.MAXSPEED; //最大移动速度
     this.states = [
       new Sitting(this.game),
       new Running(this.game),
@@ -151,14 +154,13 @@ export class Player {
     if (buff === 'slow') {
       // 玩家变慢
       this.game.player.fps = 5;
-      this.oldMaxSpeed = this.maxSpeed;
       this.game.player.maxSpeed = 2;
     }
     setTimeout(() => {
       //恢复正常
       if (buff === 'slow') {
         this.fps = 20;
-        this.maxSpeed = this.oldMaxSpeed;
+        this.maxSpeed = playerParams.MAXSPEED;
       }
       this.buff = this.buff.filter((b) => b !== buff);
     }, delay);
@@ -273,7 +275,8 @@ export class Player {
     return (
       this.currentState === this.states[4] ||
       this.currentState === this.states[5] ||
-      this.skills[skills.GIANT].actived === true
+      this.skills[skills.GIANT].actived === true ||
+      this.skills[skills.RAINBOWSKILL].actived === true
     );
   }
   // 是否无敌状态

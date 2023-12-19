@@ -1,7 +1,8 @@
-import { SpiritBomb, Shadow, FirePillar } from './particle.js';
+import { SpiritBomb, Shadow, FirePillar, Rainbow } from './particle.js';
 import { FloatingMessage } from './floatingMessages.js';
 import { checkCollision } from '../utils/tool.js';
 import { CollisionAnimation } from './collisionAnimation.js';
+import { playerParams} from './player.js';
 
 import { states } from './state/base.js';
 
@@ -255,7 +256,7 @@ export class SprintSkill extends Skill {
     }
     this.game.player.states[states.RUNNING].preEnter = () => {};
 
-    this.game.player.maxSpeed /= 2;
+    this.game.player.maxSpeed = playerParams.MAXSPEED;
   }
 }
 
@@ -279,14 +280,13 @@ export class FirePillarSkill extends Skill {
     this.fn = this.game.player.states[states.STANDING].setState; //保存方法以便恢复
     this.game.player.states[states.STANDING].setState = () => {};
 
-    this.playerMaxSpeed = this.game.player.maxSpeed;
     this.game.player.maxSpeed = 0;
   }
   end() {
     super.end();
 
     this.game.player.states[states.STANDING].setState = this.fn;
-    this.game.player.maxSpeed = this.playerMaxSpeed;
+    this.game.player.maxSpeed = playerParams.MAXSPEED;
   }
 }
 
@@ -303,10 +303,32 @@ export class RainbowSkill extends Skill {
   }
   use() {
     super.use();
-    // y轴移动
+    this.game.particles.unshift(new Rainbow(this.game, this.game.player.x, this.game.player.y));
+
+    // 设置角色站立，禁止切换状态
+    this.game.player.setState(states.STANDING, 10);
+    this.fn = this.game.player.states[states.STANDING].setState; //保存方法以便恢复
+    this.game.player.states[states.STANDING].setState = () => {};
+
+    this.game.player.maxSpeed = 0;
   }
   end() {
     super.end();
+    this.game.floatingMessages.push(
+      new FloatingMessage(
+        this.game,
+        '虚弱',
+        this.game.player.x,
+        this.game.player.y,
+        this.game.player.x,
+        this.game.player.y - 30,
+        50,
+      ),
+    );
+    this.game.player.setBuff('slow', 2000); //模拟虚弱
+
+    this.game.player.states[states.STANDING].setState = this.fn;
+    this.game.player.maxSpeed = playerParams.MAXSPEED;
   }
 }
 

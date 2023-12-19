@@ -181,7 +181,7 @@ export class CrowShit extends Particle {
   }
   _checkCollision() {
     // 矩形碰撞检测
-    if (checkCollision(this, this.game.player)) {
+    if (checkCollision(this, this.game.player) && !this.game.player.wudi()) {
       //发生碰撞
       // 浮动消息
       this.game.floatingMessages.push(
@@ -460,11 +460,11 @@ export class FirePillar extends Particle {
     }
 
     context.save();
-    //
+    // 线性渐变设置的是y方向上的渐变，y不断减小，宽度就不断变大  --注意这里x、y取得是右下角
     const _y = this.y - (this.lineH - this.preLineH) / 2;
     context.translate(this.x, this.y);
-    context.rotate((this.deg * Math.PI) / 180);
-    context.translate(-this.x, -this.y);
+    // context.rotate((this.deg * Math.PI) / 180);
+    context.translate(-this.x, -this.y); //抵消旋转画布的影响
     // 设置渐变色
     const linearGradient = context.createLinearGradient(this.x, _y, this.x, _y + this.lineH);
     linearGradient.addColorStop(0, '#de5332');
@@ -488,6 +488,62 @@ export class FirePillar extends Particle {
     context.fill();
     context.stroke();
 
+    context.restore();
+  }
+}
+
+// 彩虹尾气
+export class Rainbow extends Particle {
+  constructor(game, x, y) {
+    super(game);
+    this.x = x;
+    this.y = y;
+  }
+  move() {}
+  destroyed() {
+    if (this.game.player.skills[skills.RAINBOWSKILL].actived === false) {
+      this.markedForDeletion = true;
+    }
+  }
+  update() {
+    super.update();
+    this.game.player.vy = 0;
+
+    if (this.x > 0.1) {
+      this.x *= 0.9; //不断变长
+    }
+  }
+  draw(context) {
+    context.save();
+    // 设置渐变色
+    const linearGradient = context.createLinearGradient(
+      this.x,
+      this.y,
+      this.x,
+      this.y + this.game.player.height,
+    );
+    linearGradient.addColorStop(0, '#ffffff');
+    linearGradient.addColorStop(0.3, '#8B00FF');
+    linearGradient.addColorStop(0.4, '#0000FF');
+    linearGradient.addColorStop(0.5, '#00FFFF');
+    linearGradient.addColorStop(0.6, '#00FF00');
+    linearGradient.addColorStop(0.7, '#FFFF00');
+    linearGradient.addColorStop(0.8, '#FF7F00');
+    linearGradient.addColorStop(0.9, '#FF0000');
+    linearGradient.addColorStop(1, '#ffffff');
+    // 边缘和填充
+    context.strokeStyle = linearGradient;
+    context.fillStyle = linearGradient;
+
+    context.globalAlpha = 0.5;
+    context.beginPath();
+    context.fillRect(
+      this.x,
+      this.y + this.game.player.height / 2,
+      this.game.player.x - this.x,
+      this.game.player.height / 2,
+    );
+    context.fill();
     context.restore();
   }
 }
