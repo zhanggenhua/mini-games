@@ -12,7 +12,7 @@ import { checkCollision } from '../utils/tool.js';
 import Crow from './enemies/fly/Crow.js';
 import { skills } from './skill.js';
 
-import { fadeIn, fadeOut } from '../utils/tool.js';
+import { fadeIn, fadeOut, isMobile } from '../utils/tool.js';
 
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
@@ -51,7 +51,7 @@ window.addEventListener('load', function () {
       this.input = new InputHandler(this); //记录用户输入，没什么好说的
 
       this.enemies = [];
-      this.enemyInterval = 1000; //新敌人加入画面的速度，可以调节敌人出现的速度  Interval--间隔
+      this.enemyInterval = 2000; //新敌人加入画面的速度，可以调节敌人出现的速度  Interval--间隔
       this.enemyTimer = 0; //敌人计时器，用于生成敌人
 
       this.particles = [];
@@ -67,6 +67,7 @@ window.addEventListener('load', function () {
       // this.maxTime = 60000;
       this.gameOver = false;
       this.lives = 5; //生命
+      this.gameEnd = false;
 
       // 状态初始化
       this.player.currentState = this.player.states[0];
@@ -75,6 +76,9 @@ window.addEventListener('load', function () {
       this.enemyFactory = new EnemyFactory(this);
 
       this.flag = true;
+
+      // 进度条
+      this.progressBar = document.getElementsByClassName('progress__bar')[0];
     }
 
     update(deltaTime) {
@@ -180,7 +184,7 @@ window.addEventListener('load', function () {
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-    if (!game.pause && !game.gameOver) {
+    if (!game.pause && !game.gameOver && !game.gameEnd) {
       // 清除后再绘制
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -272,7 +276,9 @@ window.addEventListener('load', function () {
       document.exitFullscreen();
     }
   }
-  this.document.getElementById('fullScreenButton').addEventListener('click', toggleFullScreen);
+  this.document
+    .getElementById('fullScreenButton')
+    .addEventListener('pointerdown', toggleFullScreen);
 
   let mark = document.getElementsByClassName('pause__mark')[0];
   let pauseText = document.getElementsByClassName('pause__text')[0];
@@ -327,6 +333,7 @@ window.addEventListener('load', function () {
 
   function drawUI() {
     let rect = canvas.getBoundingClientRect();
+
     // 技能UI 位置
     skillUI.style.right = rect.right - rect.width + 20 + 'px';
     skillUI.style.top = rect.top + 10 + 'px';
@@ -339,6 +346,7 @@ window.addEventListener('load', function () {
     let txtElement = skillMegbox.getElementsByClassName('megbox__txt')[0];
 
     let leaveTimer = null;
+
     // 消失的延迟
     skillMegbox.addEventListener('mouseover', () => {
       clearTimeout(leaveTimer);
@@ -374,7 +382,8 @@ window.addEventListener('load', function () {
     // 跳过第一个提示框
     for (let i = 1; i < skillUI.children.length; i++) {
       const element = skillUI.children[i];
-      element.addEventListener('mouseover', () => {
+
+      const getMegItem = () => {
         clearTimeout(leaveTimer);
         // 在这里编写事件处理逻辑
         fadeIn(skillMegbox);
@@ -400,13 +409,31 @@ window.addEventListener('load', function () {
         skillMegbox.getElementsByClassName('icon__text--1')[0].innerHTML = skill.cd / 1000 + ':00';
         skillMegbox.getElementsByClassName('icon__text--2')[0].innerHTML =
           skill.skillDuration === '∞' ? skill.skillDuration : skill.skillDuration / 1000 + ':00';
+      };
+      let timer = null;
+      element.addEventListener('mouseover', () => {
+        // 移动端适配 --长按提示
+        if (isMobile()) {
+          timer = setTimeout(() => {
+            getMegItem();
+          }, 750); // 设置长按时间，单位为毫秒
+        } else {
+          getMegItem();
+        }
       });
 
       element.addEventListener('mouseout', () => {
         leaveTimer = setTimeout(() => {
           fadeOut(skillMegbox);
         }, 100);
+
+        clearTimeout(timer);
       });
+
+      // 进度条UI位置
+      let progress = document.getElementsByClassName('progress')[0];
+      progress.style.right = rect.right - rect.width + 15 + 'px';
+      progress.style.bottom = rect.bottom - rect.height + 10 + 'px';
     }
   }
   drawUI();

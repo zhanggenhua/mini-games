@@ -463,7 +463,7 @@ export class FirePillar extends Particle {
     // 线性渐变设置的是y方向上的渐变，y不断减小，宽度就不断变大  --注意这里x、y取得是右下角
     const _y = this.y - (this.lineH - this.preLineH) / 2;
     context.translate(this.x, this.y);
-    // context.rotate((this.deg * Math.PI) / 180);
+    context.rotate((this.deg * Math.PI) / 180);
     context.translate(-this.x, -this.y); //抵消旋转画布的影响
     // 设置渐变色
     const linearGradient = context.createLinearGradient(this.x, _y, this.x, _y + this.lineH);
@@ -523,19 +523,19 @@ export class Rainbow extends Particle {
       this.y + this.game.player.height,
     );
     linearGradient.addColorStop(0, '#ffffff');
-    linearGradient.addColorStop(0.3, '#8B00FF');
-    linearGradient.addColorStop(0.4, '#0000FF');
-    linearGradient.addColorStop(0.5, '#00FFFF');
-    linearGradient.addColorStop(0.6, '#00FF00');
-    linearGradient.addColorStop(0.7, '#FFFF00');
-    linearGradient.addColorStop(0.8, '#FF7F00');
-    linearGradient.addColorStop(0.9, '#FF0000');
+    linearGradient.addColorStop(0.2, '#8B00FF');
+    linearGradient.addColorStop(0.3, '#0000FF');
+    linearGradient.addColorStop(0.4, '#00FFFF');
+    linearGradient.addColorStop(0.5, '#00FF00');
+    linearGradient.addColorStop(0.6, '#FFFF00');
+    linearGradient.addColorStop(0.7, '#FF7F00');
+    linearGradient.addColorStop(0.8, '#FF0000');
     linearGradient.addColorStop(1, '#ffffff');
     // 边缘和填充
     context.strokeStyle = linearGradient;
     context.fillStyle = linearGradient;
 
-    context.globalAlpha = 0.5;
+    context.globalAlpha = 0.7;
     context.beginPath();
     context.fillRect(
       this.x,

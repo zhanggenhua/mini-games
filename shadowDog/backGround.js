@@ -11,6 +11,8 @@ export class BackGround {
     this.height = 500;
     // this.bkgMove = ''; //地图移动方向
     this.distance = 0; //记录总移动距离，用于分级
+    // 通关的目标距离
+    this.targetDistance = 10000;
     this.environment = environment.CITY;
     // this.transition = false; //用于地图切换
 
@@ -31,9 +33,10 @@ export class BackGround {
     observe(this, ['groundMargin'], () => {
       console.log('计算触发', Object.assign({}, this));
       this.game.player.computed();
-      // this.game.enemies.forEach((enemy) => {
-      //   enemy.computed();
-      // });
+    });
+    observe(this, ['environment'], () => {
+      console.log('计算触发', Object.assign({}, this));
+      this.game.enemyFactory.computed();
     });
   }
   init() {
@@ -42,7 +45,7 @@ export class BackGround {
       case environment.CITY:
         // 城市地图 --初始
         this.BackGroundLayers = [this.layer1, this.layer2, this.layer3, this.layer4, this.layer5];
-        this.groundMargin = 80;//地面高度
+        this.groundMargin = 80; //地面高度
         this.game.ui.fontFamily = 'Bangers';
         break;
       case environment.FOREST:
@@ -62,7 +65,8 @@ export class BackGround {
     this.distance += this.game.speed; //统计距离
     // 切换地图
     if (this.distance >= this.width * this.game.level) {
-      if (this.game.level % 2 === 0) {//简单的根据奇偶切换
+      if (this.game.level % 2 === 0) {
+        //简单的根据奇偶切换
         this.environment = environment.FOREST;
       } else {
         this.environment = environment.CITY;
@@ -79,6 +83,18 @@ export class BackGround {
     this.BackGroundLayers.forEach((layer) => {
       layer.draw(context);
     });
+
+    // 绘制进度条
+    let width = (this.distance / this.targetDistance) * 100;
+    if (this.distance < this.targetDistance && 80 > width) {
+      this.game.progressBar.style.width = width + '%';
+    } else if (80 < width && width < 100) {
+      // 一大波敌人
+      this.game.enemyInterval = 500;
+    } else {
+      // 游戏结束
+      this.game.gameEnd = true;
+    }
   }
 }
 

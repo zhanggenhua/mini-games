@@ -117,7 +117,7 @@ export const checkCollision = (enemy, player, type = 'circle') => {
       pillar.lineH,
       pillar.deg,
     );
-    
+
     let enemyVertices = [
       { x: enemy.x, y: enemy.y },
       { x: enemy.x, y: enemy.y + enemy.height },
@@ -223,4 +223,9 @@ export const fadeOut = (target) => {
   target.classList.add('text-blur-out');
   target.classList.remove('text-focus-in');
   target.style.visibility = 'hidden';
+};
+
+// 判断是否移动端
+export const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 };

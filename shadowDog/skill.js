@@ -118,7 +118,7 @@ class Skill {
 export class FeatherFall extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 8000;
+    this.cd = 3000;
     this.skillDuration = 5000; //持续时间
     this.title = '羽落术';
     this.description = '源于DND中的法术';
@@ -199,7 +199,7 @@ export class SpiritBombSkill extends Skill {
 export class RollSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 3000;
+    this.cd = 5000;
     this.skillDuration = 3000; //持续时间
     this.title = '无敌风火轮';
     this.description = '大开杀戒！';
@@ -242,7 +242,7 @@ export class SprintSkill extends Skill {
     this.game.particles.unshift(new Shadow(this.game, this.game.player));
 
     // 地图和玩家的速度都翻倍
-    this.game.player.setState(states.RUNNING, 2);
+    this.game.player.setState(states.RUNNING, this.game.speed * 2);
     this.game.player.states[states.RUNNING].preEnter = () => {
       this.game.speed = 2;
     };
@@ -264,8 +264,8 @@ export class SprintSkill extends Skill {
 export class FirePillarSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
-    this.skillDuration = 5000; //持续时间
+    this.cd = 6000;
+    this.skillDuration = 4000; //持续时间
     this.title = '火柱';
     this.description = '注意硬直';
 
@@ -294,7 +294,7 @@ export class FirePillarSkill extends Skill {
 export class RainbowSkill extends Skill {
   constructor(game) {
     super(game);
-    this.cd = 5000;
+    this.cd = 10000;
     this.skillDuration = 5000; //持续时间
     this.title = '喷射战士';
     this.description = '噗————————';

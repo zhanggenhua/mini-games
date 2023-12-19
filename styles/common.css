@@ -31,7 +31,7 @@ body {
 }
 
 /* 全局svg图标设置 */
-span.icon {
+.icon {
   background-size: contain;
   background-repeat: no-repeat;
 }
