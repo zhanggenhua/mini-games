@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="../styles/reset.css">
     <link rel="stylesheet" href="../styles/common.css">
     <link rel="stylesheet" href="style.css">
-    <!-- <link href="https://fonts.font.im/css?family=Creepster" rel="stylesheet"> -->
 </head>
 
 <body>
@@ -21,11 +20,25 @@
     <button id="fullScreenButton">切换全屏</button>
     <button id="restart">重新开始</button>
 
-    <div class="pause__text">暂停</div>
     <div class="pause__mark"></div>
+    <div class="pause__text">
+        <span class="pause__text--1">暂停</span>
+        <span class="pause__text--2">点击屏幕继续</span>
+        <span class="pause__text--3">切换全屏</span>
+        <span class="pause__text--4">重新开始</span>
+    </div>
 
-    <!-- 一大波敌人提示 -->
-    <div class="tip">暂停</div>
+    <!-- 提示(一大波敌人, 结局记分) -->
+    <div class="tip tip__toEnd">
+        <span>一大波敌人正在接近！！！</span>
+    </div>
+    <div class="tip tip__GameEnd">
+        <span class="tip__GameEnd--1">恭喜获胜!</span>
+        <span class="tip__GameEnd--2">您的分数是：</span>
+        <span class="tip__GameEnd--3">100</span>
+        <span class="tip__GameEnd--4">重新开始</span>
+        <span class="tip__GameEnd--5">继续游戏</span>
+    </div>
 
     <!-- 进度条 -->
     <div class="progress">

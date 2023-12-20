@@ -60,14 +60,15 @@ window.addEventListener('load', function () {
 
       this.maxParticles = 50000;
       this.score = 0;
-      this.winningScore = 1;
+      this.winningScore = 100;
       this.fontColor = 'black';
       this.time = 0;
       // 一局时间限制
       // this.maxTime = 60000;
       this.gameOver = false;
       this.lives = 5; //生命
-      this.gameEnd = false;
+      this.gameEnd = false; //游戏结束
+      this.endless = false; //无尽模式
 
       // 状态初始化
       this.player.currentState = this.player.states[0];
@@ -173,17 +174,47 @@ window.addEventListener('load', function () {
   let lastTime = 0;
   this.window.game = game; //test
 
+  // 重新开始
   function restartGame() {
-    game = new Game(canvas.width, canvas.height);
+    game = new Game(canvas);
     lastTime = 0;
   }
-  document.getElementById('restart').addEventListener('pointerdown', restartGame);
+  document.getElementsByClassName('pause__text--4')[0].addEventListener('pointerdown', () => {
+    restartGame();
+    gameContinue();
+  });
 
-  // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
+  // 游戏结束按钮
+  let gameEnd = document.getElementsByClassName('tip__GameEnd')[0];
+  document.getElementsByClassName('tip__GameEnd--4')[0].addEventListener('pointerdown', () => {
+    restartGame();
+    gameContinue();
+    gameEnd.classList.add('blur-out-expand');
+    setTimeout(() => {
+      // 等动画效果结束
+      gameEnd.style.visibility = 'hidden';
+      gameEnd.classList.remove('blur-out-expand');
+    }, 500);
+  });
+  document.getElementsByClassName('tip__GameEnd--5')[0].addEventListener('pointerdown', () => {
+    game.gameEnd = false;
+    // 进入无尽模式
+    game.endless = true;
+    gameEnd.classList.add('blur-out-expand');
+    setTimeout(() => {
+      // 等动画效果结束
+      gameEnd.style.visibility = 'hidden';
+      gameEnd.classList.remove('blur-out-expand');
+    }, 500);
+    mark.style.visibility = 'hidden';
+  });
+
+  // 主函数
   function animate(timeStamp) {
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
+    // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
     if (!game.pause && !game.gameOver && !game.gameEnd) {
       // 清除后再绘制
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -195,13 +226,19 @@ window.addEventListener('load', function () {
 
       game.update(deltaTime); //更新数据是为了draw 绘制做准备
       game.draw(ctx);
+    } else if (game.gameEnd === true) {
+      // 游戏结束
+      gameEnd.style.visibility = 'visible';
+      document.getElementsByClassName('tip__GameEnd--3')[0].innerHTML = game.score;
+      mark.style.visibility = 'visible';
     }
     requestAnimationFrame(animate);
   }
   animate(0);
 
   // 点击击杀乌鸦  --指针事件，包含了点击，触摸
-  window.addEventListener('pointerdown', function (e) {
+  canvas.addEventListener('pointerdown', function (e) {
+    // e.stopPropagation(); //阻止冒泡
     let point = getMousePos(collisionCanvas, e); //获取相对位置
     const detectPixelColor = collisionCtx.getImageData(point.x, point.y, 1, 1); //获取鼠标点击的那块区域的相关属性
     const pc = detectPixelColor.data; //鼠标点击的那块区域的rgb值如rgb(0,0,0,0.1)
@@ -239,6 +276,46 @@ window.addEventListener('load', function () {
     };
   }
 
+  let mark = document.getElementsByClassName('pause__mark')[0];
+  let pauseText = document.getElementsByClassName('pause__text')[0];
+  // 失去焦点暂停游戏  --需要修复时间累积
+  function gamePause() {
+    if (game.gameEnd === true || game.gameOver === true) return;
+    game.pause = true;
+    mark.style.visibility = 'visible';
+    pauseText.style.visibility = 'visible';
+    pauseText.style.zIndex = '4000';
+    pauseText.classList.remove('blur-out-expand');
+    // 暂停时要清空输入，因为没有触发松开按键的事件
+    game.input.keys = [];
+  }
+  window.onblur = gamePause;
+  function gameContinue() {
+    if (game.gameEnd === true || game.gameOver === true) return;
+    game.pause = false;
+    mark.style.visibility = 'hidden';
+    setTimeout(() => {
+      // 等动画效果结束
+      pauseText.style.zIndex = '0';
+    }, 500);
+    pauseText.classList.add('blur-out-expand');
+    // animate(lastTime);
+  }
+  window.onfocus = gameContinue;
+  // 点击游戏外也暂停
+  document.addEventListener('pointerdown', function (event) {
+    console.log('点击事件', event.target.tagName);
+    if (event.target.tagName === 'BODY') {
+      gamePause();
+    }
+  });
+  document.getElementsByClassName('pause__mark')[0].addEventListener('pointerdown', gameContinue);
+  document
+    .getElementsByClassName('pause__text--1')[0]
+    .addEventListener('pointerdown', gameContinue);
+  document
+    .getElementsByClassName('pause__text--2')[0]
+    .addEventListener('pointerdown', gameContinue);
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // 移动端适配
   //禁止页面滑动
@@ -263,10 +340,9 @@ window.addEventListener('load', function () {
   const scroll = stopScroll();
   scroll.stop(); //禁止页面滚动
   // 禁用右键菜单
-  body.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-  });
-
+  // body.addEventListener('contextmenu', (e) => {
+  //   e.preventDefault();
+  // });
   function toggleFullScreen() {
     if (!document.fullscreenElement) {
       canvas.requestFullscreen().catch((err) => {
@@ -276,32 +352,9 @@ window.addEventListener('load', function () {
       document.exitFullscreen();
     }
   }
-  this.document
-    .getElementById('fullScreenButton')
+  document
+    .getElementsByClassName('pause__text--3')[0]
     .addEventListener('pointerdown', toggleFullScreen);
-
-  let mark = document.getElementsByClassName('pause__mark')[0];
-  let pauseText = document.getElementsByClassName('pause__text')[0];
-  // 失去焦点暂停游戏  --需要修复时间累积
-  window.onblur = function () {
-    game.pause = true;
-    mark.style.visibility = 'visible';
-    pauseText.style.visibility = 'visible';
-    pauseText.style.zIndex = '4000';
-    pauseText.classList.remove('blur-out-expand');
-    // 暂停时要清空输入，因为没有触发松开按键的事件
-    game.input.keys = [];
-  };
-  window.onfocus = function () {
-    game.pause = false;
-    mark.style.visibility = 'hidden';
-    setTimeout(() => {
-      // 等动画效果结束
-      pauseText.style.zIndex = '0';
-    }, 500);
-    pauseText.classList.add('blur-out-expand');
-    // animate(lastTime);
-  };
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // 技能UI
@@ -434,6 +487,19 @@ window.addEventListener('load', function () {
       let progress = document.getElementsByClassName('progress')[0];
       progress.style.right = rect.right - rect.width + 15 + 'px';
       progress.style.bottom = rect.bottom - rect.height + 10 + 'px';
+
+      // 补充暂停的样式
+      mark.style.width = rect.width + 'px';
+      mark.style.height = rect.height + 'px';
+
+      console.log(
+        '?实际宽高',
+        mark.style.width,
+        rect.width,
+        rect.height,
+        canvas.width,
+        canvas.height,
+      );
     }
   }
   drawUI();

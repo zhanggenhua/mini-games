@@ -117,7 +117,7 @@ export class Player {
     this.minJumpHeight = this.ground / 8; //跳跃的最小高度
 
     this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
-    console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed);
+    console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed, this.maxJumpHeight, this.ground);
   }
 
   setState(state, speed) {

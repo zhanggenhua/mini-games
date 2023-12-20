@@ -34,17 +34,20 @@ export class UI {
       // 游戏结束看板
       if (this.game.gameOver) {
         context.textAlign = 'center';
-        context.font = this.fontSize * 2 + 'px ' + this.fontFamily;
+        context.font = this.fontSize * 3 + 'px ' + this.fontFamily;
         let text;
         if (this.game.score >= this.game.winningScore) {
-          text = 'you win!';
+          text = '嗜血狂魔!';
         } else {
           text = 'GAME OVER!';
         }
         let text2 = 'your score is :' + this.game.score;
         context.fillText(text, this.game.width * 0.5, this.game.height * 0.5 - 20);
-        context.font = this.fontSize * 0.7 + 'px ' + this.fontFamily;
-        context.fillText(text2, this.game.width * 0.5, this.game.height * 0.5 + 20);
+        context.font = this.fontSize * 1.5 + 'px ' + this.fontFamily;
+        context.fillText(text2, this.game.width * 0.5, this.game.height * 0.5 + 30);
+        
+        context.font = 'bold ' + this.fontSize * 1 + 'px ' + this.fontFamily;
+        context.fillText('点击屏幕重新开始', this.game.width * 0.5, this.game.height * 0.5 + 90);
       }
       context.restore();
     });

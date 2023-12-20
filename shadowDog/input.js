@@ -9,6 +9,8 @@ export class InputHandler {
     this.touchKey = '';
     this.touchThreshold = 30; //滑动阈值,超过30触发滑动
 
+    this.skillGroup = Object.values(skills);
+
     window.addEventListener('keydown', (e) => {
       this.keyHandler(e.key, (key) => {
         // 按键只记录一次
@@ -16,10 +18,12 @@ export class InputHandler {
           console.log('按下', e.key, this.keys);
 
           // 使用技能  --因为是触发型，防止长按重复判断，只在初次按下时触发一次
+          let skill;
           if (key === 'Shift') {
             this.game.player.useSkill(skills.ROLLSKILL);
-          } else if (key === '1') {
-            this.game.player.useSkill(skills.FEATHERFALL);
+          } else if (this.skillGroup.includes(parseInt(key))) {
+            // 按键使用技能，反正是一一对应的
+            this.game.player.useSkill(parseInt(key));
           } else {
             this.keys.push(key);
           }
@@ -94,7 +98,7 @@ export class InputHandler {
       key === 'ArrowLeft' ||
       key === 'ArrowRight' ||
       key === 'Shift' || // 翻滚
-      key === '1' // 羽落术
+      this.skillGroup.includes(parseInt(key))
     ) {
       fn(key);
     }

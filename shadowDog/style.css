@@ -25,6 +25,10 @@
   }
 }
 
+body {
+  font-family: 'ManHua';
+}
+
 .canvas {
   cursor: crosshair;
   border: 5px solid black;
@@ -61,24 +65,47 @@ img[id] {
   visibility: hidden;
   position: absolute;
 
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  font-size: 10vw;
-  font-family: 'Yuan';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-family: 'ManHua';
+  text-shadow: 1px 1px 2px #fff;
+}
+.pause__text--1 {
+  font-size: 10rem;
+}
+.pause__text--2 {
+  font-size: 3rem;
+}
+.pause__text--3 {
+  font-size: 4rem;
+  margin-top: 5rem;
+}
+.pause__text--4 {
+  font-size: 4rem;
+  margin-top: 1rem;
 }
 .pause__mark {
   z-index: 1000;
   visibility: hidden;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  /* max-width: 100%; */
+  /* max-height: 100%; */
 
   /* 都是纯色，模糊自然没用 */
   filter: blur(2px);
-  width: 100%;
-  height: 100%;
   /* 禁止操作 */
-  user-select: none;
+  /* user-select: none; */
 }
 .pause__mark::after {
   content: '';
@@ -266,10 +293,56 @@ img[id] {
 }
 .progress__flag {
   position: absolute;
-  right: 20%;
+  left: 70%;
   /* 自身底部是空白 */
   bottom: calc(2rem - 1rem);
   background-image: url(../assets/shadow/svg/flag.svg);
   width: 4rem;
   height: 4rem;
+}
+
+/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+/* 提示UI */
+.tip {
+  z-index: 2000;
+  /* visibility: hidden; */
+  position: absolute;
+
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-family: 'ManHua';
+  text-shadow: 1px 1px 2px #fff;
+}
+
+.tip__toEnd {
+  visibility: hidden;
+  font-size: 8rem;
+}
+.tip__GameEnd {
+  visibility: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tip__GameEnd--1 {
+  font-size: 10rem;
+  margin-bottom: 2rem;
+}
+.tip__GameEnd--2 {
+  font-size: 4rem;
+}
+.tip__GameEnd--3 {
+  font-size: 5rem;
+}
+.tip__GameEnd--4 {
+  font-size: 4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+.tip__GameEnd--5 {
+  font-size: 4rem;
 }

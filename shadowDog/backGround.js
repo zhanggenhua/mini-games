@@ -88,10 +88,23 @@ export class BackGround {
     let width = (this.distance / this.targetDistance) * 100;
     if (this.distance < this.targetDistance && 80 > width) {
       this.game.progressBar.style.width = width + '%';
-    } else if (80 < width && width < 100) {
+    } else if (70 < width && width < 100) {
+      // 提示
+      let tip = document.getElementsByClassName('tip__toEnd')[0];
+      tip.style.visibility = 'visible';
+      // 持续时间
+      setTimeout(() => {
+        tip.classList.add('blur-out-expand');
+        setTimeout(() => {
+          // 等动画效果结束
+          tip.style.visibility = 'hidden';
+          tip.classList.remove('blur-out-expand');
+        }, 500);
+      }, 1000);
+
       // 一大波敌人
       this.game.enemyInterval = 500;
-    } else {
+    } else if (!this.game.endless) {
       // 游戏结束
       this.game.gameEnd = true;
     }

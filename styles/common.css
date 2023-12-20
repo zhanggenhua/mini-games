@@ -1,12 +1,17 @@
+/* 可爱圆润风格 */
 @font-face {
   font-family: 'Yuan';
   /* format:ttf --必加 */
   src: url('../assets/fonts/keai.ttf') format('truetype');
 }
+/* 美漫风格 */
 @font-face {
   font-family: 'Bangers';
-  /* format:ttf --必加 */
   src: url('../assets/fonts/Bangers-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'ManHua';
+  src: url('../assets/fonts/YeZiGongChangAoYeHei-2.woff2') format('truetype');
 }
 
 /* 全局禁用文本选择 */
@@ -78,7 +83,7 @@ body {
   100% {
     letter-spacing: 1em;
     /* 中文不方便，只能特化，强行居中渐变 */
-    transform: translate(-30%, -50%);
+    transform: translate(-40%, -50%);
     -webkit-filter: blur(12px) opacity(0%);
     filter: blur(12px) opacity(0%);
   }
