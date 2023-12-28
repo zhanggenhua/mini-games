@@ -184,7 +184,7 @@ export class Rolling extends State {
         this.game.player.y + this.game.player.height * 0.5,
       ),
     );
-
+    
     if (input.includes('Shift') && input.includes('ArrowUp') && this.game.player.onGround()) {
       this.game.player.vy -= 27;
     } else if (input.includes('ArrowDown') && !this.game.player.onGround()) {

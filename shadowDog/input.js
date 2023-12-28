@@ -80,7 +80,8 @@ export class InputHandler {
       }
     });
     window.addEventListener('touchend', (e) => {
-      this.keys = [];
+      // 除了shift是由skill控制的，其余的清空
+      this.keys = this.keys.filter((k) => k == 'Shift');
       clearTimeout(this.timer);
     });
   }

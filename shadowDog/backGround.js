@@ -16,6 +16,8 @@ export class BackGround {
     this.environment = environment.CITY;
     // this.transition = false; //用于地图切换
 
+    this.showTip = true;
+
     this.layerImage1 = document.getElementById('layer1'); //最后面的图层，固定
     this.layerImage2 = document.getElementById('layer2');
     this.layerImage3 = document.getElementById('layer3');
@@ -90,20 +92,23 @@ export class BackGround {
       this.game.progressBar.style.width = width + '%';
     } else if (70 < width && width < 100) {
       // 提示
-      let tip = document.getElementsByClassName('tip__toEnd')[0];
-      tip.style.visibility = 'visible';
-      // 持续时间
-      setTimeout(() => {
-        tip.classList.add('blur-out-expand');
+      if (this.showTip) {
+        this.showTip = false;
+        let tip = document.getElementsByClassName('tip__toEnd')[0];
+        tip.style.visibility = 'visible';
+        // 持续时间
         setTimeout(() => {
-          // 等动画效果结束
-          tip.style.visibility = 'hidden';
-          tip.classList.remove('blur-out-expand');
-        }, 500);
-      }, 1000);
+          tip.classList.add('blur-out-expand');
+          setTimeout(() => {
+            // 等动画效果结束
+            tip.style.visibility = 'hidden';
+            tip.classList.remove('blur-out-expand');
+          }, 500);
+        }, 1000);
 
-      // 一大波敌人
-      this.game.enemyInterval = 500;
+        // 一大波敌人
+        this.game.enemyInterval = 500;
+      }
     } else if (!this.game.endless) {
       // 游戏结束
       this.game.gameEnd = true;

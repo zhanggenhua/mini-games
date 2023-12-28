@@ -167,18 +167,18 @@ export class Player {
   }
 
   update(input, deltaTime) {
-    // console.log(
-    //   '当前状态',
-    //   this.currentState.state,
-    //   '速度',
-    //   this.speed,
-    //   this.game.speed,
-    //   '按键',
-    //   this.game.input.keys,
-    //   '在地上？',
-    //   this.onGround(),
-    //   Object.assign({}, this),
-    // );
+    console.log(
+      '当前状态',
+      this.currentState.state,
+      '速度',
+      this.speed,
+      this.game.speed,
+      '按键',
+      this.game.input.keys,
+      '在地上？',
+      this.onGround(),
+      Object.assign({}, this),
+    );
     this.checkCollision();
     // 状态机处理当前输入
     this.currentState.handleInput(input);

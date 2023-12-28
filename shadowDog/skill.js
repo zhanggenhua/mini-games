@@ -194,7 +194,7 @@ export class SpiritBombSkill extends Skill {
     }, 100);
   }
 }
-//todo 修复移动端无法跳跃
+
 // 翻滚
 export class RollSkill extends Skill {
   constructor(game) {
