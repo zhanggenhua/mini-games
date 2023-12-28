@@ -122,7 +122,7 @@ export class FlyingEnemy extends Enemy {
   static egg = 3; //基础产卵率
   constructor(game) {
     super(game);
-    this.x = this.game.width + Math.random() * this.game.width * 0.25; //给一个随机的进场时机
+    this.x = this.game.width + Math.random() * this.game.width * 0.3; //给一个随机的进场时机
     // 随机出生在上半屏幕
     this.y = Math.random() * this.game.height * 0.4 + this.game.height * 0.1;
     this.speedX = Math.random() + 1; // 1 ~ 2

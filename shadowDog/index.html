@@ -12,68 +12,72 @@
 </head>
 
 <body>
-    <canvas id="canvas1" class="canvas">
-    </canvas>
-    <!-- collisionCanvas这个画布是用于乌鸦的碰撞检测，是基于色彩检测的 -->
-    <canvas id="collisionCanvas" class="canvas"></canvas>
-    <canvas id="particlesCanvas" class="canvas"></canvas>
-    <button id="fullScreenButton">切换全屏</button>
-    <button id="restart">重新开始</button>
+    <main>
+        <div class="fullscreen-container">
+            <canvas id="canvas1" class="canvas">
+            </canvas>
+            <!-- collisionCanvas这个画布是用于乌鸦的碰撞检测，是基于色彩检测的 -->
+            <canvas id="collisionCanvas" class="canvas"></canvas>
+            <canvas id="particlesCanvas" class="canvas"></canvas>
 
-    <div class="pause__mark"></div>
-    <div class="pause__text">
-        <span class="pause__text--1">暂停</span>
-        <span class="pause__text--2">点击屏幕继续</span>
-        <span class="pause__text--3">切换全屏</span>
-        <span class="pause__text--4">重新开始</span>
-    </div>
+            <div class="pause__mark"></div>
+            <div class="pause__text">
+                <span class="pause__text--1">暂停</span>
+                <span class="pause__text--2">点击屏幕继续</span>
+                <span class="pause__text--3">切换全屏</span>
+                <span class="pause__text--4">重新开始</span>
+            </div>
 
-    <!-- 提示(一大波敌人, 结局记分) -->
-    <div class="tip tip__toEnd">
-        <span>一大波敌人正在接近！！！</span>
-    </div>
-    <div class="tip tip__GameEnd">
-        <span class="tip__GameEnd--1">恭喜获胜!</span>
-        <span class="tip__GameEnd--2">您的分数是：</span>
-        <span class="tip__GameEnd--3">100</span>
-        <span class="tip__GameEnd--4">重新开始</span>
-        <span class="tip__GameEnd--5">继续游戏</span>
-    </div>
+            <!-- 提示(一大波敌人, 结局记分) -->
+            <div class="tip tip__toEnd">
+                <span>一大波敌人正在接近！！！</span>
+            </div>
+            <div class="tip tip__GameEnd">
+                <span class="tip__GameEnd--1">恭喜获胜!</span>
+                <span class="tip__GameEnd--2">您的分数是：</span>
+                <span class="tip__GameEnd--3">100</span>
+                <span class="tip__GameEnd--4">重新开始</span>
+                <span class="tip__GameEnd--5">继续游戏</span>
+            </div>
 
-    <!-- 进度条 -->
-    <div class="progress">
-        <!-- 填充 -->
-        <div class="progress__bar"></div>
-        <!-- 小旗帜 -->
-        <div class="progress__flag icon"></div>
-    </div>
+            <!-- 进度条 -->
+            <div class="progress">
+                <!-- 填充 -->
+                <div class="progress__bar"></div>
+                <!-- 小旗帜 -->
+                <div class="progress__flag icon"></div>
+            </div>
 
-    //todo 修复全屏消失bug
-    <!-- 技能UI -->
-    <div class="ui__skill">
-        <!-- 技能描述 -->
-        <div class="skill__megbox">
-            <div class="megbox__meg">
-                <div class="megbox__title">
-                    <!-- 必须用div -->
-                    <div class="ellipsis">提示文字提示文字提示文字</div>
-                </div>
-                <div class="megbox__icon">
-                    <div>
-                        <span class="icon megbox__icon--1 text-container" data-text="冷却时间"></span>
-                        <span class="icon__text--1">1:00</span>
+            <!-- //todo 修复全屏消失bug -->
+            <!-- 技能UI -->
+            <div class="ui__skill">
+                <!-- 技能描述 -->
+                <div class="skill__megbox">
+                    <div class="megbox__meg">
+                        <div class="megbox__title">
+                            <!-- 必须用div -->
+                            <div class="ellipsis">提示文字提示文字提示文字</div>
+                        </div>
+                        <div class="megbox__icon">
+                            <div>
+                                <span class="icon megbox__icon--1 text-container" data-text="冷却时间"></span>
+                                <span class="icon__text--1">1:00</span>
+                            </div>
+                            <div>
+                                <span class="icon megbox__icon--2 text-container" data-text="持续时间"></span>
+                                <span class="icon__text--2">1:00</span>
+                            </div>
+                        </div>
+                        <div class="megbox__txt">
+                            <span class="ellipsis-2">提示文字.提示文字.提示文字.提示文字.提示文字.提示文字.</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="icon megbox__icon--2 text-container" data-text="持续时间"></span>
-                        <span class="icon__text--2">1:00</span>
-                    </div>
-                </div>
-                <div class="megbox__txt">
-                    <span class="ellipsis-2">提示文字.提示文字.提示文字.提示文字.提示文字.提示文字.</span>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+
+
 
 
 

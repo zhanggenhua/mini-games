@@ -15,8 +15,10 @@ import { skills } from './skill.js';
 import { fadeIn, fadeOut, isMobile } from '../utils/tool.js';
 
 window.addEventListener('load', function () {
+  let fullscreenContainer = document.getElementsByClassName('fullscreen-container')[0];
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
+  // 定义尺寸，具体设置在css
   canvas.width = 900;
   canvas.height = 500;
   // 创建颜色碰撞检测画布
@@ -305,7 +307,10 @@ window.addEventListener('load', function () {
   // 点击游戏外也暂停
   document.addEventListener('pointerdown', function (event) {
     console.log('点击事件', event.target.tagName);
-    if (event.target.tagName === 'BODY') {
+    // if (event.target.tagName === 'BODY') {
+    //   gamePause();
+    // }
+    if (!fullscreenContainer.contains(event.target)) {
       gamePause();
     }
   });
@@ -318,6 +323,21 @@ window.addEventListener('load', function () {
     .addEventListener('pointerdown', gameContinue);
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // 移动端适配
+  window.addEventListener('fullscreenchange', () => {
+    // 获取全屏容器的尺寸
+    var containerWidth = fullscreenContainer.clientWidth;
+    var containerHeight = fullscreenContainer.clientHeight;
+
+    // 计算宽度和高度的缩放比例
+    var scaleX = containerWidth / canvas.width;
+    var scaleY = containerHeight / canvas.height;
+
+    // 设置缩放因子为x和y方向上的最小值，以保持宽高比不变
+    var scale = Math.min(scaleX, scaleY);
+
+    // 更新canvas元素的样式来应用缩放
+    canvas.style.transform = `scale(${scale})`; // 如果你的宽高比可以变化，可以设置为 scale(${scaleX}, ${scaleY})
+  });
   //禁止页面滑动
   var html = document.getElementsByTagName('html')[0];
   var body = document.getElementsByTagName('body')[0];
@@ -345,7 +365,7 @@ window.addEventListener('load', function () {
   // });
   function toggleFullScreen() {
     if (!document.fullscreenElement) {
-      canvas.requestFullscreen().catch((err) => {
+      fullscreenContainer.requestFullscreen().catch((err) => {
         alert(`错误，不能切换为全屏模式：${err.message}`);
       });
     } else {
@@ -388,8 +408,10 @@ window.addEventListener('load', function () {
     let rect = canvas.getBoundingClientRect();
 
     // 技能UI 位置
-    skillUI.style.right = rect.right - rect.width + 20 + 'px';
-    skillUI.style.top = rect.top + 10 + 'px';
+    // skillUI.style.right = rect.right - rect.width + 20 + 'px';
+    // skillUI.style.top = rect.top + 10 + 'px';
+    skillUI.style.right = 20 + 'px';
+    skillUI.style.top = 10 + 'px';
 
     // 根元素字体大小
     let htmlFontSize = getComputedStyle(window.document.documentElement)['font-size'];
@@ -485,12 +507,14 @@ window.addEventListener('load', function () {
 
       // 进度条UI位置
       let progress = document.getElementsByClassName('progress')[0];
-      progress.style.right = rect.right - rect.width + 15 + 'px';
-      progress.style.bottom = rect.bottom - rect.height + 10 + 'px';
+      // progress.style.right = rect.right - rect.width + 15 + 'px';
+      // progress.style.bottom = rect.bottom - rect.height + 10 + 'px';
+      progress.style.right = 15 + 'px';
+      progress.style.bottom = 10 + 'px';
 
       // 补充暂停的样式
-      mark.style.width = rect.width + 'px';
-      mark.style.height = rect.height + 'px';
+      mark.style.width = rect.width + 2.5 + 'px';
+      mark.style.height = rect.height + 2.5 + 'px';
 
       console.log(
         '?实际宽高',
