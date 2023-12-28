@@ -2,7 +2,7 @@ import { FlyingEnemy } from '../base.js';
 import { FloatingMessage } from '../../floatingMessages.js';
 
 export default class Ghost extends FlyingEnemy {
-  static score = 3;
+  static score = 4;
   static egg = 2;
   constructor(game) {
     super(game);

@@ -167,18 +167,18 @@ export class Player {
   }
 
   update(input, deltaTime) {
-    console.log(
-      '当前状态',
-      this.currentState.state,
-      '速度',
-      this.speed,
-      this.game.speed,
-      '按键',
-      this.game.input.keys,
-      '在地上？',
-      this.onGround(),
-      Object.assign({}, this),
-    );
+    // console.log(
+    //   '当前状态',
+    //   this.currentState.state,
+    //   '速度',
+    //   this.speed,
+    //   this.game.speed,
+    //   '按键',
+    //   this.game.input.keys,
+    //   '在地上？',
+    //   this.onGround(),
+    //   Object.assign({}, this),
+    // );
     this.checkCollision();
     // 状态机处理当前输入
     this.currentState.handleInput(input);
@@ -312,7 +312,7 @@ export class Player {
         // 受击
         if (!this.wudi()) {
           this.setState(6, 0);
-          this.game.score -= 5;
+          this.game.score -= 2;
           this.game.lives--;
           this.game.floatingMessages.push(
             new FloatingMessage(this.game, 'FUCK!', this.x, this.y, this.x - 20, this.y - 20, 70),

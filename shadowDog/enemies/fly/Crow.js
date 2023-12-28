@@ -5,7 +5,7 @@ import { FloatingMessage } from '../../floatingMessages.js';
 
 // 乌鸦
 export default class Crow extends FlyingEnemy {
-  static score = 3;
+  static score = 5;
   static egg = 1;
   constructor(game) {
     super(game);

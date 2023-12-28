@@ -3,7 +3,7 @@ import { GroundEnemy } from './base.js';
 
 // 锯子
 export default class Saw extends FlyingEnemy {
-  static score = 2;
+  static score = 3;
   static egg = 1;
   constructor(game) {
     super(game);
@@ -48,7 +48,7 @@ export default class Saw extends FlyingEnemy {
 
 // 陷阱版
 export class SawGround extends GroundEnemy {
-  static score = 2;
+  static score = 5;
   constructor(game) {
     super(game);
     this.spriteWidth = 213;

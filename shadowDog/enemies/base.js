@@ -9,7 +9,7 @@ class Enemy {
     this.game = game;
     this.frameX = 0;
     this.frameY = 0;
-    this.fps = 20;//每秒二十帧
+    this.fps = 20; //每秒二十帧
     // this.frameInterval = 1000 / this.fps;
     this.frameTimer = 0;
     this.markedForDeletion = false; //标记删除
@@ -242,7 +242,7 @@ export class ClimbingEnemy extends Enemy {
       // 怪物没死才处理碰撞
       if (!enemy.dead && checkCollision(enemy, this.mouth)) {
         // 比大小 --
-        if (this.score >= enemy.score && enemy.constructor.name !== 'Fly') {
+        if (this.score >= enemy.score && !['Saw', 'Fly'].includes(enemy.constructor.name)) {
           this.dead = true;
           if (this.speedY > 0) this.speedY *= -1; //返航
           enemy.dead = true;

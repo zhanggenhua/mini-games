@@ -486,23 +486,36 @@ window.addEventListener('load', function () {
           skill.skillDuration === '∞' ? skill.skillDuration : skill.skillDuration / 1000 + ':00';
       };
       let timer = null;
+      // 移动端适配 --长按提示
+      element.addEventListener('touchstart', () => {
+        timer = setTimeout(() => {
+          getMegItem();
+        }, 500); // 设置长按时间，单位为毫秒
+      });
+      // 阻止上下文菜单默认行为
+      element.addEventListener(
+        'contextmenu',
+        function (e) {
+          e.preventDefault();
+        },
+        false,
+      );
+      element.addEventListener('touchend', () => {
+        clearTimeout(timer);
+        leaveTimer = setTimeout(() => {
+          fadeOut(skillMegbox);
+        }, 100);
+      });
+
       element.addEventListener('mouseover', () => {
-        // 移动端适配 --长按提示
-        if (isMobile()) {
-          timer = setTimeout(() => {
-            getMegItem();
-          }, 750); // 设置长按时间，单位为毫秒
-        } else {
+        if (!isMobile()) {
           getMegItem();
         }
       });
-
       element.addEventListener('mouseout', () => {
         leaveTimer = setTimeout(() => {
           fadeOut(skillMegbox);
         }, 100);
-
-        clearTimeout(timer);
       });
 
       // 进度条UI位置
