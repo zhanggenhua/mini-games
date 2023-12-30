@@ -14,7 +14,8 @@ import { skills } from './skill.js';
 
 import { fadeIn, fadeOut, isMobile } from '../utils/tool.js';
 
-window.addEventListener('load', function () {
+window.addEventListener('load', gameStart());
+function gameStart() {
   let fullscreenContainer = document.getElementsByClassName('fullscreen-container')[0];
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
@@ -62,7 +63,7 @@ window.addEventListener('load', function () {
 
       this.maxParticles = 50000;
       this.score = 0;
-      this.winningScore = 100;
+      this.winningScore = 10;
       this.fontColor = 'black';
       this.time = 0;
       // 一局时间限制
@@ -174,12 +175,14 @@ window.addEventListener('load', function () {
 
   let game = new Game(canvas);
   let lastTime = 0;
-  this.window.game = game; //test
+  window.game = game; //test
 
   // 重新开始
   function restartGame() {
-    game = new Game(canvas);
-    lastTime = 0;
+    // game = new Game(canvas);
+    // lastTime = 0;
+    // gameStart();
+    window.location.reload();
   }
   document.getElementsByClassName('pause__text--4')[0].addEventListener('pointerdown', () => {
     restartGame();
@@ -211,6 +214,7 @@ window.addEventListener('load', function () {
     mark.style.visibility = 'hidden';
   });
 
+  ///////////////////////////////////////////////////////////////////////////////////////
   // 主函数
   function animate(timeStamp) {
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
@@ -233,6 +237,10 @@ window.addEventListener('load', function () {
       gameEnd.style.visibility = 'visible';
       document.getElementsByClassName('tip__GameEnd--3')[0].innerHTML = game.score;
       mark.style.visibility = 'visible';
+    }else if(game.gameOver){
+      fullscreenContainer.addEventListener('click', ()=>{
+        restartGame();
+      })
     }
     requestAnimationFrame(animate);
   }
@@ -333,9 +341,10 @@ window.addEventListener('load', function () {
     var scaleY = containerHeight / canvas.height;
 
     // 设置缩放因子为x和y方向上的最小值，以保持宽高比不变
-    var scale = Math.min(scaleX, scaleY);
+    var scale = Math.max(Math.min(scaleX, scaleY), 1);
 
     // 更新canvas元素的样式来应用缩放
+    console.log('全屏', containerWidth, containerHeight, scale);
     canvas.style.transform = `scale(${scale})`; // 如果你的宽高比可以变化，可以设置为 scale(${scaleX}, ${scaleY})
   });
   //禁止页面滑动
@@ -540,5 +549,5 @@ window.addEventListener('load', function () {
     }
   }
   drawUI();
-  this.window.addEventListener('resize', drawUI);
-});
+  window.addEventListener('resize', drawUI);
+};

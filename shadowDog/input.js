@@ -52,10 +52,10 @@ export class InputHandler {
     window.addEventListener('touchstart', (e) => {
       this.touchY = e.changedTouches[0].pageY;
       this.touchX = e.changedTouches[0].pageX;
-      this.timer = setTimeout(() => {
-        // 长按操作
-        if (this.keys.indexOf('Shift') === -1) this.keys.push('Shift');
-      }, 1000); // 设置长按时间，单位为毫秒
+      // this.timer = setTimeout(() => {
+      //   // 长按操作
+      //   if (this.keys.indexOf('Shift') === -1) this.keys.push('Shift');
+      // }, 1000); // 设置长按时间，单位为毫秒
     });
 
     window.addEventListener('touchmove', (e) => {
@@ -72,17 +72,17 @@ export class InputHandler {
       else if (swipeDistanceX > this.touchThreshold && this.keys.indexOf('ArrowRight') === -1)
         this.keys.push('ArrowRight');
 
-      if (
-        Math.abs(swipeDistanceY) > this.touchThreshold ||
-        Math.abs(swipeDistanceX) > this.touchThreshold
-      ) {
-        clearTimeout(this.timer);
-      }
+      // if (
+      //   Math.abs(swipeDistanceY) > this.touchThreshold ||
+      //   Math.abs(swipeDistanceX) > this.touchThreshold
+      // ) {
+      //   clearTimeout(this.timer);
+      // }
     });
     window.addEventListener('touchend', (e) => {
       // 除了shift是由skill控制的，其余的清空
       this.keys = this.keys.filter((k) => k == 'Shift');
-      clearTimeout(this.timer);
+      // clearTimeout(this.timer);
     });
   }
 

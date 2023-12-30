@@ -281,12 +281,15 @@ export class FirePillarSkill extends Skill {
     this.game.player.states[states.STANDING].setState = () => {};
 
     this.game.player.maxSpeed = 0;
+    this.game.player.g = 0;
+    this.game.player.vy = 0;
   }
   end() {
     super.end();
 
     this.game.player.states[states.STANDING].setState = this.fn;
     this.game.player.maxSpeed = playerParams.MAXSPEED;
+    this.game.player.g = playerParams.G;
   }
 }
 
@@ -311,6 +314,8 @@ export class RainbowSkill extends Skill {
     this.game.player.states[states.STANDING].setState = () => {};
 
     this.game.player.maxSpeed = 0;
+    this.game.player.g = 0;
+    this.game.player.vy = 0;
   }
   end() {
     super.end();
@@ -325,10 +330,13 @@ export class RainbowSkill extends Skill {
         50,
       ),
     );
-    this.game.player.setBuff('slow', 2000); //模拟虚弱
-
+    
     this.game.player.states[states.STANDING].setState = this.fn;
+    this.game.player.setState(states.RUNNING, 1);
     this.game.player.maxSpeed = playerParams.MAXSPEED;
+    this.game.player.g = playerParams.G;
+
+    this.game.player.setBuff('slow', 2000); //模拟虚弱
   }
 }
 

@@ -507,7 +507,8 @@ export class Rainbow extends Particle {
   }
   update() {
     super.update();
-    this.game.player.vy = 0;
+    
+    // this.game.player.vy = 0;
 
     if (this.x > 0.1) {
       this.x *= 0.9; //不断变长

@@ -25,6 +25,7 @@ import { checkCollision, throttle, imageDataHRevert, observe } from '../utils/to
 
 export const playerParams = {
   MAXSPEED : 8,
+  G: 1,
 }
 export class Player {
   constructor(game) {
@@ -56,8 +57,7 @@ export class Player {
     this.frameX = 0;
     this.maxFrame = 5;
     this.fps = 20; //游戏以每秒60帧运行，动画以20帧每秒--这是素材预定义好的
-    // 一秒除以fps，意思是一秒之内动画变动了fps次
-    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
+    
     this.frameTimer = 0; //跟踪[动画]每帧时间间隔，和上方变量配合， 让动画是根据时间来播放  而不是根据电脑性能
     this.frameY = 0;
 
@@ -118,6 +118,9 @@ export class Player {
 
     this.maxJumpSpeed = -Math.floor(Math.sqrt(2 * this.g * this.maxJumpHeight)); //最大跳跃速度 --公式：v0^2=2*g*h
     console.log('计算属性,重力、最大跳跃', this.g, this.maxJumpSpeed, this.maxJumpHeight, this.ground);
+
+    // 一秒除以fps，意思是一秒之内动画变动了fps次
+    this.frameInterval = 1000 / this.fps; //每一帧的时间间隔  --随fps变小而增大，总之动画变慢
   }
 
   setState(state, speed) {
@@ -271,7 +274,6 @@ export class Player {
 
   // 是否杀戮状态
   kill() {
-    console.log('???', this.skills[skills.GIANT].actived);
     return (
       this.currentState === this.states[4] ||
       this.currentState === this.states[5] ||
