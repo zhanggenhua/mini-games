@@ -4,12 +4,6 @@ import { BackGround } from './backGround.js';
 import EnemyFactory from './enemies/index.js';
 import { UI } from './UI.js';
 
-import { CollisionAnimation } from './collisionAnimation.js';
-import { FloatingMessage } from './floatingMessages.js';
-import { SpiritBomb } from './particle.js';
-import { checkCollision } from '../utils/tool.js';
-
-import Crow from './enemies/fly/Crow.js';
 import { skills } from './skill.js';
 
 import { fadeIn, fadeOut, isMobile } from '../utils/tool.js';
@@ -216,10 +210,25 @@ function gameStart() {
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // 主函数
+  let fpsComputerTime = 0;
+  let frames = 0;
   function animate(timeStamp) {
     // 两帧之间的时间差 记录时间增量是为了在不同设备上也有一样的游戏速度？也叫锁帧，此处实际只是用在动画上  --为什么不直接用当前时间戳减去一个预定义的数值而是记录增量？如你所见game需要用到这个变量
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
+
+    // 计算帧数
+    let now = performance.now(); //高精度时间戳
+    frames++;
+    if (now > fpsComputerTime + 1000) {
+      // 每秒更新一次显示
+      let fps = Math.round((frames * 1000) / (now - fpsComputerTime));
+      document.getElementById('fpsDisplay').innerText = 'FPS: ' + fps;
+
+      fpsComputerTime = now;
+      frames = 1;
+    }
+
     // timeStamp 哪怕不执行animate也一直增长，所以用假暂停
     if (!game.pause && !game.gameOver && !game.gameEnd) {
       // 清除后再绘制
@@ -237,10 +246,10 @@ function gameStart() {
       gameEnd.style.visibility = 'visible';
       document.getElementsByClassName('tip__GameEnd--3')[0].innerHTML = game.score;
       mark.style.visibility = 'visible';
-    }else if(game.gameOver){
-      fullscreenContainer.addEventListener('click', ()=>{
+    } else if (game.gameOver) {
+      fullscreenContainer.addEventListener('click', () => {
         restartGame();
-      })
+      });
     }
     requestAnimationFrame(animate);
   }
@@ -550,4 +559,4 @@ function gameStart() {
   }
   drawUI();
   window.addEventListener('resize', drawUI);
-};
+}

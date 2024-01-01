@@ -19,7 +19,7 @@ export class CollisionAnimation {
 
     // this.angel = Math.random() * 6.2;
     this.sound = new Audio();
-    this.sound.src = '../sound/cloud/Ice attack 2.wav';
+    this.sound.src = '../assets/shadow/sound/cloud/Ice attack 2.wav';
   }
   draw(context) {
     context.save();
@@ -45,8 +45,7 @@ export class CollisionAnimation {
   update(deltaTime) {
     this.x -= this.game.speed; //确保碰撞动画随地图移动
     if (this.frameTimer > this.frameInterval) {
-      // todo  全部做完再测试
-      // if (this.frame === 0) this.sound.play();
+      if (this.frameX === 0) this.sound.play();
       this.frameX++;
       this.frameTimer = 0;
     } else {
